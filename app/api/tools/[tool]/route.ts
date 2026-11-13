@@ -16,12 +16,25 @@ async function addEntry(body: Body, kind: string, details: object) {
   return Response.json({ ok: true });
 }
 
+const DOSE_STATUSES = ["taken on call", "says taken earlier", "not taken"];
+
 // One handler per tool Laura can call.
 const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
   log_wellbeing: async (body) =>
     body.aspect === "general" || body.aspect === "sleep"
       ? addEntry(body, "wellbeing", { aspect: body.aspect })
       : refuse("aspect must be general or sleep"),
+  record_dose: async (body) => {
+    if (!DOSE_STATUSES.includes(body.status as string)) return refuse(`status must be one of: ${DOSE_STATUSES.join(", ")}`);
+    if (typeof body.medication !== "string") return refuse("medication is required");
+    const plan = await writeClient().from("care_plan").select("medications").single();
+    if (plan.error) throw new Error(`Could not read the care plan: ${plan.error.message}`);
+    const named = body.medication.toLowerCase();
+    const medication = plan.data.medications.find((m: { name: string }) => m.name.toLowerCase() === named);
+    // 200, not 4xx, so the language model reads the message.
+    if (!medication) return Response.json({ ok: false, message: `${body.medication} is not on the care plan. Nothing was recorded.` });
+    return addEntry(body, "dose", { medication: medication.name, status: body.status });
+  },
 };
 
 export async function POST(request: Request, { params }: { params: Promise<{ tool: string }> }) {

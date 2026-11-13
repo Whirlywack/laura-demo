@@ -5,6 +5,7 @@ import { LiveFeed } from "../components/LiveFeed";
 import { LiveUpdates } from "../components/LiveUpdates";
 import { KeyValueRows, QuietRow } from "../components/QuietRow";
 import { QuoteFact } from "../components/QuoteFact";
+import { StatusLabel } from "../components/StatusLabel";
 import { getDashboardState } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
 
@@ -20,7 +21,7 @@ const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
 export default async function Page() {
-  const { callStatus, wellbeing, feed, carePlan } = await getDashboardState(readClient());
+  const { callStatus, wellbeing, doses, feed, carePlan } = await getDashboardState(readClient());
 
   return (
     <main style={{ padding: "0 24px 28px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
@@ -37,13 +38,31 @@ export default async function Page() {
           question="Is she okay today?"
           answer={wellbeing.general ? `“${wellbeing.general}”` : <span style={waiting}>{noWellbeing[callStatus]}</span>}
         >
-          {wellbeing.sleep ? <QuoteFact fact="Sleep" quote={wellbeing.sleep} /> : <div style={waiting}>Sleep · not asked yet</div>}
+          {wellbeing.sleep ? <QuoteFact inline fact="Sleep" quote={wellbeing.sleep} /> : <div style={waiting}>Sleep · not asked yet</div>}
         </AnswerCard>
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
         <div style={{ flex: "3 1 640px", minWidth: 0 }}>
-          <QuietRow title="Care plan" note="What Laura knows about her · read-only">
+          <Card style={{ padding: "32px 40px 36px" }}>
+            <div style={{ font: "var(--text-meta-font)", fontWeight: 700, color: "var(--text-secondary)" }}>Details from today's call</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "32px 56px", marginTop: 20 }}>
+              <div style={{ flex: "1.35 1 320px", minWidth: 0 }}>
+                <div style={{ font: "var(--text-label)", marginBottom: 12 }}>Tablets</div>
+                {doses.map((d) => (
+                  <QuoteFact
+                    key={d.name}
+                    fact={d.name}
+                    detail={`${d.strength} · ${d.timeOfDay}`}
+                    quote={d.quote}
+                    muted={d.status === "not confirmed"}
+                    status={<StatusLabel status={d.status} />}
+                  />
+                ))}
+              </div>
+            </div>
+          </Card>
+          <QuietRow style={{ marginTop: "var(--gap-cards)" }} title="Care plan" note="What Laura knows about her · read-only">
             <KeyValueRows
               rows={[
                 ...carePlan.medications.map((m) => ({ label: m.name, value: `${m.strength} · ${m.timeOfDay}` })),
