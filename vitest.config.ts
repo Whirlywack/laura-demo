@@ -17,6 +17,7 @@ function localSupabase() {
     NEXT_PUBLIC_SUPABASE_ANON_KEY: vars.ANON_KEY,
     SUPABASE_SERVICE_ROLE_KEY: vars.SERVICE_ROLE_KEY,
     SUPABASE_DB_URL: vars.DB_URL,
+    LAURA_WEBHOOK_SECRET: "test-webhook-secret",
   };
 }
 
