@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
-    "sample-data": "node --env-file=.env.local scripts/sample-data.ts"
+    "sample-data": "node --env-file=.env.local scripts/sample-data.ts",
+    "laura-agent": "node --env-file=.env.local scripts/laura-agent.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
