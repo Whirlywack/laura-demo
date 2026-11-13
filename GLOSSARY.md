@@ -62,6 +62,10 @@ _Avoid_: Measurement, vitals
 Anything Laura promises to pass on to the Family carer, such as a medical question, an emergency or a worry. Laura may only promise to tell the Family carer something if she records it as a Pass-on.
 _Avoid_: Alert, flag, escalation, message
 
+**Remark**:
+The Care recipient's words about a Watch item that has no Reading, such as how her left leg is today.
+_Avoid_: Comment, symptom, note
+
 **Errand**:
 Something the Care recipient is running out of at home that the Family carer could bring.
 _Avoid_: Shopping item, order, task
@@ -69,8 +73,12 @@ _Avoid_: Shopping item, order, task
 ## Medications
 
 **Care plan**:
-The stored list of the Care recipient's Medications and checks; the only source of what Laura names.
+The stored list of the Care recipient's Medications and Watch items; the only source of what Laura names.
 _Avoid_: Prescription, schedule
+
+**Watch item**:
+Something on the Care plan that Laura asks about on every Call: blood pressure (answered with a Reading) or left leg swelling (answered with a Remark).
+_Avoid_: Symptom, check, condition
 
 **Medication**:
 One item on the Care plan: a name, a Strength and a time of day.
