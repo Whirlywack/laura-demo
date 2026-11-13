@@ -1,6 +1,7 @@
 import { AnswerCard } from "../components/AnswerCard";
 import { CallStatus } from "../components/CallStatus";
 import { Card } from "../components/Card";
+import { DatedList } from "../components/DatedList";
 import { LiveFeed } from "../components/LiveFeed";
 import { LiveUpdates } from "../components/LiveUpdates";
 import { KeyValueRows, QuietRow } from "../components/QuietRow";
@@ -17,11 +18,15 @@ const sentence = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const time = (at: string) =>
   new Date(at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Vilnius" });
 
+// Dates as on her calendar, e.g. "Thu 12 Nov".
+const day = (at: string) =>
+  new Date(at).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Europe/Vilnius" });
+
 const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
 export default async function Page() {
-  const { callStatus, wellbeing, doses, feed, carePlan } = await getDashboardState(readClient());
+  const { callStatus, wellbeing, doses, leftLeg, feed, carePlan } = await getDashboardState(readClient());
 
   return (
     <main style={{ padding: "0 24px 28px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
@@ -59,6 +64,23 @@ export default async function Page() {
                     status={<StatusLabel status={d.status} />}
                   />
                 ))}
+              </div>
+              <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                  <span style={{ font: "var(--text-label)" }}>Left leg</span>
+                  <span style={{ font: "var(--text-meta-font)", color: "var(--text-meta)" }}>{leftLeg.today ? time(leftLeg.today.at) : ""}</span>
+                </div>
+                <div
+                  style={{
+                    font: "700 var(--size-lead)/var(--leading-lead) var(--font-sans)",
+                    letterSpacing: "var(--tracking-lead)",
+                    marginTop: 14,
+                    ...(leftLeg.today ? {} : waiting),
+                  }}
+                >
+                  {leftLeg.today ? `“${leftLeg.today.quote}”` : callStatus === "done" ? "Not asked on this call" : "Not asked yet"}
+                </div>
+                <DatedList style={{ marginTop: 16 }} items={leftLeg.earlier.map((r) => ({ date: day(r.at), quote: r.quote }))} />
               </div>
             </div>
           </Card>

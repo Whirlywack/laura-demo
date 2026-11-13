@@ -24,6 +24,8 @@ const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
     body.aspect === "general" || body.aspect === "sleep"
       ? addEntry(body, "wellbeing", { aspect: body.aspect })
       : refuse("aspect must be general or sleep"),
+  // Every Remark is about the left leg, the only Watch item without a Reading, so there is no subject field.
+  log_remark: async (body) => addEntry(body, "remark", {}),
   record_dose: async (body) => {
     if (!DOSE_STATUSES.includes(body.status as string)) return refuse(`status must be one of: ${DOSE_STATUSES.join(", ")}`);
     if (typeof body.medication !== "string") return refuse("medication is required");
