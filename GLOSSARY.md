@@ -31,7 +31,7 @@ Where the Call stands: not called yet, live, or done. A Call is live from the mo
 _Avoid_: Ringing, answered, ended, failed
 
 **Call summary**:
-What Laura says she noted, recorded as she closes the Call; it is what makes the Call done.
+What Laura says she noted, recorded as she closes the Call; it is what makes the Call done. It is Laura's words, so it belongs to the Call, not an Entry, and carries no Quote.
 _Avoid_: Recap, report
 
 **Today**:

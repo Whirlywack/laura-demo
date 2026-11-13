@@ -20,7 +20,7 @@ There is no sign-in. This brief replaces the longer "Laura: build brief" for the
 
 ## The call
 
-The demo is one call: seven beats, about three to four minutes. Each tool call becomes one Entry, shown as one card on the dashboard with Lidia's own words.
+The demo is one call: seven beats, about three to four minutes. Each tool call except `end_call_summary` becomes one Entry, shown as one card on the dashboard with Lidia's own words.
 
 | Beat | What Laura says | Tool | What appears on the dashboard |
 | --- | --- | --- | --- |
@@ -30,12 +30,12 @@ The demo is one call: seven beats, about three to four minutes. Each tool call b
 | 4. Tablets, on the line | Names each morning Medication from the care plan. "Take them now, take your time, I'll wait." Stays quiet until Lidia says they are taken | `record_dose`, once per Medication | Each Dose changes to its status, usually "taken on call" |
 | 5. Blood pressure | "Have you measured your blood pressure this morning? What did it show?" Reads the numbers back | `log_reading` | The Reading, added to the blood pressure history |
 | 6. Anything missing | "Is there anything you're running out of at home that Povilas could bring?" | `add_errand`, once per item | Each item on the errands list |
-| 7. A kind close | Says what she noted, that she will pass it on to Povilas, and something warm to end on. Then she hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary; status changes to done |
+| 7. A kind close | Says what she noted, that she will pass it on to Povilas, and something warm to end on. Then she hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
 | Any time | Whenever she says she will pass something on to Povilas: a medical question, a worry, an emergency | `pass_on` | A Pass-on in the live feed and in the "For Povilas" list |
 
 ### The seven tools
 
-Every tool carries a `quote` with Lidia's own words, and a `call_id` that ElevenLabs fills from the per-call variable (bound with `dynamic_variable`), never the language model.
+Every tool carries a `call_id` that ElevenLabs fills from the per-call variable (bound with `dynamic_variable`), never the language model. Every tool except `end_call_summary` also carries a `quote` with Lidia's own words; the Call summary is Laura's words, so it has none.
 
 | Tool | Fields besides `quote` and `call_id` | Notes |
 | --- | --- | --- |
@@ -45,13 +45,13 @@ Every tool carries a `quote` with Lidia's own words, and a `call_id` that Eleven
 | `log_reading` | `systolic`, `diastolic`, `pulse` (only if she gives it) | If she has not measured, Laura moves on and records nothing |
 | `add_errand` | `item` | No duplicate detection |
 | `pass_on` | none | Laura may only promise to tell Povilas something she records as a Pass-on |
-| `end_call_summary` | `summary` | Sets the Call to done |
+| `end_call_summary` | `summary` (no `quote`) | Stored on the Call, not as an Entry; sets the Call to done |
 
 ### How each tool call travels
 
 1. Laura calls the tool during the conversation.
 2. ElevenLabs sends it to one webhook on the website, checked by a secret header.
-3. The webhook writes one row to the Entries table, against the Call named by `call_id`.
+3. The webhook writes one row to the Entries table, against the Call named by `call_id`. `end_call_summary` instead writes the summary onto that Call.
 4. The dashboard is subscribed to that table and shows the new row at once.
 
 ### Dose status
