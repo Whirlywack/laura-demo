@@ -180,7 +180,7 @@ Sign-in, typing or dictating care-plan notes, prescriptions and reorder reminder
 
 Nothing in the loop is faked. Overnight, no real calls are placed; the webhook is tested by sending it the same requests ElevenLabs would send.
 
-Each item is one GitHub issue, one branch and one PR, reviewed by a review agent and merged without waiting for a person.
+The work is cut into tickets that each do one thing, built on one integration branch, reviewed once at the end against the whole spec, and delivered as a draft PR. The integration branch is deployed to Vercel for the morning tests.
 
 ### Live tests in the morning, in this order
 
@@ -204,4 +204,4 @@ All settled.
 - **No sign-in.** No sign-in and no password for the demo.
 - **The morning Medications.** Confirmed as sample data, as listed above.
 - **Povilas's relation to Lidia.** Not stated. Laura only uses his name, so it stays open.
-- **Git flow overnight.** An issue per item in the order of work, a branch and PR each, reviewed by a review agent and merged without waiting.
+- **Git flow overnight.** One spec, tickets that each do one thing, one integration branch, one code review at the end, one draft PR. Nothing is merged to `main` overnight.
