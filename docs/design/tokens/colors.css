@@ -1,0 +1,30 @@
+:root {
+  /* base */
+  --petrol: #1c4e57;
+  --petrol-tint: #dbe7e8;
+  --straw: #ead98f;
+  --ink: #141414;
+  --ink-2: #44443f;
+  --ink-3: #5c5c58;
+  --ink-4: #8a8a84;
+  --paper: #f3f2ee;
+  --white: #ffffff;
+
+  /* semantic */
+  --surface-page: var(--paper);
+  --surface-card: var(--white);
+  --surface-quiet: var(--petrol-tint);
+  --surface-action: var(--straw);
+  --surface-live: var(--petrol);
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-2);
+  --text-meta: var(--ink-3);
+  --text-on-live: var(--paper);
+  --text-question: var(--petrol);
+  --accent: var(--petrol);
+  --highlight: var(--straw);
+  --rule: rgba(20, 20, 20, 0.16);
+  --rule-on-highlight: rgba(20, 20, 20, 0.3);
+  --status-taken: var(--petrol);
+  --status-pending: var(--ink-4);
+}

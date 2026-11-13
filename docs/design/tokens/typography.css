@@ -1,0 +1,32 @@
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --weight-regular: 400;
+  --weight-bold: 700;
+
+  /* sizes (px) — the only sizes in use */
+  --size-meta: 16px;
+  --size-quote: 18px;
+  --size-body: 20px;
+  --size-lead: 26px;
+  --size-reading: 40px;
+  --size-answer: 60px;
+  --size-headline: 72px;
+  --size-wordmark: 32px;
+
+  --leading-body: 1.35;
+  --leading-lead: 1.12;
+  --leading-display: 1;
+
+  --tracking-display: -0.05em;
+  --tracking-reading: -0.04em;
+  --tracking-lead: -0.03em;
+
+  /* semantic */
+  --text-label: var(--weight-bold) var(--size-body) / var(--leading-body) var(--font-sans);
+  --text-body: var(--weight-regular) var(--size-body) / var(--leading-body) var(--font-sans);
+  --text-quote: var(--weight-regular) var(--size-quote) / var(--leading-body) var(--font-sans);
+  --text-meta-font: var(--weight-regular) var(--size-meta) / var(--leading-body) var(--font-sans);
+  --text-answer: var(--weight-bold) var(--size-answer) / var(--leading-display) var(--font-sans);
+  --text-headline: var(--weight-bold) var(--size-headline) / var(--leading-display) var(--font-sans);
+}
