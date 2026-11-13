@@ -11,3 +11,7 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 ### Domain docs
 
 Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Design
+
+The look of every page comes from the `laura-design` skill in `.claude/skills/laura-design/`. Load it before building or changing UI. It decides colours, type, spacing, motion and components; `docs/demo-brief.md` decides what the page shows.

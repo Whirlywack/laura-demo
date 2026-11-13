@@ -95,6 +95,10 @@ One page, no sign-in, that looks good enough to present and updates live during 
 
 ### How it should look
 
+The look comes from the `laura-design` skill in `.claude/skills/laura-design/`: its colours, type, spacing, radii, motion and components. Load it before building or changing any part of the page.
+
+The skill decides how things look. This brief decides what the page shows: every area in the table above, the wording of statuses, and the data. The skill's two reference pages, their sample people and tablets, the simulated call and the home page are illustrations and are not built. Where the skill and this brief disagree about content, this brief wins. The points below still hold.
+
 - Uses the full width of the screen. No narrow centred column with empty space on both sides.
 - Calm and contemporary, with clear hierarchy, good typography and generous spacing.
 - A neutral accent colour. No orange or red-orange anywhere, because that reads as machine-made. Red is reserved for an urgent alert, which is not in the demo, so no red at all.

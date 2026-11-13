@@ -1,0 +1,51 @@
+<!-- @dsCard group="Components" viewport="700x1180" name="Core" subtitle="Answer cards, quote rows, status, call state, lists, feed" -->
+<!doctype html><html><head><meta charset="utf-8"><title>Core components</title><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../../styles.css">
+<style>body{padding:20px}.g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}.r{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin-bottom:16px}</style></head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../preview/ds-loader.js"></script>
+<script type="text/babel" data-presets="react">
+loadLaura('../../').then((L) => {
+  const { Card, AnswerCard, QuoteFact, StatusLabel, CallStatus, DatedList, Checklist, FeedItem, QuietRow, KeyValueRows, StatLine, DoseBars } = L;
+  function Demo() {
+    const [open, setOpen] = React.useState(false);
+    const [items, setItems] = React.useState([
+      { label: 'Tea', quote: "I'm nearly out of tea. Two bags left.", meta: 'Just now', isNew: true },
+      { label: 'Bread', quote: 'The dark one, sliced.', meta: 'Done Thu', done: true },
+    ]);
+    return (
+      <div>
+        <div className="r"><CallStatus state="idle" /><CallStatus state="live" elapsed="04:12" /><CallStatus state="done" calledAt="09:30" /></div>
+        <div className="r"><StatusLabel status="taken" /><StatusLabel status="earlier" /><StatusLabel status="not-confirmed" /><StatusLabel status="not-taken" /></div>
+        <div className="g">
+          <AnswerCard nowrap question="Did she take her tablets?" answer="3 of 4" style={{ padding: 28 }}>
+            <DoseBars doses={['taken', 'taken', 'earlier', 'not-confirmed']} />
+          </AnswerCard>
+          <AnswerCard tone="action" question="What do I need to do?" answer="Bring 1 thing" style={{ padding: '28px 28px 14px' }}>
+            <Checklist items={items} onToggle={(i) => setItems(items.map((it, j) => (j === i ? { ...it, done: !it.done } : it)))} />
+          </AnswerCard>
+        </div>
+        <div className="g">
+          <Card style={{ padding: '14px 28px 20px' }}>
+            <QuoteFact style={{ borderTop: 0 }} fact="Metoprolol" detail="50 mg" quote="There. I've swallowed it." status={<StatusLabel status="taken" />} />
+            <QuoteFact muted fact="Atorvastatin" detail="20 mg" status={<StatusLabel status="not-confirmed" />} />
+            <DatedList items={[{ date: 'Thu 12 Nov', value: '142/85' }, { date: 'Wed 11 Nov', value: '136/80' }]} />
+          </Card>
+          <Card tone="quiet" style={{ padding: '14px 28px 24px' }}>
+            <FeedItem isNew title="Errand added · Tea" quote="I'm nearly out of tea. Two bags left." />
+            <FeedItem title="Blood pressure · 138/82" time="09:34" quote="I wrote it down." />
+            <FeedItem last speaker="laura" title="Laura said" time="09:32" quote="Take them now, take your time, I'll wait." />
+          </Card>
+        </div>
+        <QuietRow title="Care plan" note="What Laura knows about her · read-only" open={open} onToggle={() => setOpen(!open)}>
+          <KeyValueRows rows={[{ label: 'Calls', value: 'Every day at 09:30, on her own phone' }, { label: 'Evening', value: 'Atorvastatin 20 mg' }]} />
+        </QuietRow>
+        <div style={{ padding: '16px 32px 0' }}><StatLine label="Tablets confirmed on the call:" value="39 of 42" suffix="in the last two weeks" /></div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+});
+</script></body></html>
