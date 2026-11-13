@@ -1,0 +1,69 @@
+[
+  {
+    "name": "log_wellbeing",
+    "description": "Record how the Care recipient says she is, in her own words. Call it once for each answer: once with aspect general when she says how she is today, and once with aspect sleep when she says how she slept.",
+    "properties": {
+      "quote": { "type": "string", "description": "Her answer, word for word as she said it. Never a summary or your own words." },
+      "aspect": { "type": "string", "enum": ["general", "sleep"], "description": "general for how she is today, sleep for how she slept." }
+    },
+    "required": ["quote", "aspect"]
+  },
+  {
+    "name": "log_remark",
+    "description": "Record what the Care recipient says about her left leg today, in her own words.",
+    "properties": {
+      "quote": { "type": "string", "description": "What she said about her left leg, word for word." }
+    },
+    "required": ["quote"]
+  },
+  {
+    "name": "record_dose",
+    "description": "Record what the Care recipient says about one morning Medication. Call it once per Medication, and again if she corrects herself. If the response says the Medication is not on the care plan, nothing was recorded.",
+    "properties": {
+      "quote": { "type": "string", "description": "What she said about this Medication, word for word." },
+      "medication": { "type": "string", "description": "The Medication's name exactly as it appears in the morning Medications list, without the strength." },
+      "status": {
+        "type": "string",
+        "enum": ["taken on call", "says taken earlier", "not taken"],
+        "description": "taken on call if she takes it now, during this call; says taken earlier if she says she already took it before the call; not taken if she says she has not taken it or cannot find it."
+      }
+    },
+    "required": ["quote", "medication", "status"]
+  },
+  {
+    "name": "log_reading",
+    "description": "Record the blood pressure Reading the Care recipient reads out. Only when she gives the numbers; if she has not measured, do not call it.",
+    "properties": {
+      "quote": { "type": "string", "description": "What she said when giving the numbers, word for word." },
+      "systolic": { "type": "integer", "description": "The first, higher number." },
+      "diastolic": { "type": "integer", "description": "The second, lower number." },
+      "pulse": { "type": "integer", "description": "Her pulse, only if she says it. Leave it out otherwise; never guess it." }
+    },
+    "required": ["quote", "systolic", "diastolic"]
+  },
+  {
+    "name": "add_errand",
+    "description": "Record one thing the Care recipient is running out of at home. Call it once per item.",
+    "properties": {
+      "quote": { "type": "string", "description": "What she said about this item, word for word." },
+      "item": { "type": "string", "description": "The item, in a few words, e.g. milk." }
+    },
+    "required": ["quote", "item"]
+  },
+  {
+    "name": "pass_on",
+    "description": "Record something you promise to pass on to the Family carer: a medical question, a worry or an emergency. Call it every time you say you will pass something on.",
+    "properties": {
+      "quote": { "type": "string", "description": "What she said that you will pass on, word for word." }
+    },
+    "required": ["quote"]
+  },
+  {
+    "name": "end_call_summary",
+    "description": "Record your short summary of the call as you close it. Call it once, just before end_call.",
+    "properties": {
+      "summary": { "type": "string", "description": "A few plain sentences in your own words about what she told you, including one personal detail worth remembering next time, such as how she slept." }
+    },
+    "required": ["summary"]
+  }
+]
