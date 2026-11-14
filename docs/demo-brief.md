@@ -31,7 +31,7 @@ The demo is one call: eight beats, about three to four minutes. After each answe
 | 5. Tablets, one at a time | Names one morning Medication from the care plan with its strength. "Take it now, take your time, I'll wait." Stays quiet until Lidia says it is taken, then the next | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
 | 6. Anything missing | "Is there anything you're running out of at home that Povilas could bring?" | `add_errand`, once per item | Each item on the errands list |
 | 7. A message | "Is there anything you'd like me to tell Povilas?" | `pass_on`, if she gives a message | A Pass-on in the live feed and in the "For Povilas" list |
-| 8. A kind close | Says out loud what she noted, that she will pass it on to Povilas, something warm and goodbye. Only then does she record the summary and hang up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
+| 8. A kind close | Says out loud what she noted, that she will pass it on to Povilas, something warm and goodbye. Then, without waiting for a reply, she records the summary and hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
 | Any time | Whenever she says she will pass something on to Povilas: a medical question, a worry, an emergency | `pass_on` | A Pass-on in the live feed and in the "For Povilas" list |
 
 ### The seven tools

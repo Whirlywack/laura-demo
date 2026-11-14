@@ -58,8 +58,8 @@ test("the voice, language model and turn settings are the spec's", () => {
   const { name, conversation_config: config } = lauraAgent({ toolIds: ["tool-1", "tool-2"] });
 
   expect(name).toBe("Laura");
-  // Beatrice, from the ElevenLabs Voice Library, with expressive audio tags.
-  expect(config.tts).toMatchObject({ model_id: "eleven_v4_turbo", voice_id: "kkPJzQOWz2Oz9cUaEaQd", expressive_mode: true });
+  // Carol, a Studio Quality voice from the ElevenLabs Voice Library, with expressive audio tags.
+  expect(config.tts).toMatchObject({ model_id: "eleven_v4_turbo", voice_id: "5u41aNhyCU6hXOcjPPv0", expressive_mode: true });
   expect(config.agent.prompt.llm).toBe("claude-sonnet-5-5");
   expect(config.agent.prompt.tool_ids).toEqual(["tool-1", "tool-2"]);
   expect(Object.keys(config.agent.prompt.built_in_tools).sort()).toEqual(["end_call", "skip_turn"]);
