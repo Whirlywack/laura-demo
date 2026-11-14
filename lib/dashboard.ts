@@ -17,6 +17,9 @@ export type Remark = { quote: string; at: string };
 /** A blood pressure Reading as she read it out. Pulse only when she gave it. */
 export type Reading = { systolic: number; diastolic: number; pulse: number | null; quote: string; at: string };
 
+/** Something she is running out of, from any Call. Done once the Family carer has ticked it. */
+export type Errand = { id: string; item: string; quote: string; at: string; done: boolean };
+
 export type DashboardState = {
   callStatus: CallStatus;
   /** Today's Wellbeing in her own words: the latest Quote for each aspect. */
@@ -27,13 +30,15 @@ export type DashboardState = {
   leftLeg: { today: Remark | null; earlier: Remark[] };
   /** The latest Reading on Today's Call, and every other Reading beneath it, newest first. */
   bloodPressure: { today: Reading | null; earlier: Reading[] };
+  /** Every Errand from every Call, open and done, newest first. */
+  errands: Errand[];
   /** Every Entry on Today's Call, newest first. */
   feed: FeedCard[];
   carePlan: { medications: Medication[]; watchItems: string[]; familyPhrase: string };
 };
 
 // `details` holds the kind's own fields, e.g. a Dose's medication and status, or a Reading's numbers.
-type Entry = { id: string; kind: string; quote: string; details: Record<string, any>; created_at: string };
+type Entry = { id: string; kind: string; quote: string; details: Record<string, any>; created_at: string; done_at?: string | null };
 
 const sentence = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -54,12 +59,13 @@ function feedTitle(entry: Entry) {
   if (entry.kind === "dose") return `${entry.details.medication} · ${sentence(entry.details.status)}`;
   if (entry.kind === "remark") return "Left leg";
   if (entry.kind === "reading") return `Blood pressure · ${readingValue(reading(entry))}`;
+  if (entry.kind === "errand") return `Errand added · ${entry.details.item}`;
   return entry.kind;
 }
 
 // The one function that derives everything the page shows from the three tables.
 export async function getDashboardState(db: SupabaseClient): Promise<DashboardState> {
-  const [plan, today, watched] = await Promise.all([
+  const [plan, today, everyCall] = await Promise.all([
     db.from("care_plan").select("family_phrase, medications, watch_items").single(),
     db
       .from("calls")
@@ -68,16 +74,16 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
       .order("created_at", { referencedTable: "entries", ascending: false })
       .limit(1)
       .maybeSingle(),
-    // Remarks and Readings from every Call, not only Today's.
+    // Remarks, Readings and Errands from every Call, not only Today's.
     db
       .from("entries")
-      .select("id, call_id, kind, quote, details, created_at")
-      .in("kind", ["remark", "reading"])
+      .select("id, call_id, kind, quote, details, created_at, done_at")
+      .in("kind", ["remark", "reading", "errand"])
       .order("created_at", { ascending: false }),
   ]);
   if (plan.error) throw new Error(`Could not read the care plan: ${plan.error.message}`);
   if (today.error) throw new Error(`Could not read the calls: ${today.error.message}`);
-  if (watched.error) throw new Error(`Could not read the remarks and readings: ${watched.error.message}`);
+  if (everyCall.error) throw new Error(`Could not read the remarks, readings and errands: ${everyCall.error.message}`);
 
   const entries: Entry[] = today.data?.entries ?? [];
   const wellbeing = (aspect: string) =>
@@ -89,7 +95,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
   }));
   // The latest Entry of a kind on Today's Call, and every other one of that kind beneath it.
   const todayAndEarlier = <T>(kind: string, shape: (e: Entry) => T) => {
-    const all = watched.data.filter((e) => e.kind === kind);
+    const all = everyCall.data.filter((e) => e.kind === kind);
     const latest = all.find((e) => e.call_id === today.data?.id);
     return { today: latest ? shape(latest) : null, earlier: all.filter((e) => e !== latest).map(shape) };
   };
@@ -104,6 +110,9 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     }),
     leftLeg: todayAndEarlier("remark", (e): Remark => ({ quote: e.quote, at: e.created_at })),
     bloodPressure: todayAndEarlier("reading", reading),
+    errands: everyCall.data
+      .filter((e) => e.kind === "errand")
+      .map((e) => ({ id: e.id, item: e.details.item, quote: e.quote, at: e.created_at, done: e.done_at !== null })),
     feed: entries.map((e) => ({ id: e.id, title: feedTitle(e), quote: e.quote, at: e.created_at })),
     carePlan: { medications, watchItems: plan.data.watch_items, familyPhrase: plan.data.family_phrase },
   };

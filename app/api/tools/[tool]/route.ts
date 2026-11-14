@@ -44,6 +44,9 @@ const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
     // Pulse is stored only when she gave it.
     return addEntry(body, "reading", pulse == null ? { systolic, diastolic } : { systolic, diastolic, pulse });
   },
+  // One Entry per item, with no duplicate detection.
+  add_errand: async (body) =>
+    typeof body.item === "string" && body.item.trim() ? addEntry(body, "errand", { item: body.item }) : refuse("item is required"),
 };
 
 export async function POST(request: Request, { params }: { params: Promise<{ tool: string }> }) {

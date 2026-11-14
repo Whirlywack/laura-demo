@@ -2,6 +2,7 @@ import { AnswerCard } from "../components/AnswerCard";
 import { CallStatus } from "../components/CallStatus";
 import { Card } from "../components/Card";
 import { DatedList } from "../components/DatedList";
+import { Errands } from "../components/Errands";
 import { LiveFeed } from "../components/LiveFeed";
 import { LiveUpdates } from "../components/LiveUpdates";
 import { KeyValueRows, QuietRow } from "../components/QuietRow";
@@ -26,7 +27,7 @@ const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
 export default async function Page() {
-  const { callStatus, wellbeing, doses, bloodPressure, leftLeg, feed, carePlan } = await getDashboardState(readClient());
+  const { callStatus, wellbeing, doses, bloodPressure, leftLeg, errands, feed, carePlan } = await getDashboardState(readClient());
   const reading = bloodPressure.today;
 
   return (
@@ -46,6 +47,10 @@ export default async function Page() {
         >
           {wellbeing.sleep ? <QuoteFact inline fact="Sleep" quote={wellbeing.sleep} /> : <div style={waiting}>Sleep · not asked yet</div>}
         </AnswerCard>
+        <Errands
+          style={{ flex: "1 1 300px", paddingBottom: 26 }}
+          errands={errands.map((e) => ({ id: e.id, label: e.item, quote: e.quote, meta: day(e.at), done: e.done }))}
+        />
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
