@@ -23,7 +23,7 @@ export function SiteHeader({ menu, children }: { menu?: ReactNode; children: Rea
       <nav style={{ display: "flex", flexWrap: "wrap", gap: "0 36px", whiteSpace: "nowrap" }}>
         {menu ?? (
           <>
-            <Link href="/#one-morning" style={link}>One morning</Link>
+            <Link href="/#one-morning" style={link}>Listen to a call</Link>
             <Link href="/#what-laura-does" style={link}>What Laura does</Link>
             <Link href="/#about" style={link}>About</Link>
           </>

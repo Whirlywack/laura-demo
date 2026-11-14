@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { Fragment, type CSSProperties } from "react";
 import Link from "next/link";
 import { Card } from "../components/Card";
-import { Story, type Beat } from "../components/home/Story";
+import { Film } from "../components/home/Film";
+import { DataBlocks } from "../components/home/DataBlocks";
+import { realCall } from "../components/home/films";
 import { TabletTicks } from "../components/home/TabletTicks";
 import { SiteHeader } from "../components/SiteHeader";
-import { StatusLabel } from "../components/StatusLabel";
 
-// The home page, ported from .claude/skills/laura-design/ui_kits/home/Home.jsx: what Laura is, one morning step by
-// step, then what it adds up to. The tablets are Lidia's own (as in the care plan); "Call now" opens the demo at /demo.
+// The home page, ported from .claude/skills/laura-design/ui_kits/home/Home.jsx: what Laura is, a call to listen to (the film,
+// components/home/films.ts) with a month of her answers drawn under it, then what it adds up to. The tablets are Lidia's own (as in the care plan); "Call now" opens the demo at /demo.
 export const metadata: Metadata = {
   title: "Laura",
   description: "Laura phones her every morning, so nothing gets missed. A daily phone call for your mother or grandmother, and a page for you that fills in as she speaks.",
@@ -23,25 +24,6 @@ const box: CSSProperties = { width: 24, height: 24, border: "2px solid var(--ink
 const pill: CSSProperties = { padding: "13px 26px", borderRadius: "var(--radius-pill)", background: "var(--accent)", color: "var(--text-on-accent)", font: "var(--text-label)", textDecoration: "none", whiteSpace: "nowrap" };
 const q = (s: string) => "“" + s + "”";
 
-const story: Beat[] = [
-  {
-    time: "09:30", say: "At half past nine the phone rings. Lidia picks up.", laura: "Good morning, Lidia. How did you sleep?", lidia: "I woke at four and couldn't get back off. Otherwise fine.",
-    card: { label: "Sleep", body: q("I woke at four and couldn't get back off. Otherwise fine.") },
-  },
-  {
-    time: "09:32", say: "Laura reminds her about the morning tablets, and stays on the line while she takes them.", laura: "Take them now, take your time, I'll wait.", lidia: "There. I've swallowed it.",
-    card: { label: "Tablets", body: <span style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "4px 12px" }}><b>Concor 5 mg</b><StatusLabel status="taken on call" /></span> },
-  },
-  {
-    time: "09:34", say: "Then the blood pressure. Lidia reads the numbers off her monitor.", laura: "What does your blood pressure say this morning?", lidia: "One thirty-eight over eighty-two. I wrote it down.",
-    card: { label: "Blood pressure", body: <span style={lead}>138/82</span> },
-  },
-  {
-    time: "09:35", say: "Before they say goodbye, Laura asks about the cupboards.", laura: "Is anything running out at home?", lidia: "I'm nearly out of tea. Two bags left.",
-    card: { action: true, label: "For Paul to bring", body: <span style={lead}>Tea</span> },
-  },
-];
-const ending = { time: "09:36", say: "Six minutes. Lidia goes back to her morning. Paul opens the page and knows how she is." };
 const jobs: [string, string[]][] = [
   ["Makes sure nothing is missed", ["Her tablets, taken while Laura waits on the line", "Anything running out at home, passed on to you"]],
   ["Keeps a record of how she is", ["How she feels today, in her own words", "How she slept", "Her left leg, day by day", "Her blood pressure, as she reads it out"]],
@@ -130,12 +112,13 @@ export default function Home() {
       </div>
 
       <section id="one-morning" style={{ marginTop: 88, padding: "0 20px", scrollMarginTop: 24 }}>
-        <h2 style={display(64)}>One morning with Lidia</h2>
-        <p style={{ margin: "18px 0 0", maxWidth: 680, fontSize: 22, lineHeight: 1.4, color: "var(--text-secondary)" }}>
-          Lidia is 94. Her grandson Paul looks after her from another city. This is Friday.
+        <h2 style={display(64)}>Listen to a call</h2>
+        <p style={{ margin: "18px 0 0", maxWidth: 760, fontSize: 22, lineHeight: 1.4, color: "var(--text-secondary)" }}>
+          Lidia is 94. Her grandson Paul looks after her from another city. The words are from a real call on 14 November: Laura speaks in her own voice, and Lidia is voiced by a generated voice.
         </p>
       </section>
-      <Story beats={story} ending={ending} styles={{ label, lead, reading }} />
+      <Film data={realCall} />
+      <DataBlocks />
 
       <section id="what-laura-does" style={{ marginTop: 72, padding: "0 20px", scrollMarginTop: 24 }}>
         <h2 style={display(64)}>What it adds up to</h2>
