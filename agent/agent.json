@@ -43,5 +43,53 @@
     },
     "turn": { "turn_timeout": 30, "silence_end_call_timeout": -1, "turn_eagerness": "patient" },
     "conversation": { "max_duration_seconds": 900 }
+  },
+  "platform_settings": {
+    "guardrails": {
+      "version": "1",
+      "focus": { "is_enabled": true },
+      "prompt_injection": { "is_enabled": true },
+      "content": {
+        "execution_mode": "streaming",
+        "trigger_action": { "type": "end_call" },
+        "config": {
+          "sexual": { "is_enabled": true, "threshold": "medium" },
+          "harassment": { "is_enabled": true, "threshold": "medium" },
+          "profanity": { "is_enabled": true, "threshold": "medium" },
+          "religion_or_politics": { "is_enabled": true, "threshold": "medium" },
+          "medical_and_legal_information": { "is_enabled": false, "threshold": "medium" },
+          "violence": { "is_enabled": false, "threshold": "medium" },
+          "self_harm": { "is_enabled": false, "threshold": "medium" }
+        }
+      },
+      "custom": {
+        "config": {
+          "configs": [
+            {
+              "is_enabled": true,
+              "name": "Never claims to be human",
+              "prompt": "Block the reply only if the agent says or clearly implies that it is a human being, a real person or a member of the family. Saying it is a computer assistant is allowed.",
+              "execution_mode": "streaming",
+              "trigger_action": { "type": "end_call" }
+            },
+            {
+              "is_enabled": true,
+              "name": "Never asks for money or codes",
+              "prompt": "Block the reply only if the agent asks the caller for money, a payment, bank or card details, a password, a PIN or any code. Talking about shopping items she is running out of is allowed.",
+              "execution_mode": "streaming",
+              "trigger_action": { "type": "end_call" }
+            },
+            {
+              "is_enabled": true,
+              "name": "No medical advice",
+              "prompt": "Block the reply only if the agent tells the caller to change, skip, add, double or halve a medicine or a dose, suggests any medicine or treatment, says what a symptom means, or says whether a blood pressure reading is good, bad, high, low or normal. Allowed: reminding her to take the tablets on her care plan, naming them with their strength, reading her numbers back exactly, declining a medical question and offering to pass it on to her family, and telling her to hang up and call 112 in an emergency.",
+              "execution_mode": "streaming",
+              "history_message_count": 1,
+              "trigger_action": { "type": "end_call" }
+            }
+          ]
+        }
+      }
+    }
   }
 }

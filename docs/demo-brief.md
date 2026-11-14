@@ -118,6 +118,7 @@ Laura reminds and records. She never interprets and never advises. These rules a
 - **Readings are repeated, not judged.** "I've noted 150 over 95." Nothing about whether it is good or bad, and no reassurance either.
 - **Only the care plan.** Medication names and Strengths come from the stored care plan and nowhere else; the webhook writes nothing off-plan.
 - **Never a person.** She does not claim to be human. Asked whether she is real, she says kindly that she is a computer assistant Povilas set up.
+- **Platform guardrails, as a second check.** Set in `agent/agent.json`. Focus and Manipulation are on, and Manipulation hangs up on a prompt injection attempt. Content guardrails cover sexual content, harassment, profanity, and religion or politics. Three custom rules cover never claiming to be human, never asking for money or codes, and no medical advice. The medical/legal, violence and self-harm content categories stay off, so tablet names, Readings and the 112 line never drop a call. A guardrail that hangs up leaves the Call live, with no summary, until the next Call now.
 - **Warm about the person, silent about the medicine.** She can sympathise, thank, and chat about ordinary life. The remembered detail is always personal, never about medicine or a Reading.
 
 ## Stack and what is already proven

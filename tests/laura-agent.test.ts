@@ -103,3 +103,25 @@ test("the instructions name every tool Laura can call", () => {
 
   for (const tool of [...Object.keys(specTable), "skip_turn", "end_call"]) expect(prompt).toContain(tool);
 });
+
+test("guardrails catch manipulation, and never block what a normal call says", () => {
+  const { guardrails } = lauraAgent({ toolIds: [] }).platform_settings;
+  const content = guardrails.content.config;
+
+  expect(guardrails.focus.is_enabled).toBe(true);
+  expect(guardrails.prompt_injection.is_enabled).toBe(true);
+  for (const on of ["sexual", "harassment", "profanity", "religion_or_politics"]) expect(content[on].is_enabled).toBe(true);
+  // Every call names her tablets and reads back a Reading, and an emergency needs the 112 line: these never drop a call.
+  for (const off of ["medical_and_legal_information", "violence", "self_harm"]) expect(content[off].is_enabled).toBe(false);
+
+  const rules = guardrails.custom.config.configs;
+  expect(rules.map((rule: { name: string }) => rule.name)).toEqual([
+    "Never claims to be human",
+    "Never asks for money or codes",
+    "No medical advice",
+  ]);
+  for (const rule of rules) {
+    expect(rule.is_enabled).toBe(true);
+    expect(rule.prompt.length).toBeLessThanOrEqual(10_000);
+  }
+});
