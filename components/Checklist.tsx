@@ -26,7 +26,7 @@ export function Checklist({ items, onTick }: { items: ChecklistItem[]; onTick: (
             style={{
               width: "var(--checkbox)", height: "var(--checkbox)", border: "2px solid var(--ink)", borderRadius: "var(--radius-check)",
               background: it.done ? "var(--ink)" : "var(--white)", color: "var(--white)", flex: "none", boxSizing: "border-box",
-              display: "flex", alignItems: "center", justifyContent: "center", font: "700 16px/1 var(--font-sans)",
+              display: "flex", alignItems: "center", justifyContent: "center", font: "700 var(--size-meta)/1 var(--font-sans)",
             }}
           >
             {it.done ? "✓" : ""}

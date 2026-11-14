@@ -2,6 +2,7 @@ import { AnswerCard } from "../components/AnswerCard";
 import { CallNow } from "../components/CallNow";
 import { Card } from "../components/Card";
 import { DatedList } from "../components/DatedList";
+import { DoseBars } from "../components/DoseBars";
 import { Errands } from "../components/Errands";
 import { FoldedRow } from "../components/FoldedRow";
 import { LiveFeed } from "../components/LiveFeed";
@@ -10,7 +11,7 @@ import { KeyValueRows, QuietRow } from "../components/QuietRow";
 import { QuoteFact } from "../components/QuoteFact";
 import { StatLine } from "../components/StatLine";
 import { StatusLabel } from "../components/StatusLabel";
-import { getDashboardState, readingValue, type Dose } from "../lib/dashboard";
+import { getDashboardState, readingValue, type CallStatus, type Dose, type DoseStatus } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,19 @@ const tablets = (doses: Dose[]) => {
   return [`${onCall} of ${doses.length} tablets taken on call`, ...others].join(" · ");
 };
 
+// Today's Doses in words, under the bars that show them: e.g. "2 taken on call, 1 says taken earlier."
+const dosesInWords = (doses: Dose[], callStatus: CallStatus) => {
+  const said = (["taken on call", "says taken earlier", "not taken"] as DoseStatus[])
+    .map((status) => ({ status, n: doses.filter((d) => d.status === status).length }))
+    .filter(({ n }) => n)
+    .map(({ status, n }) => `${n} ${status}`);
+  if (said.length) return `${sentence(said.join(", "))}.`;
+  return callStatus === "done" ? "Not asked on this call." : "Laura will ask on the call.";
+};
+
+// Only the latest few earlier Remarks and Readings, so the details card stays short. History has every earlier Call.
+const EARLIER = 4;
+
 const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
@@ -41,14 +55,16 @@ export default async function Page() {
   const reading = bloodPressure.today;
 
   return (
-    <main style={{ padding: "0 24px 28px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
+    <main style={{ padding: "0 24px 28px", boxSizing: "border-box" }}>
       <LiveUpdates />
       <header style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 40px", padding: "22px 20px" }}>
         <div style={{ font: "700 var(--size-wordmark)/1 var(--font-sans)", letterSpacing: "-.04em" }}>Laura</div>
         <div style={{ flex: 1 }} />
+        <div>Lidia, 94</div>
         <CallNow status={callStatus} />
       </header>
 
+      {/* The three questions the Family carer has, answered in the only large type on the page. */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
         <AnswerCard
           style={{ flex: "1.5 1 420px" }}
@@ -81,8 +97,24 @@ export default async function Page() {
             <div style={{ ...waiting, marginTop: 8 }}>For Povilas · nothing to pass on</div>
           )}
         </AnswerCard>
+        {/* The tablet count sits in the top row, so it can be seen moving as each Dose is recorded. */}
+        <AnswerCard
+          style={{ flex: "1 1 300px" }}
+          question="Did she take her tablets?"
+          answer={`${doses.filter((d) => d.status === "taken on call").length} of ${doses.length}`}
+        >
+          <DoseBars doses={doses} style={{ marginBottom: 20 }} />
+          <div style={{ color: "var(--text-secondary)" }}>{dosesInWords(doses, callStatus)}</div>
+          <div style={{ marginTop: 12 }}>
+            {tabletCount.total ? (
+              <StatLine label="Tablets confirmed on the call:" value={`${tabletCount.confirmed} of ${tabletCount.total}`} suffix="in the last two weeks" />
+            ) : (
+              <span style={{ font: "var(--text-quote)", color: "var(--text-secondary)" }}>No calls in the last two weeks</span>
+            )}
+          </div>
+        </AnswerCard>
         <Errands
-          style={{ flex: "1 1 300px", paddingBottom: 26 }}
+          style={{ flex: "1 1 400px", paddingBottom: 26 }}
           errands={errands.map((e) => ({ id: e.id, label: e.item, quote: e.quote, meta: day(e.at), done: e.done }))}
         />
       </div>
@@ -91,8 +123,9 @@ export default async function Page() {
         <div style={{ flex: "3 1 640px", minWidth: 0 }}>
           <Card style={{ padding: "32px 40px 36px" }}>
             <div style={{ font: "var(--text-meta-font)", fontWeight: 700, color: "var(--text-secondary)" }}>Details from today's call</div>
+            {/* Tablets, then Blood pressure and Left leg side by side beneath; all three in a row once there is room. */}
             <div style={{ display: "flex", flexWrap: "wrap", gap: "32px 56px", marginTop: 20 }}>
-              <div style={{ flex: "1.35 1 320px", minWidth: 0 }}>
+              <div style={{ flex: "1 1 320px", minWidth: 0 }}>
                 <div style={{ font: "var(--text-label)", marginBottom: 12 }}>Tablets</div>
                 {doses.map((d) => (
                   <QuoteFact
@@ -105,50 +138,55 @@ export default async function Page() {
                   />
                 ))}
               </div>
-              <div style={{ flex: "1 1 300px", minWidth: 0 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <span style={{ font: "var(--text-label)" }}>Blood pressure</span>
-                  <span style={{ font: "var(--text-meta-font)", color: "var(--text-meta)" }}>{reading ? time(reading.at) : ""}</span>
+              <div style={{ flex: "2 1 656px", minWidth: 0, display: "flex", flexWrap: "wrap", gap: "32px 56px" }}>
+                <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ font: "var(--text-label)" }}>Blood pressure</span>
+                    <span style={{ font: "var(--text-meta-font)", color: "var(--text-meta)" }}>{reading ? time(reading.at) : ""}</span>
+                  </div>
+                  {/* Shown as she read it out, in plain ink: never coloured, ranked or commented on. */}
+                  <div
+                    style={{
+                      font: "700 var(--size-reading)/1 var(--font-sans)",
+                      letterSpacing: "var(--tracking-reading)",
+                      fontVariantNumeric: "tabular-nums",
+                      marginTop: 14,
+                      ...(reading ? {} : waiting),
+                    }}
+                  >
+                    {reading ? `${reading.systolic}/${reading.diastolic}` : callStatus === "done" ? "No reading on this call" : "Not read yet"}
+                  </div>
+                  {reading && reading.pulse !== null ? (
+                    <div style={{ font: "var(--text-quote)", marginTop: 10, fontVariantNumeric: "tabular-nums" }}>Pulse {reading.pulse}</div>
+                  ) : null}
+                  {reading ? <div style={{ font: "var(--text-quote)", marginTop: 10, color: "var(--text-secondary)" }}>“{reading.quote}”</div> : null}
+                  <DatedList
+                    style={{ marginTop: 16 }}
+                    items={bloodPressure.earlier.slice(0, EARLIER).map((r) => ({ date: day(r.at), value: readingValue(r) }))}
+                  />
                 </div>
-                {/* Shown as she read it out, in plain ink: never coloured, ranked or commented on. */}
-                <div
-                  style={{
-                    font: "700 var(--size-reading)/1 var(--font-sans)",
-                    letterSpacing: "var(--tracking-reading)",
-                    fontVariantNumeric: "tabular-nums",
-                    marginTop: 14,
-                    ...(reading ? {} : waiting),
-                  }}
-                >
-                  {reading ? `${reading.systolic}/${reading.diastolic}` : callStatus === "done" ? "No reading on this call" : "Not read yet"}
+                <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ font: "var(--text-label)" }}>Left leg</span>
+                    <span style={{ font: "var(--text-meta-font)", color: "var(--text-meta)" }}>{leftLeg.today ? time(leftLeg.today.at) : ""}</span>
+                  </div>
+                  <div
+                    style={{
+                      font: "700 var(--size-lead)/var(--leading-lead) var(--font-sans)",
+                      letterSpacing: "var(--tracking-lead)",
+                      marginTop: 14,
+                      ...(leftLeg.today ? {} : waiting),
+                    }}
+                  >
+                    {leftLeg.today ? `“${leftLeg.today.quote}”` : callStatus === "done" ? "Not asked on this call" : "Not asked yet"}
+                  </div>
+                  <DatedList style={{ marginTop: 16 }} items={leftLeg.earlier.slice(0, EARLIER).map((r) => ({ date: day(r.at), quote: r.quote }))} />
                 </div>
-                {reading && reading.pulse !== null ? (
-                  <div style={{ font: "var(--text-quote)", marginTop: 10, fontVariantNumeric: "tabular-nums" }}>Pulse {reading.pulse}</div>
-                ) : null}
-                {reading ? <div style={{ font: "var(--text-quote)", marginTop: 10, color: "var(--text-secondary)" }}>“{reading.quote}”</div> : null}
-                <DatedList style={{ marginTop: 16 }} items={bloodPressure.earlier.map((r) => ({ date: day(r.at), value: readingValue(r) }))} />
-              </div>
-              <div style={{ flex: "1 1 300px", minWidth: 0 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <span style={{ font: "var(--text-label)" }}>Left leg</span>
-                  <span style={{ font: "var(--text-meta-font)", color: "var(--text-meta)" }}>{leftLeg.today ? time(leftLeg.today.at) : ""}</span>
-                </div>
-                <div
-                  style={{
-                    font: "700 var(--size-lead)/var(--leading-lead) var(--font-sans)",
-                    letterSpacing: "var(--tracking-lead)",
-                    marginTop: 14,
-                    ...(leftLeg.today ? {} : waiting),
-                  }}
-                >
-                  {leftLeg.today ? `“${leftLeg.today.quote}”` : callStatus === "done" ? "Not asked on this call" : "Not asked yet"}
-                </div>
-                <DatedList style={{ marginTop: 16 }} items={leftLeg.earlier.map((r) => ({ date: day(r.at), quote: r.quote }))} />
               </div>
             </div>
           </Card>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
-            <QuietRow style={{ flex: "1 1 300px", minWidth: 0 }} title="Care plan" note="What Laura knows about her · read-only">
+            <QuietRow style={{ flex: "1 1 360px", minWidth: 0 }} title="Care plan" note="What Laura knows about her · read-only">
               <KeyValueRows
                 rows={[
                   ...carePlan.medications.map((m) => ({ label: m.name, value: `${m.strength} · ${m.timeOfDay}` })),
@@ -163,17 +201,7 @@ export default async function Page() {
                 </div>
               ) : null}
             </QuietRow>
-            <FoldedRow
-              style={{ flex: "2 1 420px", minWidth: 0 }}
-              title="History"
-              note={
-                tabletCount.total ? (
-                  <StatLine label="Tablets confirmed on the call:" value={`${tabletCount.confirmed} of ${tabletCount.total}`} suffix="in the last two weeks" />
-                ) : (
-                  "No calls in the last two weeks"
-                )
-              }
-            >
+            <FoldedRow style={{ flex: "1 1 360px", minWidth: 0 }} title="History" note="Every call before today">
               {history.length ? (
                 <KeyValueRows
                   rows={history.map((c) => ({

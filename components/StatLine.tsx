@@ -7,7 +7,7 @@ export function StatLine({ label, value, suffix, style }: { label?: string; valu
     <span style={{ font: "var(--text-quote)", color: "var(--text-secondary)", ...style }}>
       {label}
       {label ? " " : ""}
-      <b style={{ fontWeight: 700, color: "var(--text-primary)", fontVariantNumeric: "tabular-nums" }}>{value}</b>
+      <b style={{ fontWeight: 700, color: "var(--text-primary)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{value}</b>
       {suffix ? ` ${suffix}` : ""}
     </span>
   );
