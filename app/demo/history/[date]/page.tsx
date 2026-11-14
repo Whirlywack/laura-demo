@@ -102,7 +102,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           {/* Laura's own words as she closed the Call, so no quotation marks. */}
           <Card tone="quiet" style={{ flex: 1, padding: "28px 30px 26px" }}>
             <div style={title}>Laura&apos;s summary</div>
-            <div style={line}>{day.summary ? "Laura's own words at the end of the call." : "No summary on this call."}</div>
+            <div style={line}>{day.summary ? "Laura's summary of the call." : "No summary on this call."}</div>
             {day.summary ? <div style={{ marginTop: 14 }}>{day.summary}</div> : null}
           </Card>
         </div>

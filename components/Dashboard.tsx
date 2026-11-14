@@ -32,7 +32,7 @@ const dosesInWords = (doses: Dose[], callStatus: CallStatus) => {
 };
 
 const waiting: CSSProperties = { color: "var(--text-meta)" };
-const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
+const noWellbeing = { "not called yet": "Laura hasn't called yet today.", live: "Laura is asking…", done: "Not asked on this call" };
 const title: CSSProperties = { font: "700 30px/1.1 var(--font-sans)", letterSpacing: "-.03em" };
 const line: CSSProperties = { marginTop: 4, color: "var(--text-secondary)" };
 // Every card on the page starts its text 32px in.
@@ -101,7 +101,7 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
               ))}
             </div>
           ) : (
-            <div style={{ ...waiting, marginTop: 8 }}>For Paul · nothing to pass on</div>
+            <div style={{ ...waiting, marginTop: 8 }}>No message for Paul today</div>
           )}
         </AnswerCard>
         <AnswerCard style={{ flex: "1 1 300px", padding: inset }} question="Did she take her tablets?" answer={`${doses.filter((d) => d.status === "taken on call").length} of ${doses.length}`}>
@@ -152,7 +152,7 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
           </div>
           <div style={{ marginTop: "var(--gap-cards)" }}>
             <div ref={plan}>
-              <QuietRow title="Care plan" note="What Laura knows about her · read-only" open={planOpen} onToggle={() => setPlanOpen((o) => !o)}>
+              <QuietRow title="Care plan" note="What Laura asks Lidia about · fixed in this demo" open={planOpen} onToggle={() => setPlanOpen((o) => !o)}>
                 <KeyValueRows
                   rows={[
                     ...carePlan.medications.map((m) => ({ label: m.name, value: `${m.strength} · ${m.timeOfDay}` })),

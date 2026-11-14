@@ -43,7 +43,7 @@ const bars = (
 
 const MEDICATIONS = ["Concor", "Sanoral HCT", "Eliquis"];
 const feedTitle = (e: FilmRecord) =>
-  e.kind === "general" ? "Today" : e.kind === "sleep" ? "Sleep" : e.kind === "leg" ? "Left leg" : e.kind === "reading" ? `Blood pressure · ${e.value}`
+  e.kind === "general" ? "How she felt" : e.kind === "sleep" ? "Sleep" : e.kind === "leg" ? "Left leg" : e.kind === "reading" ? `Blood pressure · ${e.value}`
   : e.kind === "dose" ? `${e.name} · Taken on call` : e.kind === "errand" ? `Errand added · ${e.item}` : "For Paul";
 
 // Paul's page as it stands once these records have landed.
@@ -56,7 +56,7 @@ function PaulsPage({ records, status, calledAt }: { records: FilmRecord[]; statu
     return { name, strength: "", timeOfDay: "morning", status: taken ? "taken on call" : "not confirmed", quote: taken?.quote ?? null };
   });
   const feed = records.filter((e) => e.kind !== "summary").reverse().slice(0, 2);
-  const waiting = status === "not called yet" ? "Not called yet today" : "Laura is asking…";
+  const waiting = status === "not called yet" ? "Laura hasn't called yet today." : "Laura is asking…";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -88,8 +88,8 @@ function PaulsPage({ records, status, calledAt }: { records: FilmRecord[]; statu
           </div>
         </div>
         <div style={{ ...card("action"), height: "var(--film-card)" }}>
-          <div style={label}>What do I need to do?</div>
-          <div style={{ ...lead, marginTop: 10 }}>{errands.length ? `Bring ${errands.length} thing${errands.length > 1 ? "s" : ""}` : "Nothing to bring yet"}</div>
+          <div style={label}>What do I need to bring?</div>
+          <div style={{ ...lead, marginTop: 10 }}>{errands.length ? `Bring ${errands.length} thing${errands.length > 1 ? "s" : ""}` : "Nothing yet"}</div>
           {errands.map((e) => (
             <div key={e.at} style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--rule-on-highlight)", ...arrive }}>
               <b style={label}>{e.item}</b>
