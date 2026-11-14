@@ -5,10 +5,10 @@
 import { env } from "../lib/env.ts";
 import { lauraAgent, lauraTools } from "../lib/laura-agent.ts";
 
-// The deployment of the integration branch, reachable without Vercel's login.
-const appUrl = "https://laura-demo-git-integration-ketflows-projects.vercel.app";
 const secretName = "laura_webhook_secret";
 
+// The deployment the seven tools post to, reachable without Vercel's login.
+const appUrl = env("LAURA_APP_URL");
 const apiKey = env("ELEVENLABS_API_KEY");
 const webhookSecret = env("LAURA_WEBHOOK_SECRET");
 const phoneNumberId = env("ELEVENLABS_PHONE_NUMBER_ID");
