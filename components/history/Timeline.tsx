@@ -17,7 +17,8 @@ const SLEPT = [["well", "Well"], ["not well", "Not well"]] as const;
 const lane = (i: number) => 14 + i * 30;
 
 // `width` is the drawing's width in px at full size (the home page's blocks are narrower than the History page's card).
-export function Timeline({ dates, days, range, only, width: W = 900 }: { dates: string[]; days: HistoryDay[]; range: Range; only?: string[]; width?: number }) {
+// `label` says what the drawing shows, for a screen reader.
+export function Timeline({ dates, days, range, only, width: W = 900, label = "Blood pressure, pulse, how she felt and how she slept, day by day. Use the calendar to open a day." }: { dates: string[]; days: HistoryDay[]; range: Range; only?: string[]; width?: number; label?: string }) {
   const byDate = new Map(days.map((d) => [d.date, d]));
   const step = (W - L - R) / dates.length;
   const x = (i: number) => L + i * step + step / 2;
@@ -133,10 +134,10 @@ export function Timeline({ dates, days, range, only, width: W = 900 }: { dates: 
   top += range === "1m" ? 48 : 28;
 
   return (
-    // On a narrow screen the full-size drawing scrolls sideways (a narrower one just shrinks); right-to-left makes it
-    // open at the newest days.
+    // On a narrow screen the full-size drawing scrolls sideways, so its type keeps its size (a narrower one may shrink
+    // by up to three tenths first, so a phone shows all of it); right-to-left makes it open at the newest days.
     <div style={{ overflowX: "auto", direction: "rtl" }}>
-      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label="Blood pressure, pulse, how she felt and how she slept, day by day. Use the calendar to open a day." style={{ display: "block", minWidth: W < 760 ? undefined : 760, direction: "ltr" }}>
+      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label={label} style={{ display: "block", minWidth: W < 760 ? W * 0.7 : 760, direction: "ltr" }}>
         {dates.map((date, i) => {
           const d = byDate.get(date);
           return d ? (

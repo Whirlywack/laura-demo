@@ -1,11 +1,11 @@
 // The film on the home page (components/home/Film.tsx plays it). Times are seconds from the start.
-// A line is what is said; an event is what Laura records, landing on Paul's page; a caption sets the scene.
+// A line is what is said; a record is something Laura noted, landing on Paul's page; a caption sets the scene.
 
 // One thing landing on Paul's page. Her words (`quote`) on everything but Laura's summary (`text`); a reading has its
 // `value`, a dose its Medication `name`, an errand its `item`.
 type Recorded = { kind: "general" | "sleep" | "leg" | "passOn" | "reading" | "dose" | "errand" | "summary"; quote?: string; value?: string; name?: string; item?: string; text?: string };
 
-export type FilmEvent = { at: number; clock: string } & Recorded;
+export type FilmRecord = { at: number; clock: string } & Recorded;
 export type FilmLine = { start: number; who: "laura" | "lidia"; text: string };
 
 export type FilmData = {
@@ -14,7 +14,7 @@ export type FilmData = {
   /** When the call was, on Paul's page once it is done: "Called at 09:30". */
   calledAt: string;
   lines: FilmLine[];
-  events: FilmEvent[];
+  records: FilmRecord[];
   captions: { at: number; label: string; text: string }[];
   /** When the closing card shows, and when the film stops. */
   ending: { at: number; text: string };
@@ -48,7 +48,8 @@ const spoken: [start: number, end: number, who: "laura" | "lidia", text: string]
   [102.54, 104.72, "lidia", "Uh, tell Paul I love him."],
   [105.92, 111.05, "laura", "I'll tell him... I'll tell Paul everything... Goodbye, Lidia."],
 ];
-// What Laura recorded after each of Lidia's answers, in the order of the call. The call started at 20:08:10.
+// What Laura recorded after each of Lidia's answers, in the order of the call. The words are the call's; the clock is
+// Laura's usual half past nine, as the page is about her morning call (the test call itself was made in the evening).
 const recorded: [line: number, Recorded][] = [
   [3, { kind: "general", quote: "I'm good, thank you." }],
   [5, { kind: "sleep", quote: "Uh, it's much better." }],
@@ -61,13 +62,13 @@ const recorded: [line: number, Recorded][] = [
   [19, { kind: "passOn", quote: "Uh, tell Paul I love him." }],
   [20, { kind: "summary", text: "Lidia was in good spirits and said she was good today. She slept much better last night than the night before. She said her left leg is all right and getting better. She reported blood pressure of 140 over 80 and took all three morning tablets during the call. She would love some of her favourite apples, and asked me to tell Paul she loves him." }],
 ];
-const clockAt = (s: number) => `20:${String(8 + Math.floor((10 + s) / 60)).padStart(2, "0")}`;
+const clockAt = (s: number) => `09:${30 + Math.floor(s / 60)}`;
 
 export const realCall: FilmData = {
   poster: { title: "Listen to a call. Turn the sound on.", note: "Just under two minutes. Paul's page fills in as Lidia answers." },
-  calledAt: "20:08",
+  calledAt: "09:30",
   lines: spoken.map(([start, , who, text]) => ({ start, who, text })),
-  events: recorded.map(([line, e]) => ({ at: +(spoken[line][1] + 0.7).toFixed(2), clock: clockAt(spoken[line][1]), ...e })),
+  records: recorded.map(([line, e]) => ({ at: +(spoken[line][1] + 0.7).toFixed(2), clock: clockAt(spoken[line][1]), ...e })),
   captions: [{ at: 0, label: "A call on 14 November", text: "Laura phones Lidia. Everything on Paul's page arrives while they are still talking." }],
   ending: { at: 112, text: "Laura called." },
   length: 116,

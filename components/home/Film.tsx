@@ -5,20 +5,20 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
 import type { Dose } from "../../lib/dashboard";
 import { DoseBars } from "../DoseBars";
 import { StatusLabel } from "../StatusLabel";
-import type { FilmData, FilmEvent } from "./films";
+import type { FilmData, FilmRecord } from "./films";
 
 // The film on the home page: Paul's page on the left fills in as Laura and Lidia talk on the right. It follows its
 // sound file's clock (its own once the sound has ended). Paul's page here is a small copy of the dashboard at /demo,
-// drawn from the film's events: no database. Every card has a fixed height, so the film never changes size as it plays.
+// drawn from the film's records: no database. Every card has a fixed height, so the film never changes size as it plays.
 
 const label: CSSProperties = { font: "var(--text-meta-font)", fontWeight: 700 };
 const lead: CSSProperties = { font: "700 var(--size-lead)/var(--leading-lead) var(--font-sans)", letterSpacing: "var(--tracking-lead)" };
 const reading: CSSProperties = { font: "700 var(--size-reading)/1.03 var(--font-sans)", letterSpacing: "var(--tracking-reading)" };
 const meta: CSSProperties = { font: "var(--text-meta-font)", color: "var(--text-meta)" };
 const quote: CSSProperties = { font: "var(--text-meta-font)", color: "var(--text-secondary)" };
-const arrive: CSSProperties = { animation: "laura-arrive 500ms cubic-bezier(.2,.7,.2,1) both" };
+const arrive: CSSProperties = { animation: "laura-arrive var(--motion-arrive) both" };
 const card = (tone: "card" | "quiet" | "action" = "card"): CSSProperties => ({
-  flex: "1 1 190px", minWidth: 0, boxSizing: "border-box", borderRadius: 18, padding: "16px 18px 18px", overflow: "hidden",
+  flex: "1 1 190px", minWidth: 0, boxSizing: "border-box", borderRadius: "var(--radius-card-compact)", padding: "16px 18px 18px", overflow: "hidden",
   background: tone === "card" ? "var(--surface-card)" : tone === "quiet" ? "var(--surface-quiet)" : "var(--surface-action)",
 });
 const question: CSSProperties = { ...label, color: "var(--text-question)" };
@@ -42,20 +42,20 @@ const bars = (
 );
 
 const MEDICATIONS = ["Concor", "Sanoral HCT", "Eliquis"];
-const feedTitle = (e: FilmEvent) =>
+const feedTitle = (e: FilmRecord) =>
   e.kind === "general" ? "Today" : e.kind === "sleep" ? "Sleep" : e.kind === "leg" ? "Left leg" : e.kind === "reading" ? `Blood pressure · ${e.value}`
   : e.kind === "dose" ? `${e.name} · Taken on call` : e.kind === "errand" ? `Errand added · ${e.item}` : "For Paul";
 
-// Paul's page as it stands once these events have landed.
-function PaulsPage({ events, status, calledAt }: { events: FilmEvent[]; status: "not called yet" | "live" | "done"; calledAt: string }) {
-  const last = (kind: FilmEvent["kind"]) => events.findLast((e) => e.kind === kind);
+// Paul's page as it stands once these records have landed.
+function PaulsPage({ records, status, calledAt }: { records: FilmRecord[]; status: "not called yet" | "live" | "done"; calledAt: string }) {
+  const last = (kind: FilmRecord["kind"]) => records.findLast((e) => e.kind === kind);
   const general = last("general"), sleep = last("sleep"), leg = last("leg"), bp = last("reading"), summary = last("summary"), passOn = last("passOn");
-  const errands = events.filter((e) => e.kind === "errand");
+  const errands = records.filter((e) => e.kind === "errand");
   const doses: Dose[] = MEDICATIONS.map((name) => {
-    const taken = events.find((e) => e.kind === "dose" && e.name === name);
+    const taken = records.find((e) => e.kind === "dose" && e.name === name);
     return { name, strength: "", timeOfDay: "morning", status: taken ? "taken on call" : "not confirmed", quote: taken?.quote ?? null };
   });
-  const feed = events.filter((e) => e.kind !== "summary").reverse().slice(0, 2);
+  const feed = records.filter((e) => e.kind !== "summary").reverse().slice(0, 2);
   const waiting = status === "not called yet" ? "Not called yet today" : "Laura is asking…";
 
   return (
@@ -68,13 +68,13 @@ function PaulsPage({ events, status, calledAt }: { events: FilmEvent[]; status: 
         </span>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-        <div style={{ ...card(), flex: "1.7 1 260px", height: 236 }}>
+        <div style={{ ...card(), flex: "1.7 1 260px", height: "var(--film-card)" }}>
           <div style={question}>Is she okay today?</div>
           {general ? <div key={general.quote} style={{ ...lead, marginTop: 10, textWrap: "balance", ...arrive }}>“{general.quote}”</div> : <div style={{ ...lead, marginTop: 10, color: "var(--text-meta)" }}>{waiting}</div>}
           {sleep ? <div key={sleep.quote} style={{ ...quote, marginTop: 10, ...arrive }}><b style={{ color: "var(--text-primary)" }}>Sleep</b> · “{sleep.quote}”</div> : <div style={{ ...meta, marginTop: 10 }}>Sleep · not asked yet</div>}
           {passOn ? <div key={passOn.quote} style={{ ...quote, marginTop: 6, ...arrive }}><b style={{ color: "var(--text-primary)" }}>For Paul</b> · “{passOn.quote}”</div> : null}
         </div>
-        <div style={{ ...card(), height: 236, display: "flex", flexDirection: "column" }}>
+        <div style={{ ...card(), height: "var(--film-card)", display: "flex", flexDirection: "column" }}>
           <div style={question}>Did she take her tablets?</div>
           <div style={{ ...reading, marginTop: 8 }}>{doses.filter((d) => d.status === "taken on call").length} of 3</div>
           <DoseBars doses={doses} style={{ marginTop: 12 }} />
@@ -87,7 +87,7 @@ function PaulsPage({ events, status, calledAt }: { events: FilmEvent[]; status: 
             ))}
           </div>
         </div>
-        <div style={{ ...card("action"), height: 236 }}>
+        <div style={{ ...card("action"), height: "var(--film-card)" }}>
           <div style={label}>What do I need to do?</div>
           <div style={{ ...lead, marginTop: 10 }}>{errands.length ? `Bring ${errands.length} thing${errands.length > 1 ? "s" : ""}` : "Nothing to bring yet"}</div>
           {errands.map((e) => (
@@ -100,15 +100,15 @@ function PaulsPage({ events, status, calledAt }: { events: FilmEvent[]; status: 
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
         {/* As she read it out, in plain ink: never coloured, ranked or commented on. */}
-        <div style={{ ...card("quiet"), height: 268 }}>
+        <div style={{ ...card("quiet"), height: "var(--film-card-small)" }}>
           <div style={label}>Blood pressure</div>
           {bp ? <div key={bp.value} style={arrive}><div style={{ ...reading, marginTop: 8, fontVariantNumeric: "tabular-nums" }}>{bp.value}</div><div style={{ ...quote, marginTop: 6 }}>“{bp.quote}”</div></div> : <div style={{ ...meta, marginTop: 8 }}>Not read yet today.</div>}
         </div>
-        <div style={{ ...card(), height: 268 }}>
+        <div style={{ ...card(), height: "var(--film-card-small)" }}>
           <div style={label}>Left leg</div>
           {leg ? <div key={leg.quote} style={{ font: "var(--text-quote)", fontWeight: 700, marginTop: 8, ...arrive }}>“{leg.quote}”</div> : <div style={{ ...meta, marginTop: 8 }}>Not asked yet today.</div>}
         </div>
-        <div style={{ ...card("quiet"), flex: "1.5 1 240px", height: 268 }}>
+        <div style={{ ...card("quiet"), flex: "1.5 1 240px", height: "var(--film-card)", overflowY: "auto" }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 8, ...meta }}>
             <b>{summary ? "Laura's summary" : "Live from the call"}</b>
             {summary ? null : <span>Newest first</span>}
@@ -132,7 +132,7 @@ function PaulsPage({ events, status, calledAt }: { events: FilmEvent[]; status: 
 }
 
 export function Film({ data }: { data: FilmData }) {
-  const { lines, events, captions, ending, length: T } = data;
+  const { lines, records, captions, ending, length: T } = data;
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
@@ -143,7 +143,8 @@ export function Film({ data }: { data: FilmData }) {
     if (!playing) return undefined;
     const id = setInterval(() => {
       const a = sound.current;
-      setT((v) => Math.min(a && !a.paused && !a.ended ? a.currentTime : v + 0.1, T));
+      // readyState 2+: the sound has data to play. If it never loads, the film still runs, silent.
+      setT((v) => Math.min(a && a.readyState >= 2 && !a.paused && !a.ended ? a.currentTime : v + 0.1, T));
     }, 100);
     return () => clearInterval(id);
   }, [playing, T]);
@@ -162,7 +163,11 @@ export function Film({ data }: { data: FilmData }) {
     setStarted(true);
     setPlaying(true);
     const a = sound.current;
-    if (a && at < (a.duration || Infinity)) void a.play().catch(() => undefined);
+    if (a && at < (a.duration || Infinity)) {
+      // The sound may have been stopped from outside the page (a media key) while the film ran on.
+      if (Math.abs(a.currentTime - at) > 0.3) a.currentTime = at;
+      void a.play().catch(() => undefined);
+    }
   };
   const pause = () => {
     setPlaying(false);
@@ -175,7 +180,7 @@ export function Film({ data }: { data: FilmData }) {
     if (a && playing && a.paused && at < (a.duration || 0)) void a.play().catch(() => undefined);
   };
 
-  const landed = events.filter((e) => e.at <= t);
+  const landed = records.filter((e) => e.at <= t);
   const lastLine = lines.findLast((l) => l.start <= t);
   const laura = lines.findLast((l) => l.who === "laura" && l.start <= t);
   const lidia = lastLine?.who === "lidia" ? lastLine : undefined;
@@ -210,11 +215,12 @@ export function Film({ data }: { data: FilmData }) {
   return (
     <div style={{ marginTop: 36, position: "relative", background: "var(--surface-live)", color: "var(--text-on-live)", borderRadius: "var(--radius-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       {data.audio ? <audio ref={sound} src={data.audio} preload="none" /> : null}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "24px 36px", padding: "32px 36px 24px" }}>
-        <div style={{ flex: "1.9 1 560px", minWidth: 0, minHeight: 598, background: "var(--surface-page)", color: "var(--ink)", borderRadius: 24, padding: "18px 16px 16px", boxSizing: "border-box" }}>
-          <PaulsPage events={landed} status={callOver ? "done" : started && t > 0 ? "live" : "not called yet"} calledAt={data.calledAt} />
+      {/* Side by side on a laptop. When they no longer fit, wrap-reverse puts the talk above Paul's page. */}
+      <div style={{ display: "flex", flexWrap: "wrap-reverse", gap: "24px 36px", padding: "var(--film-pad) var(--film-pad) 24px" }}>
+        <div style={{ flex: "1.9 1 560px", minWidth: 0, background: "var(--surface-page)", color: "var(--ink)", borderRadius: "var(--radius-card)", padding: "18px min(16px, var(--film-pad)) 16px", boxSizing: "border-box" }}>
+          <PaulsPage records={landed} status={callOver ? "done" : started && t > 0 ? "live" : "not called yet"} calledAt={data.calledAt} />
         </div>
-        <div style={{ flex: "1 1 320px", minWidth: 0, display: "flex", flexDirection: "column", minHeight: 598 }}>
+        <div style={{ flex: "1 1 320px", minWidth: 0, display: "flex", flexDirection: "column", minHeight: "var(--film-talk)", padding: "0 6px", boxSizing: "border-box" }}>
           <div key={caption.at} style={arrive}>
             <div style={label}>{caption.label}</div>
             <div style={{ ...lead, marginTop: 8, textWrap: "balance" }}>{caption.text}</div>
@@ -223,13 +229,13 @@ export function Film({ data }: { data: FilmData }) {
         </div>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "0 36px 28px" }}>
-        <button type="button" className="laura-button" aria-label={playing ? "Pause" : "Play"} style={round} onClick={() => (playing ? pause() : play())}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "0 var(--film-pad) 28px" }}>
+        <button type="button" className="laura-button" tabIndex={started ? 0 : -1} aria-label={playing ? "Pause" : "Play"} style={round} onClick={() => (playing ? pause() : play())}>
           {playing ? bars : triangle(9)}
         </button>
         <div
           role="slider"
-          tabIndex={0}
+          tabIndex={started ? 0 : -1}
           className="laura-button"
           aria-label="Position in the film"
           aria-valuemin={0}
@@ -262,7 +268,7 @@ export function Film({ data }: { data: FilmData }) {
           type="button"
           onClick={play}
           aria-label={data.poster.title}
-          style={{ position: "absolute", inset: 0, border: 0, background: "var(--surface-live)", color: "var(--text-on-live)", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 28, padding: 24 }}
+          style={{ position: "absolute", inset: 0, border: 0, background: "var(--surface-live)", color: "var(--text-on-live)", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 28, padding: "min(13%, 200px) 24px 24px" }}
         >
           <span style={{ ...round, width: 112, height: 112 }}>{triangle(18)}</span>
           <span style={{ ...reading, textWrap: "balance", maxWidth: 680 }}>{data.poster.title}</span>
