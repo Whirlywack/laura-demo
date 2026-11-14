@@ -64,11 +64,12 @@ export async function getHistory(db: SupabaseClient, days: number): Promise<Hist
   return [...byDate.values()].reverse();
 }
 
-/** One day's page, with the dates of the days either side that have one; null for a date with none (or not a date).
+/** One day's page, with the dates of the days either side that have one and of every day in the year that has one
+ * (for its calendar); null for a date with none (or not a date).
  * ponytail: reads the whole year to find the neighbours; ask the database by date if that ever gets slow. */
 export async function getHistoryDay(db: SupabaseClient, date: string) {
   const days = await getHistory(db, RANGES["1y"]);
   const i = days.findIndex((d) => d.date === date);
   if (i < 0) return null;
-  return { day: days[i], before: days[i - 1]?.date ?? null, after: days[i + 1]?.date ?? null };
+  return { day: days[i], before: days[i - 1]?.date ?? null, after: days[i + 1]?.date ?? null, called: days.map((d) => d.date) };
 }

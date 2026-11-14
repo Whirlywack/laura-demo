@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { day as shortDay } from "../../lib/format";
 import type { HistoryDay, Range } from "../../lib/history";
@@ -137,14 +138,14 @@ export function Timeline({ dates, days, range, only, width: W = 900, label = "Bl
     // On a narrow screen the full-size drawing scrolls sideways, so its type keeps its size (a narrower one may shrink
     // by up to three tenths first, so a phone shows all of it); right-to-left makes it open at the newest days.
     <div style={{ overflowX: "auto", direction: "rtl" }}>
-      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label={label} style={{ display: "block", minWidth: W < 760 ? W * 0.7 : 760, direction: "ltr" }}>
+      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label={label} style={{ display: "block", minWidth: W < 760 ? W * 0.7 : 700, direction: "ltr" }}>
         {dates.map((date, i) => {
           const d = byDate.get(date);
           return d ? (
-            <a key={date} href={`/demo/history/${date}?range=${range}`} tabIndex={-1} className="laura-column">
+            <Link key={date} href={`/demo/history/${date}?range=${range}`} prefetch={false} tabIndex={-1} className="laura-column">
               <title>{shortDay(d.at)}</title>
               <rect x={L + i * step} y={0} width={step} height={plotted} />
-            </a>
+            </Link>
           ) : null;
         })}
         <g style={{ pointerEvents: "none" }}>
