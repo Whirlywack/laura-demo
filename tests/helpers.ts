@@ -33,9 +33,13 @@ export const callNow = (headers: Record<string, string> = fromThePage) =>
 export type OutboundCall = { url: string; apiKey: string | null; body: any };
 
 // The one fake: ElevenLabs's outbound-call request, which would ring a real phone. It answers with `reply`
-// and returns every request Call now would have sent. Requests to the local database go through;
+// with `status`, or throws `reply` when it is an Error, as when ElevenLabs cannot be reached.
+// It returns every request Call now would have sent. Requests to the local database go through;
 // any other request fails the test. Undo it with vi.restoreAllMocks().
-export function fakeOutboundCall(reply: object = { success: true, message: "Call started", conversation_id: "conv_test", sip_call_id: "sip_test" }) {
+export function fakeOutboundCall(
+  reply: object = { success: true, message: "Call started", conversation_id: "conv_test", sip_call_id: "sip_test" },
+  status = 200,
+) {
   const sent: OutboundCall[] = [];
   const realFetch = globalThis.fetch;
   vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
@@ -43,7 +47,8 @@ export function fakeOutboundCall(reply: object = { success: true, message: "Call
     if (url.origin === new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).origin) return realFetch(input, init);
     if (url.pathname !== "/v1/convai/sip-trunk/outbound-call") throw new Error(`Unexpected request to ${url}`);
     sent.push({ url: url.toString(), apiKey: new Headers(init?.headers).get("xi-api-key"), body: JSON.parse(String(init?.body)) });
-    return Response.json(reply);
+    if (reply instanceof Error) throw reply;
+    return Response.json(reply, { status });
   });
   return sent;
 }

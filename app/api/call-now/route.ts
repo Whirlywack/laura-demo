@@ -65,14 +65,18 @@ export async function POST(request: Request) {
     previous_call_when: previous.data ? howLongAgo(previous.data.started_at) : "none",
   };
 
-  // If this request fails outright, the Call stays live: it may have been placed, and the next Call replaces it.
   const response = await fetch(`${apiUrl}/v1/convai/sip-trunk/outbound-call`, {
     method: "POST",
     headers: { "xi-api-key": apiKey, "content-type": "application/json" },
     body: JSON.stringify({ ...outbound, conversation_initiation_client_data: { dynamic_variables } }),
-  });
+  }).catch(() => null);
+  // No answer, or a server error on the way (a 502 or 504 from a gateway): the call may have been placed,
+  // so the Call stays live for what Laura records, and the next Call replaces it.
+  if (!response || response.status >= 500) {
+    return refuse("The call may have been placed. If her phone does not ring, you can call again in a minute.", 502);
+  }
   const result = await response.json().catch(() => null);
-  // ElevenLabs says in `success` whether it started the call. If it did not, the phone never rang, so no Call is kept.
+  // A 4xx, or `success` not true: ElevenLabs did not start the call, the phone never rang, so no Call is kept.
   if (!response.ok || result?.success !== true) {
     const removed = await db.from("calls").delete().eq("id", call.id);
     if (removed.error) throw new Error(`Could not remove the call that was not placed: ${removed.error.message}`);

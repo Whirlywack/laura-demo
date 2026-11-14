@@ -131,19 +131,42 @@ test("a minute after a Call nobody answered, Call now replaces it, and Laura sti
   expect((await getDashboardState(readClient())).previousSummary).toBe(variablesSent(sent).previous_call_summary);
 });
 
-test("if ElevenLabs does not start the call, the page says so, no Call is left behind, and Call now works again at once", async () => {
-  fakeOutboundCall({ success: false, message: "The SIP trunk did not answer.", conversation_id: null, sip_call_id: null });
+test.each([
+  [
+    "says it did not start the call",
+    { success: false, message: "The SIP trunk did not answer.", conversation_id: null, sip_call_id: null },
+    200,
+    "The call could not be placed. ElevenLabs said: The SIP trunk did not answer.",
+  ],
+  ["refuses the request", { detail: { status: "invalid_request", message: "to_number is not a phone number" } }, 422, "The call could not be placed."],
+])("if ElevenLabs %s, the page says so, no Call is left behind, and Call now works again at once", async (_, reply, status, message) => {
+  fakeOutboundCall(reply, status);
 
   const response = await callNow();
 
   expect(response.status).toBe(502);
-  expect(await response.json()).toEqual({ ok: false, message: "The call could not be placed. ElevenLabs said: The SIP trunk did not answer." });
+  expect(await response.json()).toEqual({ ok: false, message });
   expect(await getDashboardState(readClient())).toMatchObject({ callStatus: "not called yet" });
 
   vi.restoreAllMocks();
   const sent = fakeOutboundCall();
   expect((await callNow()).status).toBe(200);
   expect(sent).toHaveLength(1);
+});
+
+test.each([
+  ["answers with a server error", { detail: "Gateway Timeout" }, 504],
+  ["cannot be reached", new TypeError("fetch failed"), 200],
+])("if ElevenLabs %s, the call may have been placed: the page says so, and the Call stays live for what Laura records", async (_, reply, status) => {
+  const sent = fakeOutboundCall(reply, status);
+
+  const response = await callNow();
+
+  expect(response.status).toBe(502);
+  expect(await response.json()).toEqual({ ok: false, message: "The call may have been placed. If her phone does not ring, you can call again in a minute." });
+  expect(await getDashboardState(readClient())).toMatchObject({ callStatus: "live" });
+  await sendTool("log_wellbeing", { call_id: variablesSent(sent).call_id, quote: "Hello? Who is it?", aspect: "general" });
+  expect((await getDashboardState(readClient())).wellbeing.general).toBe("Hello? Who is it?");
 });
 
 test("with no earlier Call at all, the previous summary and when it was are both \"none\"", async () => {
