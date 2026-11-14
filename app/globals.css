@@ -83,6 +83,8 @@
   --radius-card: 32px;
   --radius-card-compact: 24px;
   --radius-check: 8px;
+  /* A card inside a card with 16px between them: 32 - 16. */
+  --radius-inner: 16px;
   --radius-pill: 999px;
 
   --marker: 12px;
@@ -98,7 +100,14 @@ body {
   color: var(--text-primary);
   font: var(--text-body);
   -webkit-font-smoothing: antialiased;
+  text-wrap: pretty;
 }
+/* Buttons, pills and links that act as buttons answer the pointer: a little lighter on hover, a little smaller on press. */
+.laura-button:not([role="slider"]) { transition: opacity 150ms ease-out, scale 150ms ease-out; }
+@media (hover: hover) {
+  .laura-button:not([role="slider"]):not(:disabled):hover { opacity: 0.82; }
+}
+.laura-button:not([role="slider"]):not(:disabled):active { scale: 0.96; }
 a { color: var(--accent); }
 a:hover { color: var(--ink); }
 /* The tick box input is hidden behind its drawn box, so the drawn box shows keyboard focus. */

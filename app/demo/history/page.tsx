@@ -35,9 +35,24 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
         <Card style={{ ...wide, padding: "28px 30px 22px" }}>
           {days.length ? <Timeline dates={dates} days={days} range={range} /> : <div style={{ color: "var(--text-secondary)" }}>No calls in this time yet.</div>}
         </Card>
-        <Card style={{ ...narrow, padding: "24px 20px" }}>
-          <HistoryCalendar key={range} first={dates[0]} last={today} called={days.map((d) => d.date)} range={range} />
-        </Card>
+        <div style={{ ...narrow, display: "flex", flexDirection: "column", gap: "var(--gap-cards)" }}>
+          <Card style={{ padding: "24px 20px" }}>
+            <HistoryCalendar key={range} first={dates[0]} last={today} called={days.map((d) => d.date)} range={range} />
+          </Card>
+          {/* The timeline's key. It says how each mark is drawn, never what a value means. */}
+          <Card tone="quiet" style={{ padding: "14px 24px 16px", font: "var(--text-meta-font)" }}>
+            {[
+              ["Blood pressure", "a line from the lower number to the higher, as she read it out."],
+              ["Pulse", "a dot, on the days she gave it."],
+              ["Felt and slept", range === "1m" ? "a dot on her answer that day." : `how many days she gave each answer, ${range === "3m" ? "week by week" : "month by month"}.`],
+              ["A gap", "a day without a call, or without that answer."],
+            ].map(([what, how], i) => (
+              <div key={what} style={{ padding: "8px 0", borderTop: i ? "1px solid var(--rule)" : undefined, color: "var(--text-secondary)" }}>
+                <b style={{ color: "var(--text-primary)" }}>{what}:</b> {how}
+              </div>
+            ))}
+          </Card>
+        </div>
       </div>
     </>
   );

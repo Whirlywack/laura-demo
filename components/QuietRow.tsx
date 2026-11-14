@@ -1,24 +1,20 @@
-import Link from "next/link";
 import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { Card } from "./Card";
 
 // Ported from .claude/skills/laura-design/components/core/QuietRow.jsx.
-// With `onToggle` it is folded until opened; without it, it is always open. With `href` its `action` ("Open") is a link
-// somewhere else instead (History).
+// With `onToggle` it is folded until opened; without it, it is always open.
 type Props = {
   title: string;
   note?: ReactNode;
   open?: boolean;
   onToggle?: () => void;
-  href?: string;
-  action?: string;
   children?: ReactNode;
   style?: CSSProperties;
 };
 
 const actionStyle: CSSProperties = { border: 0, background: "none", padding: "10px 0", minHeight: "var(--hit-min)", font: "var(--text-quote)", fontWeight: 700, color: "var(--accent)", cursor: "pointer", whiteSpace: "nowrap" };
 
-export function QuietRow({ title, note, open = true, onToggle, href, action, children, style }: Props) {
+export function QuietRow({ title, note, open = true, onToggle, children, style }: Props) {
   return (
     <Card compact style={style}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
@@ -26,11 +22,7 @@ export function QuietRow({ title, note, open = true, onToggle, href, action, chi
           <div style={{ font: "var(--text-label)" }}>{title}</div>
           {note ? <div style={{ font: "var(--text-quote)", color: "var(--text-secondary)" }}>{note}</div> : null}
         </div>
-        {href ? (
-          <Link href={href} className="laura-button" style={{ ...actionStyle, display: "inline-flex", alignItems: "center", boxSizing: "border-box", textDecoration: "none" }}>
-            {action}
-          </Link>
-        ) : onToggle ? (
+        {onToggle ? (
           <button type="button" onClick={onToggle} aria-expanded={open} className="laura-button" style={actionStyle}>
             {open ? "Hide" : "Show"}
           </button>
