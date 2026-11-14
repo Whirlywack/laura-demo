@@ -37,6 +37,13 @@ const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
     if (!medication) return Response.json({ ok: false, message: `${body.medication} is not on the care plan. Nothing was recorded.` });
     return addEntry(body, "dose", { medication: medication.name, status: body.status });
   },
+  log_reading: async (body) => {
+    const { systolic, diastolic, pulse } = body;
+    if (!Number.isInteger(systolic) || !Number.isInteger(diastolic)) return refuse("systolic and diastolic must be whole numbers");
+    if (pulse != null && !Number.isInteger(pulse)) return refuse("pulse must be a whole number");
+    // Pulse is stored only when she gave it.
+    return addEntry(body, "reading", pulse == null ? { systolic, diastolic } : { systolic, diastolic, pulse });
+  },
 };
 
 export async function POST(request: Request, { params }: { params: Promise<{ tool: string }> }) {
