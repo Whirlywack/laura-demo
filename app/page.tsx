@@ -7,7 +7,7 @@ import { LiveUpdates } from "../components/LiveUpdates";
 import { KeyValueRows, QuietRow } from "../components/QuietRow";
 import { QuoteFact } from "../components/QuoteFact";
 import { StatusLabel } from "../components/StatusLabel";
-import { getDashboardState } from "../lib/dashboard";
+import { getDashboardState, readingValue } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,8 @@ const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
 export default async function Page() {
-  const { callStatus, wellbeing, doses, leftLeg, feed, carePlan } = await getDashboardState(readClient());
+  const { callStatus, wellbeing, doses, bloodPressure, leftLeg, feed, carePlan } = await getDashboardState(readClient());
+  const reading = bloodPressure.today;
 
   return (
     <main style={{ padding: "0 24px 28px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
@@ -64,6 +65,29 @@ export default async function Page() {
                     status={<StatusLabel status={d.status} />}
                   />
                 ))}
+              </div>
+              <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                  <span style={{ font: "var(--text-label)" }}>Blood pressure</span>
+                  <span style={{ font: "var(--text-meta-font)", color: "var(--text-meta)" }}>{reading ? time(reading.at) : ""}</span>
+                </div>
+                {/* Shown as she read it out, in plain ink: never coloured, ranked or commented on. */}
+                <div
+                  style={{
+                    font: "700 var(--size-reading)/1 var(--font-sans)",
+                    letterSpacing: "var(--tracking-reading)",
+                    fontVariantNumeric: "tabular-nums",
+                    marginTop: 14,
+                    ...(reading ? {} : waiting),
+                  }}
+                >
+                  {reading ? `${reading.systolic}/${reading.diastolic}` : callStatus === "done" ? "No reading on this call" : "Not read yet"}
+                </div>
+                {reading && reading.pulse !== null ? (
+                  <div style={{ font: "var(--text-quote)", marginTop: 10, fontVariantNumeric: "tabular-nums" }}>Pulse {reading.pulse}</div>
+                ) : null}
+                {reading ? <div style={{ font: "var(--text-quote)", marginTop: 10, color: "var(--text-secondary)" }}>“{reading.quote}”</div> : null}
+                <DatedList style={{ marginTop: 16 }} items={bloodPressure.earlier.map((r) => ({ date: day(r.at), value: readingValue(r) }))} />
               </div>
               <div style={{ flex: "1 1 300px", minWidth: 0 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
