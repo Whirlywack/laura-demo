@@ -55,7 +55,7 @@ _Avoid_: Card, note, event, observation
 The Care recipient's own words that an Entry carries, shown with it as proof.
 
 **Wellbeing**:
-How the Care recipient says she is, in one of two aspects: general or sleep. The Quote is the whole record; Laura does not summarise it.
+How the Care recipient says she is, in one of two aspects: general or sleep. The Quote is the record; Laura does not summarise it. With each answer Laura notes its rating as Lidia said it: good, okay or bad for general, well or not well for sleep, or none when her answer does not say. The History page draws the ratings; her words are always shown beside them.
 _Avoid_: Mood, status
 
 **Reading**:

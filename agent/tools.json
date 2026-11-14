@@ -1,10 +1,11 @@
 [
   {
     "name": "log_wellbeing",
-    "description": "Record how the Care recipient says she is, in her own words. Call it once for each answer: once with aspect general when she says how she is today, and once with aspect sleep when she says how she slept.",
+    "description": "Record how the Care recipient says she is, in her own words. Call it once for each answer: once with aspect general when she says how she is today, and once with aspect sleep when she says how she slept. Give the rating her answer says.",
     "properties": {
       "quote": { "type": "string", "description": "Her answer, word for word as she said it. Never a summary or your own words." },
-      "aspect": { "type": "string", "enum": ["general", "sleep"], "description": "general for how she is today, sleep for how she slept." }
+      "aspect": { "type": "string", "enum": ["general", "sleep"], "description": "general for how she is today, sleep for how she slept." },
+      "rating": { "type": "string", "enum": ["good", "okay", "bad", "well", "not well"], "description": "Which answer it was, as she said it. For aspect general: good, okay or bad. For aspect sleep: well or not well. Leave it out only if her answer does not say." }
     },
     "required": ["quote", "aspect"]
   },

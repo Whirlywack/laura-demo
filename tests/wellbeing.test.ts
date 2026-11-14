@@ -37,6 +37,35 @@ test("sleep is its own line, and the feed shows the newest card first", async ()
   ]);
 });
 
+// What she said, and which answer it was: good, okay or bad for how she is; well or not well for how she slept.
+test("Laura records the rating of each answer as she heard it, and an answer with no rating keeps only her words", async () => {
+  const call_id = await startCall();
+
+  await sendTool("log_wellbeing", { call_id, quote: "Good, thank you. The sun is out.", aspect: "general", rating: "good" });
+  await sendTool("log_wellbeing", { call_id, quote: "Badly. I kept waking up.", aspect: "sleep", rating: "not well" });
+  await sendTool("log_wellbeing", { call_id, quote: "Hard to say, really.", aspect: "general" });
+
+  const { data } = await readClient().from("entries").select("details").eq("call_id", call_id).order("created_at");
+  expect(data!.map((e) => e.details)).toEqual([
+    { aspect: "general", rating: "good" },
+    { aspect: "sleep", rating: "not well" },
+    { aspect: "general" },
+  ]);
+});
+
+test.each([
+  ["general", "well"],
+  ["sleep", "good"],
+  ["general", "fine"],
+])("an answer about %s rated %s is refused, and nothing is recorded", async (aspect, rating) => {
+  const call_id = await startCall();
+
+  const response = await sendTool("log_wellbeing", { call_id, quote: "Fine.", aspect, rating });
+
+  expect(response.status).toBe(400);
+  expect((await getDashboardState(readClient())).wellbeing).toEqual({ general: null, sleep: null });
+});
+
 test.each([
   ["no secret header", {}],
   ["the wrong secret", { "x-laura-secret": "guessed" }],

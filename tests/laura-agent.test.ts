@@ -6,7 +6,7 @@ const secretId = "secret-1";
 
 // The spec's tool table: the fields each tool carries besides `call_id`; `?` marks an optional field.
 const specTable = {
-  log_wellbeing: ["quote", "aspect"],
+  log_wellbeing: ["quote", "aspect", "rating?"],
   log_remark: ["quote"],
   record_dose: ["quote", "medication", "status"],
   log_reading: ["quote", "systolic", "diastolic", "pulse?"],
@@ -51,6 +51,7 @@ test("the language model is told the allowed values for aspect and Dose status",
     lauraTools({ appUrl, secretId }).find((t) => t.name === tool)!.api_schema.request_body_schema.properties[name];
 
   expect(field("log_wellbeing", "aspect").enum).toEqual(["general", "sleep"]);
+  expect(field("log_wellbeing", "rating").enum).toEqual(["good", "okay", "bad", "well", "not well"]);
   expect(field("record_dose", "status").enum).toEqual(["taken on call", "says taken earlier", "not taken"]);
 });
 

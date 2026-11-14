@@ -9,6 +9,11 @@ export type FeedCard = { id: string; title: string; quote: string; at: string };
 /** The statuses Laura can record for a Dose, in the order the page lists them. */
 export const DOSE_STATUSES = ["taken on call", "says taken earlier", "not taken"] as const;
 
+/** Which answer she gave, as Laura heard it: for how she is, good, okay or bad; for how she slept, well or not well. */
+export const RATINGS = { general: ["good", "okay", "bad"], sleep: ["well", "not well"] } as const;
+export type Felt = (typeof RATINGS.general)[number];
+export type Slept = (typeof RATINGS.sleep)[number];
+
 /** A Dose's status: the latest one Laura recorded, or "not confirmed" until she records one. */
 export type DoseStatus = "not confirmed" | (typeof DOSE_STATUSES)[number];
 

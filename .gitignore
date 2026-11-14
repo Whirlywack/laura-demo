@@ -11,3 +11,6 @@ next-env.d.ts
 
 # Serena tool workspace (local)
 .serena/
+
+# Brainstorming mockups (local)
+.superpowers/
