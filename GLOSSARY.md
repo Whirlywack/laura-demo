@@ -26,6 +26,10 @@ _Avoid_: Password, code word, passphrase
 One phone conversation between Laura and the Care recipient.
 _Avoid_: Session, conversation
 
+**Call now password**:
+The password typed into the page before Call now places a Call, because the site is public. It guards her phone from strangers; Laura never hears it, and it is not the Family phrase.
+_Avoid_: Family phrase, PIN
+
 **Call status**:
 Where the Call stands: not called yet, live, or done. A Call is live from the moment it is placed, ringing included, and done only once Laura records its Call summary; a Call that ends any other way stays live until the next Call replaces it.
 _Avoid_: Ringing, answered, ended, failed

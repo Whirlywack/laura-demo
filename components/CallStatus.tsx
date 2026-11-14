@@ -10,8 +10,8 @@ const pill: CSSProperties = {
 export function CallStatus({ status }: { status: Status }) {
   if (status === "live") {
     return (
-      <span role="status" style={{ ...pill, background: "var(--surface-live)", color: "var(--text-on-live)" }}>
-        <span style={{ width: "var(--marker)", height: "var(--marker)", borderRadius: "50%", background: "currentColor" }} />
+      <span role="status" style={{ ...pill, background: "var(--surface-quiet)", color: "var(--text-primary)" }}>
+        <span style={{ width: "var(--marker)", height: "var(--marker)", borderRadius: "50%", background: "var(--accent)" }} />
         Live
       </span>
     );

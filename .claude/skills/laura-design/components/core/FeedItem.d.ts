@@ -7,7 +7,7 @@ export interface FeedItemProps {
   /** The words spoken. Quotation marks are added for Lidia only. */
   quote?: string;
   speaker?: 'lidia' | 'laura';
-  /** The newest item: bold, petrol dot, plays the arrive motion once. */
+  /** The newest item: bold, burgundy dot, plays the arrive motion once. */
   isNew?: boolean;
   /** Drop the bottom rule on the final item. */
   last?: boolean;

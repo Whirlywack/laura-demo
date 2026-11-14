@@ -19,11 +19,11 @@ function howLongAgo(at: string) {
 type Medication = { name: string; strength: string; time_of_day: string };
 
 // The site is public, so only someone with the password can ring her phone. Hashing first gives two equal-length
-// values, so the comparison takes the same time whatever was typed. A missing CALL_NOW_PASSWORD refuses every call.
+// values, so the comparison takes the same time whatever was typed.
 const digest = (text: string) => createHash("sha256").update(text).digest();
-async function rightPassword(request: Request) {
+async function rightPassword(request: Request, expected: string) {
   const { password } = await request.json().catch(() => ({}));
-  return typeof password === "string" && timingSafeEqual(digest(password), digest(env("CALL_NOW_PASSWORD")));
+  return typeof password === "string" && timingSafeEqual(digest(password), digest(expected));
 }
 
 // The message is shown on the page.
@@ -33,7 +33,10 @@ const refuse = (message: string, status: number) => Response.json({ ok: false, m
 // from the Peoplefone number over the SIP trunk.
 export async function POST(request: Request) {
   if (fromAnotherSite(request)) return refuseAnotherSite();
-  if (!(await rightPassword(request))) return refuse("Wrong password.", 401);
+  // A site without CALL_NOW_PASSWORD places no calls at all, and says so.
+  const expected = process.env.CALL_NOW_PASSWORD;
+  if (!expected) return refuse("Calls are switched off on this site.", 503);
+  if (!(await rightPassword(request, expected))) return refuse("Wrong password.", 401);
   // Read first, so a missing variable leaves no Call behind. Tests and local checks point ELEVENLABS_API_URL at a fake,
   // so they can never ring her phone; when it is not set, the request goes to ElevenLabs.
   const apiUrl = process.env.ELEVENLABS_API_URL ?? "https://api.elevenlabs.io";

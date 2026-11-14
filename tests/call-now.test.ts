@@ -10,6 +10,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.restoreAllMocks();
   vi.useRealTimers();
+  vi.unstubAllEnvs();
 });
 
 test("Call now makes Laura phone her: a live Call becomes Today, and every earlier Call stays in History", async () => {
@@ -93,6 +94,18 @@ test.each([
 
   expect(response.status).toBe(401);
   expect(await response.json()).toEqual({ ok: false, message: "Wrong password." });
+  expect(sent).toHaveLength(0);
+  expect(await getDashboardState(readClient())).toMatchObject({ callStatus: "not called yet" });
+});
+
+test("a site with no CALL_NOW_PASSWORD refuses every call with a clear message, and the phone is not rung", async () => {
+  const sent = fakeOutboundCall();
+  vi.stubEnv("CALL_NOW_PASSWORD", "");
+
+  const response = await callNow(undefined, "");
+
+  expect(response.status).toBe(503);
+  expect(await response.json()).toEqual({ ok: false, message: "Calls are switched off on this site." });
   expect(sent).toHaveLength(0);
   expect(await getDashboardState(readClient())).toMatchObject({ callStatus: "not called yet" });
 });

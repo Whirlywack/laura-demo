@@ -63,7 +63,7 @@ export function CallNow({ status }: { status: Status }) {
         style={{
           display: "inline-flex", alignItems: "center", minHeight: "var(--hit-min)", padding: "12px 22px", border: 0,
           borderRadius: "var(--radius-pill)", font: "var(--text-label)", whiteSpace: "nowrap", boxSizing: "border-box",
-          background: calling ? "var(--ink-3)" : "var(--ink)", color: "var(--paper)", cursor: calling ? "progress" : "pointer",
+          background: calling ? "var(--ink-3)" : "var(--accent)", color: "var(--text-on-accent)", cursor: calling ? "progress" : "pointer",
         }}
       >
         Call now
