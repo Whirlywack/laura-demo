@@ -9,7 +9,7 @@ The person Laura phones; in the demo, Lidia.
 _Avoid_: Patient, user, client, elder
 
 **Family carer**:
-The relative who set Laura up and reads the page; in the demo, Povilas.
+The relative who set Laura up and reads the page; in the demo, Paul.
 _Avoid_: Caregiver, admin, user
 
 **Laura**:

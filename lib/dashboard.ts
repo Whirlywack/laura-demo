@@ -49,7 +49,7 @@ export type DashboardState = {
   bloodPressure: { today: Reading | null; earlier: Reading[] };
   /** Every Errand from every Call, open and done, newest first. */
   errands: Errand[];
-  /** The "For Povilas" list: every Pass-on on Today's Call, newest first. */
+  /** The "For Paul" list: every Pass-on on Today's Call, newest first. */
   passOns: PassOn[];
   /** Every Entry on Today's Call, newest first. */
   feed: FeedCard[];
@@ -86,7 +86,7 @@ function feedTitle(entry: Entry) {
   if (entry.kind === "remark") return "Left leg";
   if (entry.kind === "reading") return `Blood pressure · ${readingValue(reading(entry))}`;
   if (entry.kind === "errand") return `Errand added · ${entry.details.item}`;
-  if (entry.kind === "pass_on") return "For Povilas";
+  if (entry.kind === "pass_on") return "For Paul";
   return entry.kind;
 }
 

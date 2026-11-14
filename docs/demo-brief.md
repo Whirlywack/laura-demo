@@ -11,10 +11,10 @@ Laura phones Lidia, and while they talk a good-looking website updates live with
 Five must-haves:
 
 1. **The loop works end to end.** A button starts a real phone call; each thing Lidia says is written to the database; the dashboard shows it within a second or two, with no reload.
-2. **Laura knows Lidia.** She asks about the left leg from the care plan, and she remembers one thing from the previous call: "You told me yesterday you slept badly. How was last night?"
+2. **Laura knows Lidia.** She asks about the left leg from the care plan, and she remembers one thing from the previous call: "You told me yesterday you slept badly. How did you sleep last night?"
 3. **Waiting on the line.** Laura names the tablets, says she will wait, stays quiet until Lidia says they are taken, and each Dose shows as taken.
 4. **Errands.** Laura asks whether anything is missing at home, and the items appear on a list.
-5. **Trust and safety.** Laura opens with the family phrase and never gives medical advice. Anything she promises to pass on to Povilas appears on the page.
+5. **Trust and safety.** Laura opens with the family phrase and never gives medical advice. Anything she promises to pass on to Paul appears on the page.
 
 There is no sign-in. This brief replaces the longer "Laura: build brief" for the demo build; that one stays as the reference for everything after the demo.
 
@@ -24,15 +24,15 @@ The demo is one call: eight beats, about three to four minutes. After each answe
 
 | Beat | What Laura says | Tool | What appears on the dashboard |
 | --- | --- | --- | --- |
-| 1. Opening | "Hello, is that Lidia?" Only once she confirms: "Hi Lidia, it's Laura. Povilas says thank you again for the cherry jam." | none | Call status is already live (it turns live when Call now places the call) |
-| 2. How are you | "How are you doing today?" She listens and responds warmly. Then the remembered detail: "You told me yesterday you slept badly. How was last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep | Today's wellbeing line, and sleep on its own line |
+| 1. Opening | "Hello, is that Lidia?" Only once she confirms: "Hi Lidia, it's Laura. Paul says thank you again for the cherry jam." | none | Call status is already live (it turns live when Call now places the call) |
+| 2. How are you | "How are you doing today?" She listens and responds warmly. Then the remembered detail: "You told me yesterday you slept badly. How did you sleep last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep | Today's wellbeing line, and sleep on its own line |
 | 3. The leg | "How is your left leg today?" A kind word about her answer | `log_remark` | A new Remark on the left leg card, above the earlier ones |
 | 4. Blood pressure | "Have you measured your blood pressure this morning? What did it show?" Reads the numbers back. Asked before the tablets, because two of them lower blood pressure | `log_reading` | The Reading, added to the blood pressure history |
-| 5. Tablets, one at a time | Names one morning Medication from the care plan with its strength. "Take it now, take your time, I'll wait." Stays quiet until Lidia says it is taken, then the next | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
-| 6. Anything missing | "Is there anything you're running out of at home that Povilas could bring?" | `add_errand`, once per item | Each item on the errands list |
-| 7. A message | "Is there anything you'd like me to tell Povilas?" | `pass_on`, if she gives a message | A Pass-on in the live feed and in the "For Povilas" list |
-| 8. A kind close | Says out loud what she noted, that she will pass it on to Povilas, something warm and goodbye. Then, without waiting for a reply, she records the summary and hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
-| Any time | Whenever she says she will pass something on to Povilas: a medical question, a worry, an emergency | `pass_on` | A Pass-on in the live feed and in the "For Povilas" list |
+| 5. Tablets, one at a time | "I'd also like to remind you that it's time to take your morning tablets. We'll take them one at a time." Then names one morning Medication from the care plan with its strength. "Take it now, take your time, I'll wait." Stays quiet until Lidia says it is taken, then the next | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
+| 6. Anything missing | "Is there anything you're running out of at home that Paul could bring?" | `add_errand`, once per item | Each item on the errands list |
+| 7. A message | "Is there anything you'd like me to tell Paul?" | `pass_on`, if she gives a message | A Pass-on in the live feed and in the "For Paul" list |
+| 8. A kind close | Says out loud what she noted, that she will pass it on to Paul, something warm and goodbye. Then, without waiting for a reply, she records the summary and hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
+| Any time | Whenever she says she will pass something on to Paul: a medical question, a worry, an emergency | `pass_on` | A Pass-on in the live feed and in the "For Paul" list |
 
 ### The seven tools
 
@@ -45,7 +45,7 @@ Every tool carries a `call_id` that ElevenLabs fills from the per-call variable 
 | `record_dose` | `medication`, `status`: taken on call, says taken earlier, not taken | The webhook matches `medication` against the Care plan, ignoring case. No match: nothing is written and Laura is told it is not on the plan |
 | `log_reading` | `systolic`, `diastolic`, `pulse` (only if she gives it) | If she has not measured, Laura moves on and records nothing |
 | `add_errand` | `item` | No duplicate detection |
-| `pass_on` | none | Laura may only promise to tell Povilas something she records as a Pass-on |
+| `pass_on` | none | Laura may only promise to tell Paul something she records as a Pass-on |
 | `end_call_summary` | `summary` (no `quote`) | Stored on the Call, not as an Entry; sets the Call to done |
 
 ### How each tool call travels
@@ -75,7 +75,7 @@ Agent settings this needs: turn timeout 30 seconds (the maximum; the default is 
 
 ### What Laura is given before each call
 
-Passed in as per-call variables: the `call_id`, Lidia's name, Povilas's name, the family phrase, the morning Medications with their Strengths, the Watch items (the left leg, blood pressure), and the previous Call's summary with how long ago it was, in words ("yesterday", "earlier today"). From that summary Laura picks one personal detail, never one about medicine or a Reading, and words the timing to match.
+Passed in as per-call variables: the `call_id`, Lidia's name, Paul's name, the family phrase, the morning Medications with their Strengths, the Watch items (the left leg, blood pressure), and the previous Call's summary with how long ago it was, in words ("yesterday", "earlier today"). From that summary Laura picks one personal detail, never one about medicine or a Reading, and words the timing to match.
 
 ## The website
 
@@ -83,7 +83,7 @@ One page, no sign-in, that looks good enough to present and updates live during 
 
 | Area | Shows |
 | --- | --- |
-| Today | How Lidia is, in her own words, with sleep on its own line. Call status: not called yet, live, done. The Call summary once done. A "For Povilas" list of Pass-ons |
+| Today | How Lidia is, in her own words, with sleep on its own line. Call status: not called yet, live, done. The Call summary once done. A "For Paul" list of Pass-ons |
 | Medications | Each Medication with its Strength and time of day, and its Dose status on Today's Call: not confirmed, taken on call, says taken earlier, not taken |
 | Left leg | Today's Remark in Lidia's words, with the earlier Remarks beneath |
 | Blood pressure | Today's Reading and the earlier ones as a dated list, in plain colours |
@@ -112,12 +112,12 @@ The skill decides how things look. This brief decides what the page shows: every
 
 Laura reminds and records. She never interprets and never advises. These rules are in her instructions from the first call.
 
-- **The family phrase.** She says "Povilas says thank you again for the cherry jam" as a full sentence, only after the person confirms she is Lidia. If not (a neighbour, a voicemail), Laura says she will call another time, records nothing and hangs up. Lidia never has to prove anything, and Laura never asks for money, passwords or codes.
-- **No medical advice.** Asked "is that bad?" or "should I take half a tablet?", she declines kindly, says she will pass the question to Povilas, and records it as a Pass-on.
+- **The family phrase.** She says "Paul says thank you again for the cherry jam" as a full sentence, only after the person confirms she is Lidia. If not (a neighbour, a voicemail), Laura says she will call another time, records nothing and hangs up. Lidia never has to prove anything, and Laura never asks for money, passwords or codes.
+- **No medical advice.** Asked "is that bad?" or "should I take half a tablet?", she declines kindly, says she will pass the question to Paul, and records it as a Pass-on.
 - **Emergencies.** If Lidia describes an emergency, Laura records a Pass-on, tells her to hang up now and call 112, records a short Call summary, ends the call herself, and skips every remaining beat. No text message and no alert feature.
 - **Readings are repeated, not judged.** "I've noted 150 over 95." Nothing about whether it is good or bad, and no reassurance either.
 - **Only the care plan.** Medication names and Strengths come from the stored care plan and nowhere else; the webhook writes nothing off-plan.
-- **Never a person.** She does not claim to be human. Asked whether she is real, she says kindly that she is a computer assistant Povilas set up.
+- **Never a person.** She does not claim to be human. Asked whether she is real, she says kindly that she is a computer assistant Paul set up.
 - **Platform guardrails, as a second check.** Set in `agent/agent.json`. Focus and Manipulation are on, and Manipulation hangs up on a prompt injection attempt. Content guardrails cover sexual content, harassment, profanity, and religion or politics. Three custom rules cover never claiming to be human, never asking for money or codes, and no medical advice. The medical/legal, violence and self-harm content categories stay off, so tablet names, Readings and the 112 line never drop a call. A guardrail that hangs up leaves the Call live, with no summary, until the next Call now.
 - **Warm about the person, silent about the medicine.** She can sympathise, thank, and chat about ordinary life. The remembered detail is always personal, never about medicine or a Reading.
 
@@ -153,8 +153,8 @@ All keys, the webhook secret and the phone number Laura dials live in environmen
 Everything is fictional sample data, created by a script. The demo says so out loud.
 
 - **Lidia**, 94, the person Laura phones. Her number is whichever phone should ring in the demo, read from an environment variable.
-- **Povilas**, her family carer, who looks at the website.
-- **Family phrase:** "Povilas says thank you again for the cherry jam."
+- **Paul**, her family carer, who looks at the website.
+- **Family phrase:** "Paul says thank you again for the cherry jam."
 - **Care plan:** stored as data, not typed in during the demo. Morning Medications, and two Watch items: blood pressure and left leg swelling.
 - **History:** about two weeks of earlier Calls, so the page is not empty: wellbeing and sleep lines, Readings, Doses, Remarks about the leg, a few Errands done. Yesterday's Call summary says Lidia slept badly, which is the detail Laura remembers. The tablet count on the page is worked out from this history, not typed in.
 - **Resetting:** the sample-data script clears every Call it did not create, so rehearsals disappear. Run it before the real demo, or Laura will remember the last rehearsal instead of "yesterday, you slept badly".
@@ -197,8 +197,8 @@ The work is cut into tickets that each do one thing, built on one integration br
 - [ ] Give a blood pressure reading. She reads it back, and it appears.
 - [ ] She names the first tablet. Stay silent for a full minute, then say it is taken. She waits, that Dose changes to taken, and the tablet count goes up. She does the same for the other two.
 - [ ] Name two things you are out of. Both appear on the errands list.
-- [ ] Ask "should I take half a tablet?" She declines, says she will pass it to Povilas, and a Pass-on appears in the feed and the "For Povilas" list.
-- [ ] She asks whether there is anything to tell Povilas. Give a message; a Pass-on appears.
+- [ ] Ask "should I take half a tablet?" She declines, says she will pass it to Paul, and a Pass-on appears in the feed and the "For Paul" list.
+- [ ] She asks whether there is anything to tell Paul. Give a message; a Pass-on appears.
 - [ ] She says goodbye out loud, hangs up, and the call shows as done with a summary.
 
 ## Decisions
@@ -210,5 +210,5 @@ All settled.
 - **Urgent alert.** Out of the demo. No urgent alert and no text messages.
 - **No sign-in.** No sign-in and no password for the demo.
 - **The morning Medications.** Confirmed as sample data, as listed above.
-- **Povilas's relation to Lidia.** Not stated. Laura only uses his name, so it stays open.
+- **Paul's relation to Lidia.** Not stated. Laura only uses his name, so it stays open.
 - **Git flow overnight.** One spec, tickets that each do one thing, one integration branch, one code review at the end, one draft PR. Nothing is merged to `main` overnight.

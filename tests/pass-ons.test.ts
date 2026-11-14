@@ -10,7 +10,7 @@ beforeEach(() => {
 
 const dated = { at: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/) };
 
-test("what Laura promises to pass on is listed for Povilas and is a card on the live feed", async () => {
+test("what Laura promises to pass on is listed for Paul and is a card on the live feed", async () => {
   const call_id = await startCall();
 
   const response = await sendTool("pass_on", { call_id, quote: "Should I take half a tablet?" });
@@ -19,7 +19,7 @@ test("what Laura promises to pass on is listed for Povilas and is a card on the 
   expect(await response.json()).toEqual({ ok: true });
   const state = await getDashboardState(readClient());
   expect(state.passOns).toEqual([{ quote: "Should I take half a tablet?", ...dated }]);
-  expect(state.feed).toMatchObject([{ title: "For Povilas", quote: "Should I take half a tablet?" }]);
+  expect(state.feed).toMatchObject([{ title: "For Paul", quote: "Should I take half a tablet?" }]);
 });
 
 test("the list holds every Pass-on from Today's Call, newest first, and none from an earlier Call", async () => {

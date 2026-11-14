@@ -3,9 +3,9 @@ import { env } from "../../../lib/env";
 import { fromAnotherSite, refuseAnotherSite } from "../../../lib/same-origin";
 import { writeClient } from "../../../lib/supabase";
 
-// The database has no field for their names; the page says "Povilas" too.
+// The database has no field for their names; the page says "Paul" too.
 const CARE_RECIPIENT = "Lidia";
-const FAMILY_CARER = "Povilas";
+const FAMILY_CARER = "Paul";
 
 // How long ago a Call was, in the words Laura says: "earlier today", "yesterday", "3 days ago".
 // Under 12 hours is "earlier today" even across midnight, so ten minutes ago is never "yesterday".

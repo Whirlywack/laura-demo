@@ -78,7 +78,7 @@ export default async function Page() {
           {/* What Laura promised to pass on, in her words and plain ink. */}
           {passOns.length ? (
             <div style={{ marginTop: 24 }}>
-              <div style={{ font: "var(--text-label)", marginBottom: 12 }}>For Povilas</div>
+              <div style={{ font: "var(--text-label)", marginBottom: 12 }}>For Paul</div>
               {passOns.map((p, i) => (
                 <div
                   key={i}
@@ -90,7 +90,7 @@ export default async function Page() {
               ))}
             </div>
           ) : (
-            <div style={{ ...waiting, marginTop: 8 }}>For Povilas · nothing to pass on</div>
+            <div style={{ ...waiting, marginTop: 8 }}>For Paul · nothing to pass on</div>
           )}
         </AnswerCard>
         {/* The tablet count sits in the top row, so it can be seen moving as each Dose is recorded. */}

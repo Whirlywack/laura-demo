@@ -11,7 +11,7 @@ const db = createClient(env("NEXT_PUBLIC_SUPABASE_URL"), env("SUPABASE_SERVICE_R
 });
 
 const carePlan = {
-  family_phrase: "Povilas says thank you again for the cherry jam.",
+  family_phrase: "Paul says thank you again for the cherry jam.",
   medications: [
     { name: "Metoprolol", strength: "47.5 mg, one tablet", time_of_day: "morning" },
     { name: "Sanoral HCT", strength: "40/10/12.5 mg, one tablet", time_of_day: "morning" },
@@ -184,7 +184,7 @@ const entries = history.flatMap((day, i) => {
           },
         ]
       : []),
-    // Povilas brought each Errand the next afternoon and ticked it.
+    // Paul brought each Errand the next afternoon and ticked it.
     ...(day.errand
       ? [{ call_id, kind: "errand", quote: day.errand.quote, details: { item: day.errand.item }, created_at: minutesAfter(start, 9), done_at: minutesAfter(start, 30 * 60) }]
       : []),
