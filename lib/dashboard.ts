@@ -25,6 +25,8 @@ export type PassOn = { quote: string; at: string };
 
 export type DashboardState = {
   callStatus: CallStatus;
+  /** Laura's summary of Today's Call, in her words. Recorded as she closes the Call; null until then. */
+  summary: string | null;
   /** Today's Wellbeing in her own words: the latest Quote for each aspect. */
   wellbeing: { general: string | null; sleep: string | null };
   /** One per Medication on the Care plan, in Care plan order. */
@@ -75,7 +77,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     db.from("care_plan").select("family_phrase, medications, watch_items").single(),
     db
       .from("calls")
-      .select("id, status, entries(id, kind, quote, details, created_at)")
+      .select("id, status, summary, entries(id, kind, quote, details, created_at)")
       .order("started_at", { ascending: false })
       .order("created_at", { referencedTable: "entries", ascending: false })
       .limit(1)
@@ -108,6 +110,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
 
   return {
     callStatus: today.data?.status ?? "not called yet",
+    summary: today.data?.summary ?? null,
     wellbeing: { general: wellbeing("general"), sleep: wellbeing("sleep") },
     doses: medications.map((m) => {
       // Entries are newest first, so the first one found is the latest: it wins.

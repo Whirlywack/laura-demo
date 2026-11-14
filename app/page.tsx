@@ -27,7 +27,7 @@ const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
 export default async function Page() {
-  const { callStatus, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan } = await getDashboardState(readClient());
+  const { callStatus, summary, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan } = await getDashboardState(readClient());
   const reading = bloodPressure.today;
 
   return (
@@ -46,6 +46,13 @@ export default async function Page() {
           answer={wellbeing.general ? `“${wellbeing.general}”` : <span style={waiting}>{noWellbeing[callStatus]}</span>}
         >
           {wellbeing.sleep ? <QuoteFact inline fact="Sleep" quote={wellbeing.sleep} /> : <div style={waiting}>Sleep · not asked yet</div>}
+          {/* Laura's own words as she closed the Call, so no quotation marks. */}
+          {summary ? (
+            <div style={{ marginTop: 24 }}>
+              <div style={{ font: "var(--text-label)", marginBottom: 8 }}>Laura's summary</div>
+              <div style={{ font: "var(--text-body)", color: "var(--text-secondary)", maxWidth: "60ch" }}>{summary}</div>
+            </div>
+          ) : null}
           {/* What Laura promised to pass on, in her words and plain ink. */}
           {passOns.length ? (
             <div style={{ marginTop: 24 }}>
