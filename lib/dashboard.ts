@@ -50,7 +50,7 @@ export type DashboardState = {
   /** Every Entry on Today's Call, newest first. */
   feed: FeedCard[];
   carePlan: { medications: Medication[]; watchItems: string[]; familyPhrase: string };
-  /** "From the last call:": Laura's summary of the latest Call before Today, where her remembered detail comes from. */
+  /** "From the last call:": Laura's summary of the latest Call before Today that has one, where her remembered detail comes from. */
   previousSummary: string | null;
   /** Every Call before Today, newest first. */
   history: HistoryCall[];
@@ -150,7 +150,8 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     passOns: entries.filter((e) => e.kind === "pass_on").map((e) => ({ quote: e.quote, at: e.created_at })),
     feed: entries.map((e) => ({ id: e.id, title: feedTitle(e), quote: e.quote, at: e.created_at })),
     carePlan: { medications, watchItems: plan.data.watch_items, familyPhrase: plan.data.family_phrase },
-    previousSummary: history[0]?.summary ?? null,
+    // The latest earlier Call with a summary, as Call now gives Laura: a Call nobody answered has none.
+    previousSummary: history.find((c) => c.summary)?.summary ?? null,
     history: history.map((c) => {
       const latestReading = c.entries.find((e) => e.kind === "reading");
       return { at: c.started_at, wellbeing: wellbeingOn(c.entries), reading: latestReading ? reading(latestReading) : null, doses: dosesOn(c.entries, medications) };

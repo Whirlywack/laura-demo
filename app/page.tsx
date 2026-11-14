@@ -1,5 +1,5 @@
 import { AnswerCard } from "../components/AnswerCard";
-import { CallStatus } from "../components/CallStatus";
+import { CallNow } from "../components/CallNow";
 import { Card } from "../components/Card";
 import { DatedList } from "../components/DatedList";
 import { Errands } from "../components/Errands";
@@ -46,7 +46,7 @@ export default async function Page() {
       <header style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 40px", padding: "22px 20px" }}>
         <div style={{ font: "700 var(--size-wordmark)/1 var(--font-sans)", letterSpacing: "-.04em" }}>Laura</div>
         <div style={{ flex: 1 }} />
-        <CallStatus status={callStatus} />
+        <CallNow status={callStatus} />
       </header>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
