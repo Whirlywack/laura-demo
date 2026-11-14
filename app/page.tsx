@@ -27,7 +27,7 @@ const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
 export default async function Page() {
-  const { callStatus, wellbeing, doses, bloodPressure, leftLeg, errands, feed, carePlan } = await getDashboardState(readClient());
+  const { callStatus, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan } = await getDashboardState(readClient());
   const reading = bloodPressure.today;
 
   return (
@@ -46,6 +46,23 @@ export default async function Page() {
           answer={wellbeing.general ? `“${wellbeing.general}”` : <span style={waiting}>{noWellbeing[callStatus]}</span>}
         >
           {wellbeing.sleep ? <QuoteFact inline fact="Sleep" quote={wellbeing.sleep} /> : <div style={waiting}>Sleep · not asked yet</div>}
+          {/* What Laura promised to pass on, in her words and plain ink. */}
+          {passOns.length ? (
+            <div style={{ marginTop: 24 }}>
+              <div style={{ font: "var(--text-label)", marginBottom: 12 }}>For Povilas</div>
+              {passOns.map((p, i) => (
+                <div
+                  key={i}
+                  style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, padding: "var(--pad-row)", borderTop: "1px solid var(--rule)", font: "var(--text-quote)" }}
+                >
+                  <span>“{p.quote}”</span>
+                  <span style={{ font: "var(--text-meta-font)", color: "var(--text-meta)", whiteSpace: "nowrap" }}>{time(p.at)}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ ...waiting, marginTop: 8 }}>For Povilas · nothing to pass on</div>
+          )}
         </AnswerCard>
         <Errands
           style={{ flex: "1 1 300px", paddingBottom: 26 }}

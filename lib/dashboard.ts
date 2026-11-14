@@ -20,6 +20,9 @@ export type Reading = { systolic: number; diastolic: number; pulse: number | nul
 /** Something she is running out of, from any Call. Done once the Family carer has ticked it. */
 export type Errand = { id: string; item: string; quote: string; at: string; done: boolean };
 
+/** Something Laura promised to pass on to the Family carer, in her words. */
+export type PassOn = { quote: string; at: string };
+
 export type DashboardState = {
   callStatus: CallStatus;
   /** Today's Wellbeing in her own words: the latest Quote for each aspect. */
@@ -32,6 +35,8 @@ export type DashboardState = {
   bloodPressure: { today: Reading | null; earlier: Reading[] };
   /** Every Errand from every Call, open and done, newest first. */
   errands: Errand[];
+  /** The "For Povilas" list: every Pass-on on Today's Call, newest first. */
+  passOns: PassOn[];
   /** Every Entry on Today's Call, newest first. */
   feed: FeedCard[];
   carePlan: { medications: Medication[]; watchItems: string[]; familyPhrase: string };
@@ -60,6 +65,7 @@ function feedTitle(entry: Entry) {
   if (entry.kind === "remark") return "Left leg";
   if (entry.kind === "reading") return `Blood pressure · ${readingValue(reading(entry))}`;
   if (entry.kind === "errand") return `Errand added · ${entry.details.item}`;
+  if (entry.kind === "pass_on") return "For Povilas";
   return entry.kind;
 }
 
@@ -113,6 +119,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     errands: everyCall.data
       .filter((e) => e.kind === "errand")
       .map((e) => ({ id: e.id, item: e.details.item, quote: e.quote, at: e.created_at, done: e.done_at !== null })),
+    passOns: entries.filter((e) => e.kind === "pass_on").map((e) => ({ quote: e.quote, at: e.created_at })),
     feed: entries.map((e) => ({ id: e.id, title: feedTitle(e), quote: e.quote, at: e.created_at })),
     carePlan: { medications, watchItems: plan.data.watch_items, familyPhrase: plan.data.family_phrase },
   };

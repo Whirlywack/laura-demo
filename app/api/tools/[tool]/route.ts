@@ -47,6 +47,8 @@ const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
   // One Entry per item, with no duplicate detection.
   add_errand: async (body) =>
     typeof body.item === "string" && body.item.trim() ? addEntry(body, "errand", { item: body.item }) : refuse("item is required"),
+  // Anything Laura promises to pass on to the Family carer: her words are the whole record.
+  pass_on: async (body) => addEntry(body, "pass_on", {}),
 };
 
 export async function POST(request: Request, { params }: { params: Promise<{ tool: string }> }) {
