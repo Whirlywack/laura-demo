@@ -2,6 +2,8 @@
 // and a year of History, dated back from the day it runs: the last 13 days written by hand, the rest made up
 // from a fixed seed, so every reset writes the same year.
 // Fictional data for the demo. Run with `npm run sample-data` (reads .env.local).
+// `--two-weeks` writes only the 13 hand-written days: the tests reset dozens of times, and a year of rows each time
+// floods the local live-update service.
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import type { DoseStatus, Felt, Slept } from "../lib/dashboard.ts";
@@ -176,7 +178,7 @@ const takenOnCall: Record<string, string[]> = {
   Eliquis: ["The little yellow one. Done.", "Eliquis, taken.", "All three now."],
 };
 
-// Days 14 to 365 before today, made up from a fixed seed: plausible for her, varied, and the same on every reset.
+// Days 14 to 364 before today (the History page's year is 365 days, today included), made up from a fixed seed: plausible for her, varied, and the same on every reset.
 // About 3 days in 100 have no Call. Laura's summary is built from that day's facts, in her plain words.
 let seed = 11;
 const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -204,7 +206,8 @@ const legs: [quote: string, summary: string][] = [
 const errandItems = ["Tea", "Bread", "Milk", "Honey", "Biscuits", "Soap", "Stamps"];
 
 const madeUp: (Day & { daysAgo: number })[] = [];
-for (let daysAgo = 14; daysAgo <= 365; daysAgo++) {
+const twoWeeks = process.argv.includes("--two-weeks");
+for (let daysAgo = 14; !twoWeeks && daysAgo <= 364; daysAgo++) {
   if (random() < 0.03) continue;
   const r = random();
   const felt: Felt = r < 0.55 ? "good" : r < 0.88 ? "okay" : "bad";
@@ -301,4 +304,4 @@ for (let i = 0; i < entries.length; i += 500) {
   if (recorded.error) throw new Error(`Could not write the sample entries: ${recorded.error.message}`);
 }
 
-console.log(`Sample data reset: Care plan written, ${calls.length} earlier Calls in History (a year back from yesterday), no Call today.`);
+console.log(`Sample data reset: Care plan written, ${calls.length} earlier Calls in History (${twoWeeks ? "two weeks" : "a year"} back from yesterday), no Call today.`);

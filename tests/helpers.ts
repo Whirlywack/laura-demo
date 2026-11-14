@@ -5,7 +5,9 @@ import { POST as callNowRoute } from "../app/api/call-now/route";
 import { POST as tick } from "../app/api/errands/[id]/tick/route";
 import { POST } from "../app/api/tools/[tool]/route";
 
-export const resetSampleData = () => execFileSync("node", ["scripts/sample-data.ts"], { stdio: "pipe" });
+// The sample data as `npm run sample-data` writes it, but only the last two weeks unless a test asks for the year
+// (see the script: a year on every reset floods the local live-update service).
+export const resetSampleData = (year = false) => execFileSync("node", ["scripts/sample-data.ts", ...(year ? [] : ["--two-weeks"])], { stdio: "pipe" });
 
 // A tool call exactly as ElevenLabs sends it: POST /api/tools/<tool>, the secret header, the tool's fields as the body.
 export function sendTool(tool: string, body: object, headers: Record<string, string> = { "x-laura-secret": process.env.LAURA_WEBHOOK_SECRET! }) {

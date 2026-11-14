@@ -3,8 +3,8 @@ import { Card } from "../../../components/Card";
 import { HistoryCalendar } from "../../../components/history/HistoryCalendar";
 import { HistoryHeader, pill } from "../../../components/history/HistoryHeader";
 import { Timeline } from "../../../components/history/Timeline";
-import { calendarDay } from "../../../lib/dashboard";
-import { addDays, getHistory, RANGES, rangeOf, type Range } from "../../../lib/history";
+import { addDays, calendarDay } from "../../../lib/dashboard";
+import { getHistory, RANGES, rangeOf, type Range } from "../../../lib/history";
 import { readClient } from "../../../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +35,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
         <Card style={{ flex: "3 1 600px", minWidth: 0, padding: "28px 30px 22px" }}>
           {days.length ? <Timeline dates={dates} days={days} range={range} /> : <div style={{ color: "var(--text-secondary)" }}>No calls in this time yet.</div>}
         </Card>
-        <Card style={{ flex: "1 1 320px", minWidth: 0, maxWidth: 440, padding: "24px 26px" }}>
+        <Card style={{ flex: "1 1 350px", minWidth: 0, maxWidth: 440, padding: "24px 20px" }}>
           <HistoryCalendar key={range} first={dates[0]} last={today} called={days.map((d) => d.date)} range={range} />
         </Card>
       </div>

@@ -22,7 +22,8 @@ const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
   // The rating is optional: Laura leaves it out when her answer does not say.
   log_wellbeing: async (body) => {
     if (body.aspect !== "general" && body.aspect !== "sleep") return refuse("aspect must be general or sleep");
-    if (body.rating === undefined) return addEntry(body, "wellbeing", { aspect: body.aspect });
+    // Sent empty (null or "") counts as left out: her words are recorded either way.
+    if (body.rating == null || body.rating === "") return addEntry(body, "wellbeing", { aspect: body.aspect });
     const allowed: readonly string[] = RATINGS[body.aspect];
     if (!allowed.includes(body.rating as string)) return refuse(`rating for ${body.aspect} must be one of: ${allowed.join(", ")}`);
     return addEntry(body, "wellbeing", { aspect: body.aspect, rating: body.rating });

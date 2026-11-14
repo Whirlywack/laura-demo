@@ -25,7 +25,7 @@ The demo is one call: eight beats, about three to four minutes. After each answe
 | Beat | What Laura says | Tool | What appears on the dashboard |
 | --- | --- | --- | --- |
 | 1. Opening | "Hello, is that Lidia?" Only once she confirms: "Hi Lidia, it's Laura... Your family phrase... Paul says the blue teapot is still his favourite." | none | Call status is already live (it turns live when Call now places the call) |
-| 2. How are you | "How are you today?" Then the remembered detail: "Yesterday you slept badly... How was last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep | Today's wellbeing line, and sleep on its own line |
+| 2. How are you | "How are you today?" Then the remembered detail: "Yesterday you slept badly... How was last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep, each with the `rating` her answer says (good, okay or bad; well or not well), left out when it does not say | Today's wellbeing line, and sleep on its own line; the ratings are drawn on the History page |
 | 3. The leg | "And how is your left leg?" | `log_remark` | A new Remark on the left leg card, above the earlier ones |
 | 4. Blood pressure | "What was your blood pressure this morning?" Reads the numbers back: "150 over 95... noted." Asked before the tablets, because two of them lower blood pressure | `log_reading` | The Reading, added to the blood pressure history |
 | 5. Tablets, one at a time | "Time for your tablets." Then one Medication at a time, by name only (the Strength stays on the page): "First, Concor... Take your time, I'll wait.", "Next, Sanoral HCT... I'll wait.", "Last one, Eliquis... I'll wait." Stays quiet until Lidia says each one is taken | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
@@ -40,7 +40,7 @@ Every tool carries a `call_id` that ElevenLabs fills from the per-call variable 
 
 | Tool | Fields besides `quote` and `call_id` | Notes |
 | --- | --- | --- |
-| `log_wellbeing` | `aspect`: general or sleep | The Quote is the line. No summary field: summarising her mood is interpreting |
+| `log_wellbeing` | `aspect`: general or sleep; optional `rating`: good, okay or bad for general, well or not well for sleep | The Quote is the line. No summary field: summarising her mood is interpreting. The rating is which answer she gave, as she said it; one that doesn't fit the aspect is refused |
 | `log_remark` | none | Every Remark is about the left leg, the only Watch item without a Reading |
 | `record_dose` | `medication`, `status`: taken on call, says taken earlier, not taken | The webhook matches `medication` against the Care plan, ignoring case. No match: nothing is written and Laura is told it is not on the plan |
 | `log_reading` | `systolic`, `diastolic`, `pulse` (only if she gives it) | If she has not measured, Laura moves on and records nothing |

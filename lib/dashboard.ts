@@ -57,7 +57,7 @@ export type DashboardState = {
   leftLeg: { today: Remark | null; earlier: Remark[] };
   /** The latest Reading on Today's Call, and every other Reading beneath it, newest first. */
   bloodPressure: { today: Reading | null; earlier: Reading[] };
-  /** Every open Errand, and those done in the last 14 days, newest first. */
+  /** Every open Errand, and those ticked done in the last 14 days, newest first. */
   errands: Errand[];
   /** The "For Paul" list: every Pass-on on Today's Call, newest first. */
   passOns: PassOn[];
@@ -135,6 +135,12 @@ export function dosesOn(entries: Entry[], medications: Medication[]): Dose[] {
 /** The date on her calendar in Lithuania, e.g. "2026-11-14". Dates compare as strings. */
 export const calendarDay = (at: string | number) => new Date(at).toLocaleDateString("en-CA", { timeZone: "Europe/Vilnius" });
 
+/** "2026-11-14" plus `n` days (or minus), on the calendar, whatever the clocks do. */
+export const addDays = (date: string, n: number) => {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+};
+
 /**
  * The Call Laura remembers: the latest Call with a summary, other than Today when its id is given.
  * A Call nobody answered has no summary, so Laura still remembers the one before it.
@@ -151,14 +157,14 @@ export async function previousCall(db: SupabaseClient, today?: string): Promise<
 // The one function that derives everything the page shows from the three tables. It reads the last 14 days on her
 // calendar in Lithuania, today and the 13 days before it: the History page (lib/history.ts) holds the rest.
 export async function getDashboardState(db: SupabaseClient): Promise<DashboardState> {
-  const firstDay = calendarDay(Date.now() - 13 * 24 * 60 * 60 * 1000);
+  const firstDay = addDays(calendarDay(Date.now()), -13);
   // A day's margin either side of her midnight; the exact cut is by her calendar, below.
   const since = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString();
   const [plan, recent, errandEntries] = await Promise.all([
     db.from("care_plan").select("family_phrase, medications, watch_items").single(),
     callsWithEntries(db, since),
-    // An Errand stays on the list until Paul ticks it, however old; done ones only for the 14 days.
-    db.from("entries").select("id, quote, details, created_at, done_at").eq("kind", "errand").or(`done_at.is.null,created_at.gte.${since}`).order("created_at", { ascending: false }),
+    // An Errand stays on the list until Paul ticks it, however old, and as done for 14 days after he ticks it.
+    db.from("entries").select("id, quote, details, created_at, done_at").eq("kind", "errand").or(`done_at.is.null,done_at.gte.${since}`).order("created_at", { ascending: false }),
   ]);
   if (plan.error) throw new Error(`Could not read the care plan: ${plan.error.message}`);
   if (recent.error) throw new Error(`Could not read the calls: ${recent.error.message}`);
@@ -190,7 +196,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     leftLeg: todayAndEarlier("remark", (e): Remark => ({ quote: e.quote, at: e.created_at })),
     bloodPressure: todayAndEarlier("reading", reading),
     errands: errandEntries.data
-      .filter((e) => e.done_at === null || calendarDay(e.created_at) >= firstDay)
+      .filter((e) => e.done_at === null || calendarDay(e.done_at) >= firstDay)
       .map((e) => ({ id: e.id, item: e.details.item, quote: e.quote, at: e.created_at, done: e.done_at !== null })),
     passOns: entries.filter((e) => e.kind === "pass_on").map((e) => ({ quote: e.quote, at: e.created_at })),
     feed: entries.map(feedCard),

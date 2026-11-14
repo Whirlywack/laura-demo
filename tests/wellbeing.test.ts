@@ -44,11 +44,15 @@ test("Laura records the rating of each answer as she heard it, and an answer wit
   await sendTool("log_wellbeing", { call_id, quote: "Good, thank you. The sun is out.", aspect: "general", rating: "good" });
   await sendTool("log_wellbeing", { call_id, quote: "Badly. I kept waking up.", aspect: "sleep", rating: "not well" });
   await sendTool("log_wellbeing", { call_id, quote: "Hard to say, really.", aspect: "general" });
+  await sendTool("log_wellbeing", { call_id, quote: "I slept, I suppose.", aspect: "sleep", rating: null });
+  await sendTool("log_wellbeing", { call_id, quote: "Oh, the usual.", aspect: "general", rating: "" });
 
   const { data } = await readClient().from("entries").select("details").eq("call_id", call_id).order("created_at");
   expect(data!.map((e) => e.details)).toEqual([
     { aspect: "general", rating: "good" },
     { aspect: "sleep", rating: "not well" },
+    { aspect: "general" },
+    { aspect: "sleep" },
     { aspect: "general" },
   ]);
 });

@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { calendarDay, callsWithEntries, dosesOn, medicationsOf, reading, type Call, type Dose, type Entry, type Felt, type Medication, type Reading, type Slept } from "./dashboard";
+import { addDays, calendarDay, callsWithEntries, dosesOn, medicationsOf, reading, type Call, type Dose, type Entry, type Felt, type Medication, type Reading, type Slept } from "./dashboard";
 
 // The History page: one day per date on her calendar that has a Call that recorded something, Today's included.
 
@@ -21,12 +21,6 @@ export type HistoryDay = {
   remark: string | null;
   doses: Dose[];
   summary: string | null;
-};
-
-/** "2026-11-14" plus `n` days (or minus), on the calendar, whatever the clocks do. */
-export const addDays = (date: string, n: number) => {
-  const [y, m, d] = date.split("-").map(Number);
-  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
 };
 
 // Her answer on one aspect: the latest one on the Call. Entries are newest first.

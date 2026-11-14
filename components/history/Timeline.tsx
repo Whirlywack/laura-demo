@@ -5,12 +5,12 @@ import type { HistoryDay, Range } from "../../lib/history";
 // The History page's timeline: one column per date in the range, every row lined up by day. Drawn by hand, in ink, on
 // fixed scales: nothing averaged, smoothed or coloured, and no line across a day without a Reading. For 1 month her
 // answers are a dot per day; for 3 months (weeks from the start of the range) and 1 year (calendar months) they are
-// counted, with a bar as long as that answer's share of the days she gave one. A column with a Call links to its day
+// counted, with a bar as long as that answer's share of that period's Calls. A column with a Call links to its day
 // (CSS shades it on hover; its title is the date); the calendar beside it is the keyboard path, so these links are
 // left out of the tab order.
 const W = 900, L = 110, R = 8;
 const ink: CSSProperties = { fill: "var(--ink)" };
-const meta: CSSProperties = { fill: "var(--ink-3)", font: "16px var(--font-sans)" };
+const meta: CSSProperties = { fill: "var(--ink-3)", font: "var(--text-meta-font)" };
 const rule: CSSProperties = { stroke: "var(--rule)" };
 const FELT = [["good", "Good"], ["okay", "Okay"], ["bad", "Bad"]] as const;
 const SLEPT = [["well", "Well"], ["not well", "Not well"]] as const;
@@ -35,16 +35,16 @@ export function Timeline({ dates, days, range }: { dates: string[]; days: Histor
 
   function counts(answers: readonly (readonly [string, string])[], rating: (d: HistoryDay) => string | null) {
     return groups.map(({ a, b }) => {
-      const rated = dates.slice(a, b + 1).map((date) => byDate.get(date)).filter((d) => d && rating(d)) as HistoryDay[];
+      const called = dates.slice(a, b + 1).flatMap((date) => byDate.get(date) ?? []);
       const x0 = L + a * step, w = (b - a + 1) * step;
       return (
         <g key={a}>
           <line x1={x0} x2={x0} y1={0} y2={lane(answers.length - 1) + 14} style={rule} />
           {answers.map(([value], k) => {
-            const n = rated.filter((d) => rating(d) === value).length;
+            const n = called.filter((d) => rating(d) === value).length;
             return (
               <g key={value}>
-                <rect x={x0 + 3} y={lane(k) - 11} width={Math.max(0, (w - 6) * (rated.length ? n / rated.length : 0))} height={22} rx={4} style={{ fill: "var(--rule)" }} />
+                <rect x={x0 + 3} y={lane(k) - 11} width={Math.max(0, (w - 6) * (called.length ? n / called.length : 0))} height={22} rx={4} style={{ fill: "var(--rule)" }} />
                 <text x={x0 + w / 2} y={lane(k) + 5} textAnchor="middle" style={{ ...meta, fill: n ? "var(--ink)" : "var(--ink-3)", fontWeight: n ? 700 : 400 }}>{n}</text>
               </g>
             );
@@ -56,8 +56,10 @@ export function Timeline({ dates, days, range }: { dates: string[]; days: Histor
 
   // Each row: its title, its scale or answers on the left, then what each day drew. `height` is the drawing area.
   const rows: { title: string; height: number; ticks: [string, number][]; lines: boolean; marks: ReactNode }[] = [];
-  const bp = (v: number) => 8 + 124 * (1 - (v - 60) / 130);
-  const pulse = (v: number) => 8 + 58 * (1 - (v - 40) / 80);
+  // Fixed scales; a value beyond one stops at its edge rather than drawing over the row above.
+  const within = (v: number, low: number, high: number) => Math.min(high, Math.max(low, v));
+  const bp = (v: number) => 8 + 124 * (1 - (within(v, 60, 190) - 60) / 130);
+  const pulse = (v: number) => 8 + 58 * (1 - (within(v, 40, 120) - 40) / 80);
   rows.push({
     title: "Blood pressure", height: 140, lines: true, ticks: [180, 140, 100, 60].map((v) => [String(v), bp(v)]),
     marks: dates.map((date, i) => {
@@ -93,7 +95,7 @@ export function Timeline({ dates, days, range }: { dates: string[]; days: Histor
     top = g0 + row.height + 12;
     return (
       <g key={row.title}>
-        <text x={0} y={g0 - 12} style={{ ...ink, font: "700 18px var(--font-sans)" }}>{row.title}</text>
+        <text x={0} y={g0 - 12} style={{ ...ink, font: "var(--text-quote)", fontWeight: 700 }}>{row.title}</text>
         <g transform={`translate(0,${g0})`}>
           {row.ticks.map(([label, y]) => (
             <g key={label}>
@@ -129,7 +131,7 @@ export function Timeline({ dates, days, range }: { dates: string[]; days: Histor
   return (
     // On a narrow screen it scrolls sideways; right-to-left makes it open at the newest days.
     <div style={{ overflowX: "auto", direction: "rtl" }}>
-      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label="Blood pressure, pulse, how she felt and how she slept, day by day. Use the calendar to open a day." style={{ display: "block", minWidth: 640, direction: "ltr" }}>
+      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label="Blood pressure, pulse, how she felt and how she slept, day by day. Use the calendar to open a day." style={{ display: "block", minWidth: 760, direction: "ltr" }}>
         {dates.map((date, i) => {
           const d = byDate.get(date);
           return d ? (

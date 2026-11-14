@@ -1,11 +1,11 @@
 import { beforeEach, expect, test } from "vitest";
-import { getDashboardState } from "../lib/dashboard";
-import { addDays, getHistory, getHistoryDay } from "../lib/history";
+import { addDays, getDashboardState } from "../lib/dashboard";
+import { getHistory, getHistoryDay } from "../lib/history";
 import { readClient } from "../lib/supabase";
-import { resetSampleData, sendTool, startCall } from "./helpers";
+import { resetSampleData, sendTool, startCall, tickErrand } from "./helpers";
 
 beforeEach(() => {
-  resetSampleData();
+  resetSampleData(true);
 });
 
 const calendarDay = (at: string | number) => new Date(at).toLocaleDateString("en-CA", { timeZone: "Europe/Vilnius" });
@@ -70,13 +70,19 @@ test("a date with no Call, a date that does not exist, and something that is not
   for (const date of [missing, daysAgo(400), "2026-02-30", "yesterday"]) expect(await getHistoryDay(readClient(), date)).toBeNull();
 });
 
-test("the dashboard reads only the last two weeks, but an Errand nobody has brought stays on the list however old", async () => {
+test("the dashboard reads only the last two weeks, but an Errand stays until it is brought, and as done for two weeks after", async () => {
   const call_id = await startCall(20);
   await sendTool("add_errand", { call_id, quote: "Matches, for the stove.", item: "Matches" });
+  await sendTool("add_errand", { call_id, quote: "And soap.", item: "Soap" });
 
   const state = await getDashboardState(readClient());
   expect(state.history.map((c) => calendarDay(c.at))).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(daysAgo));
-  expect(state.errands.filter((e) => !e.done).map((e) => e.item)).toEqual(["Matches"]);
-  expect(state.errands.filter((e) => e.done).every((e) => calendarDay(e.at) >= daysAgo(13))).toBe(true);
   expect(state.leftLeg.earlier).toHaveLength(13);
+  expect(state.errands.filter((e) => !e.done).map((e) => e.item)).toEqual(["Soap", "Matches"]);
+  // The sample Errands Paul ticked months ago are gone; the ones from the last two weeks are there.
+  expect(state.errands.filter((e) => e.done).every((e) => calendarDay(e.at) >= daysAgo(15))).toBe(true);
+
+  await tickErrand(state.errands.find((e) => e.item === "Matches")!.id);
+  const ticked = (await getDashboardState(readClient())).errands.find((e) => e.item === "Matches");
+  expect(ticked?.done).toBe(true);
 });
