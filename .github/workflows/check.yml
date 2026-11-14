@@ -1,4 +1,4 @@
-# Type check and every test, on each pull request and each push to main.
+# Type check, every test and a production build, on each pull request and each push to main.
 # The database tests run against a local Supabase started here from supabase/config.toml and
 # supabase/migrations; nothing touches the hosted project, and Call now's outbound request is faked.
 name: check
@@ -24,3 +24,5 @@ jobs:
           version: 2.120.0
       - run: supabase start
       - run: npm run check
+      # The pages compile and every route builds; tests/repo.test.ts checks the links between them.
+      - run: npm run build

@@ -9,22 +9,14 @@ beforeEach(() => {
 
 const summary = "Lidia slept badly, the dog next door kept her up. Her leg is less swollen. She took all three tablets on the call.";
 
-test("Laura's summary is shown for Today and the Call is done, with no card on the live feed", async () => {
+test("Laura's summary is shown for Today and the Call is done; what she said stays on the feed, and the summary is no card of its own", async () => {
   const call_id = await startCall();
+  await sendTool("log_wellbeing", { call_id, quote: "I'm all right. A bit tired, but all right.", aspect: "general" });
 
   const response = await sendTool("end_call_summary", { call_id, summary });
 
   expect(response.status).toBe(200);
   expect(await response.json()).toEqual({ ok: true });
-  expect(await getDashboardState(readClient())).toMatchObject({ callStatus: "done", summary, feed: [] });
-});
-
-test("what she said before the summary stays on the feed, and the summary becomes no card of its own", async () => {
-  const call_id = await startCall();
-  await sendTool("log_wellbeing", { call_id, quote: "I'm all right. A bit tired, but all right.", aspect: "general" });
-
-  await sendTool("end_call_summary", { call_id, summary });
-
   expect(await getDashboardState(readClient())).toMatchObject({
     callStatus: "done",
     summary,

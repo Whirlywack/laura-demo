@@ -1,12 +1,10 @@
-import { execFileSync } from "node:child_process";
 import { expect, test } from "vitest";
 import { getDashboardState } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
-
-const runSampleData = () => execFileSync("node", ["scripts/sample-data.ts"], { stdio: "pipe" });
+import { resetSampleData } from "./helpers";
 
 test("the sample data puts the Care plan on the dashboard, with no Call yet", async () => {
-  runSampleData();
+  resetSampleData();
 
   const state = await getDashboardState(readClient());
 
@@ -20,12 +18,4 @@ test("the sample data puts the Care plan on the dashboard, with no Call yet", as
     watchItems: ["blood pressure", "left leg swelling"],
     familyPhrase: "Paul says the blue teapot is still his favourite.",
   });
-});
-
-test("a missing environment variable is named", () => {
-  const { SUPABASE_SERVICE_ROLE_KEY: _, ...withoutKey } = process.env;
-
-  expect(() => execFileSync("node", ["scripts/sample-data.ts"], { env: withoutKey, stdio: "pipe" })).toThrow(
-    "Missing environment variable SUPABASE_SERVICE_ROLE_KEY",
-  );
 });

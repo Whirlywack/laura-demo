@@ -25,8 +25,8 @@ export function tickErrand(id: string, headers: Record<string, string> = fromThe
   return tick(new Request(`http://localhost/api/errands/${id}/tick`, { method: "POST", headers }), { params: Promise.resolve({ id }) });
 }
 
-// Pressing Call now on the page: POST /api/call-now, with no body. Install fakeOutboundCall first.
-// Call now from the page, with the password typed in unless a test passes another one (null sends none).
+// Pressing Call now on the page: POST /api/call-now with the password typed in, unless a test passes another one
+// (null sends none). Install fakeOutboundCall first.
 export const callNow = (headers: Record<string, string> = fromThePage, password: string | null = process.env.CALL_NOW_PASSWORD!) =>
   callNowRoute(new Request("http://localhost/api/call-now", { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(password === null ? {} : { password }) }));
 
