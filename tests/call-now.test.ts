@@ -45,7 +45,7 @@ test("Laura is given every per-call variable as a string, with yesterday's summa
     call_id: expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/),
     care_recipient_name: "Lidia",
     family_carer_name: "Paul",
-    family_phrase: "Paul says thank you again for the cherry jam.",
+    family_phrase: "Paul says the blue teapot is still his favourite.",
     morning_medications: "Metoprolol 47.5 mg, one tablet; Sanoral HCT 40/10/12.5 mg, one tablet; Eliquis 2.5 mg, one tablet",
     watch_items: "blood pressure; left leg swelling",
     previous_call_summary:

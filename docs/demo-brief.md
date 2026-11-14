@@ -24,7 +24,7 @@ The demo is one call: eight beats, about three to four minutes. After each answe
 
 | Beat | What Laura says | Tool | What appears on the dashboard |
 | --- | --- | --- | --- |
-| 1. Opening | "Hello, is that Lidia?" Only once she confirms: "Hi Lidia, it's Laura. Paul says thank you again for the cherry jam." | none | Call status is already live (it turns live when Call now places the call) |
+| 1. Opening | "Hello, is that Lidia?" Only once she confirms: "Hi Lidia, it's Laura. So you know Paul set up this call, here is your family phrase: Paul says the blue teapot is still his favourite." | none | Call status is already live (it turns live when Call now places the call) |
 | 2. How are you | "How are you doing today?" She listens and responds warmly. Then the remembered detail: "You told me yesterday you slept badly. How did you sleep last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep | Today's wellbeing line, and sleep on its own line |
 | 3. The leg | "How is your left leg today?" A kind word about her answer | `log_remark` | A new Remark on the left leg card, above the earlier ones |
 | 4. Blood pressure | "Have you measured your blood pressure this morning? What did it show?" Reads the numbers back. Asked before the tablets, because two of them lower blood pressure | `log_reading` | The Reading, added to the blood pressure history |
@@ -112,7 +112,7 @@ The skill decides how things look. This brief decides what the page shows: every
 
 Laura reminds and records. She never interprets and never advises. These rules are in her instructions from the first call.
 
-- **The family phrase.** She says "Paul says thank you again for the cherry jam" as a full sentence, only after the person confirms she is Lidia. If not (a neighbour, a voicemail), Laura says she will call another time, records nothing and hangs up. Lidia never has to prove anything, and Laura never asks for money, passwords or codes.
+- **The family phrase.** She says "So you know Paul set up this call, here is your family phrase:" and then "Paul says the blue teapot is still his favourite" as a full sentence, only after the person confirms she is Lidia. If not (a neighbour, a voicemail), Laura says she will call another time, records nothing and hangs up. Lidia never has to prove anything, and Laura never asks for money, passwords or codes.
 - **No medical advice.** Asked "is that bad?" or "should I take half a tablet?", she declines kindly, says she will pass the question to Paul, and records it as a Pass-on.
 - **Emergencies.** If Lidia describes an emergency, Laura records a Pass-on, tells her to hang up now and call 112, records a short Call summary, ends the call herself, and skips every remaining beat. No text message and no alert feature.
 - **Readings are repeated, not judged.** "I've noted 150 over 95." Nothing about whether it is good or bad, and no reassurance either.
@@ -154,7 +154,7 @@ Everything is fictional sample data, created by a script. The demo says so out l
 
 - **Lidia**, 94, the person Laura phones. Her number is whichever phone should ring in the demo, read from an environment variable.
 - **Paul**, her family carer, who looks at the website.
-- **Family phrase:** "Paul says thank you again for the cherry jam."
+- **Family phrase:** "Paul says the blue teapot is still his favourite."
 - **Care plan:** stored as data, not typed in during the demo. Morning Medications, and two Watch items: blood pressure and left leg swelling.
 - **History:** about two weeks of earlier Calls, so the page is not empty: wellbeing and sleep lines, Readings, Doses, Remarks about the leg, a few Errands done. Yesterday's Call summary says Lidia slept badly, which is the detail Laura remembers. The tablet count on the page is worked out from this history, not typed in.
 - **Resetting:** the sample-data script clears every Call it did not create, so rehearsals disappear. Run it before the real demo, or Laura will remember the last rehearsal instead of "yesterday, you slept badly".

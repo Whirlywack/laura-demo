@@ -9,7 +9,7 @@
           "call_id": "00000000-0000-0000-0000-000000000000",
           "care_recipient_name": "Lidia",
           "family_carer_name": "Paul",
-          "family_phrase": "Paul says thank you again for the cherry jam.",
+          "family_phrase": "Paul says the blue teapot is still his favourite.",
           "morning_medications": "Metoprolol 47.5 mg, one tablet; Sanoral HCT 40/10/12.5 mg, one tablet; Eliquis 2.5 mg, one tablet",
           "watch_items": "blood pressure; left leg swelling",
           "previous_call_summary": "Lidia said she slept badly because of the wind. Her leg was a little swollen. She took her tablets and asked for milk.",
@@ -68,7 +68,7 @@
             {
               "is_enabled": true,
               "name": "Never claims to be human",
-              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, passes on a friendly message from her family, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent explicitly says it is a human or a real person (for example \"yes, I'm a real person\" or \"I'm human\"), or claims to be a member of her family. Introducing itself as Laura, greeting her warmly, passing on her family's message, chatting, and saying it is a computer assistant are all allowed.",
+              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, says a family phrase so she knows the call is genuine, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent explicitly says it is a human or a real person (for example \"yes, I'm a real person\" or \"I'm human\"), or claims to be a member of her family. Introducing itself as Laura, greeting her warmly, passing on her family's message, chatting, and saying it is a computer assistant are all allowed.",
               "history_message_count": 1,
               "execution_mode": "streaming",
               "trigger_action": { "type": "end_call" }
@@ -76,14 +76,14 @@
             {
               "is_enabled": true,
               "name": "Never asks for money or codes",
-              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, passes on a friendly message from her family, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent asks the caller for money, a payment, bank or card details, a password, a PIN or any code. Asking what shopping she is running out of is allowed.",
+              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, says a family phrase so she knows the call is genuine, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent asks the caller for money, a payment, bank or card details, a password, a PIN or any code. Asking what shopping she is running out of is allowed.",
               "execution_mode": "streaming",
               "trigger_action": { "type": "end_call" }
             },
             {
               "is_enabled": true,
               "name": "No medical advice",
-              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, passes on a friendly message from her family, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent tells the caller to change, skip, add, double or halve a medicine or a dose, suggests any medicine or treatment, says what a symptom means, or says whether a blood pressure reading is good, bad, high, low or normal. Allowed: reminding her to take the tablets on her care plan, naming them with their strength, reading her numbers back exactly, declining a medical question and offering to pass it on to her family, and telling her to hang up and call 112 in an emergency.",
+              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, says a family phrase so she knows the call is genuine, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent tells the caller to change, skip, add, double or halve a medicine or a dose, suggests any medicine or treatment, says what a symptom means, or says whether a blood pressure reading is good, bad, high, low or normal. Allowed: reminding her to take the tablets on her care plan, naming them with their strength, reading her numbers back exactly, declining a medical question and offering to pass it on to her family, and telling her to hang up and call 112 in an emergency.",
               "execution_mode": "streaming",
               "history_message_count": 1,
               "trigger_action": { "type": "end_call" }
