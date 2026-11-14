@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useState, type CSSProperties } from "react";
 import type { Range } from "../../lib/history";
 
-// The History page's calendar, for finding a date: one month at a time, Monday to Sunday. A day with a Call is a shaded
-// link to its page; the arrows and the month name (a dropdown) move between the months in the range. It is the keyboard
-// and screen-reader path to every day (the timeline's columns are for pointing).
+// The calendar on the History page and on every day's page, for finding a date: one month at a time, Monday to Sunday.
+// A day with a Call is a shaded link to its page; the arrows and the month name (a dropdown) move between the months.
+// It is the keyboard and screen-reader path to every day (the timeline's columns are for pointing). On a day's page it
+// opens on that day's month, with the day (`selected`) marked.
 const nextMonth = (month: string) => {
   const [y, m] = month.split("-").map(Number);
   return new Date(Date.UTC(y, m, 1)).toISOString().slice(0, 7);
@@ -20,10 +21,13 @@ const arrow = (disabled: boolean): CSSProperties => ({
 });
 const dayName = (date: string) => new Date(`${date}T12:00:00Z`).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
 
-export function HistoryCalendar({ first, last, called, range }: { first: string; last: string; called: string[]; range: Range }) {
+export function HistoryCalendar({ first, last, called, range, selected }: { first: string; last: string; called: string[]; range: Range; selected?: string }) {
   const months: string[] = [];
   for (let m = first.slice(0, 7); m <= last.slice(0, 7); m = nextMonth(m)) months.push(m);
-  const [shown, setShown] = useState(months.length - 1);
+  const [shown, setShown] = useState(() => {
+    const at = selected ? months.indexOf(selected.slice(0, 7)) : -1;
+    return at < 0 ? months.length - 1 : at;
+  });
   const month = months[shown];
   const has = new Set(called);
   const [y, m] = month.split("-").map(Number);
@@ -64,7 +68,14 @@ export function HistoryCalendar({ first, last, called, range }: { first: string;
         {Array.from({ length }, (_, i) => {
           const date = `${month}-${String(i + 1).padStart(2, "0")}`;
           return has.has(date) ? (
-            <Link key={date} href={`/demo/history/${date}?range=${range}`} aria-label={dayName(date)} className="laura-button" style={{ ...cell, background: "var(--surface-quiet)", color: "var(--ink)", fontWeight: 700, textDecoration: "none" }}>
+            <Link
+              key={date}
+              href={`/demo/history/${date}?range=${range}`}
+              aria-label={dayName(date)}
+              aria-current={date === selected ? "page" : undefined}
+              className="laura-button"
+              style={{ ...cell, fontWeight: 700, textDecoration: "none", ...(date === selected ? { background: "var(--accent)", color: "var(--text-on-accent)" } : { background: "var(--surface-quiet)", color: "var(--ink)" }) }}
+            >
               {i + 1}
             </Link>
           ) : (

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { day as shortDay } from "../../lib/format";
 import type { HistoryDay, Range } from "../../lib/history";
@@ -141,10 +142,10 @@ export function Timeline({ dates, days, range, only, width: W = 900, label = "Bl
         {dates.map((date, i) => {
           const d = byDate.get(date);
           return d ? (
-            <a key={date} href={`/demo/history/${date}?range=${range}`} tabIndex={-1} className="laura-column">
+            <Link key={date} href={`/demo/history/${date}?range=${range}`} tabIndex={-1} className="laura-column">
               <title>{shortDay(d.at)}</title>
               <rect x={L + i * step} y={0} width={step} height={plotted} />
-            </a>
+            </Link>
           ) : null;
         })}
         <g style={{ pointerEvents: "none" }}>
