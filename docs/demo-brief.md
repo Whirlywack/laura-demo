@@ -11,7 +11,7 @@ Laura phones Lidia, and while they talk a good-looking website updates live with
 Five must-haves:
 
 1. **The loop works end to end.** A button starts a real phone call; each thing Lidia says is written to the database; the dashboard shows it within a second or two, with no reload.
-2. **Laura knows Lidia.** She asks about the left leg from the care plan, and she remembers one thing from the previous call: "You told me yesterday you slept badly. How did you sleep last night?"
+2. **Laura knows Lidia.** She asks about the left leg from the care plan, and she remembers one thing from the previous call: "Yesterday you slept badly... How was last night?"
 3. **Waiting on the line.** Laura names the tablets, says she will wait, stays quiet until Lidia says they are taken, and each Dose shows as taken.
 4. **Errands.** Laura asks whether anything is missing at home, and the items appear on a list.
 5. **Trust and safety.** Laura opens with the family phrase and never gives medical advice. Anything she promises to pass on to Paul appears on the page.
@@ -20,18 +20,18 @@ There is no sign-in. This brief replaces the longer "Laura: build brief" for the
 
 ## The call
 
-The demo is one call: eight beats, about three to four minutes. After each answer Laura replies in one short, warm sentence, and she always speaks before she waits or hangs up. Each tool call except `end_call_summary` becomes one Entry, shown as one card on the dashboard with Lidia's own words.
+The demo is one call: eight beats, about three to four minutes. After each answer Laura replies with one or two warm words, she puts short pauses ("...") between thoughts, and she always speaks before she waits or hangs up. Each tool call except `end_call_summary` becomes one Entry, shown as one card on the dashboard with Lidia's own words.
 
 | Beat | What Laura says | Tool | What appears on the dashboard |
 | --- | --- | --- | --- |
-| 1. Opening | "Hello, is that Lidia?" Only once she confirms: "Hi Lidia, it's Laura. So you know Paul set up this call, here is your family phrase: Paul says the blue teapot is still his favourite." | none | Call status is already live (it turns live when Call now places the call) |
-| 2. How are you | "How are you doing today?" She listens and responds warmly. Then the remembered detail: "You told me yesterday you slept badly. How did you sleep last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep | Today's wellbeing line, and sleep on its own line |
-| 3. The leg | "How is your left leg today?" A kind word about her answer | `log_remark` | A new Remark on the left leg card, above the earlier ones |
-| 4. Blood pressure | "Have you measured your blood pressure this morning? What did it show?" Reads the numbers back. Asked before the tablets, because two of them lower blood pressure | `log_reading` | The Reading, added to the blood pressure history |
-| 5. Tablets, one at a time | "Now it's time for your morning tablets. We'll take them one at a time." Then names one morning Medication from the care plan, by name only (the Strength stays on the page). "Take it now, take your time, I'll wait." Stays quiet until Lidia says it is taken, then the next | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
-| 6. Anything missing | "Is there anything you're running out of at home that Paul could bring?" | `add_errand`, once per item | Each item on the errands list |
-| 7. A message | "Is there anything you'd like me to tell Paul?" | `pass_on`, if she gives a message | A Pass-on in the live feed and in the "For Paul" list |
-| 8. A kind close | Says out loud, in a few words: "Thank you, Lidia. I'll pass everything on to Paul. Take care. Goodbye." Then, without waiting for a reply, she records the summary and hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
+| 1. Opening | "Hello, is that Lidia?" Only once she confirms: "Hi Lidia, it's Laura... Your family phrase... Paul says the blue teapot is still his favourite." | none | Call status is already live (it turns live when Call now places the call) |
+| 2. How are you | "How are you today?" Then the remembered detail: "Yesterday you slept badly... How was last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep | Today's wellbeing line, and sleep on its own line |
+| 3. The leg | "And how is your left leg?" | `log_remark` | A new Remark on the left leg card, above the earlier ones |
+| 4. Blood pressure | "What was your blood pressure this morning?" Reads the numbers back: "150 over 95... noted." Asked before the tablets, because two of them lower blood pressure | `log_reading` | The Reading, added to the blood pressure history |
+| 5. Tablets, one at a time | "Time for your tablets." Then one Medication at a time, by name only (the Strength stays on the page): "First, Concor... Take your time, I'll wait.", "Next, Sanoral HCT... I'll wait.", "Last one, Eliquis... I'll wait." Stays quiet until Lidia says each one is taken | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
+| 6. Anything missing | "Is there anything Paul should bring you?" Then: "Milk and butter... noted." | `add_errand`, once per item | Each item on the errands list |
+| 7. A message | "Any message for Paul?" Then: "I'll tell him." | `pass_on`, if she gives a message | A Pass-on in the live feed and in the "For Paul" list |
+| 8. A kind close | "I'll tell Paul everything... Goodbye, Lidia." Then, without waiting for a reply, she records the summary and hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
 | Any time | Whenever she says she will pass something on to Paul: a medical question, a worry, an emergency | `pass_on` | A Pass-on in the live feed and in the "For Paul" list |
 
 ### The seven tools

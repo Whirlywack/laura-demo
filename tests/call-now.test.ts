@@ -49,7 +49,7 @@ test("Laura is given every per-call variable as a string, with yesterday's summa
     morning_medications: "Concor 5 mg, one tablet; Sanoral HCT 40/10/12.5 mg, one tablet; Eliquis 2.5 mg, one tablet",
     watch_items: "blood pressure; left leg swelling",
     previous_call_summary:
-      "Lidia slept badly; the wind kept rattling the window. Her left leg was swollen by the evening. She took all three tablets on the call.",
+      "Lidia slept badly. Her left leg was swollen by the evening. She took all three tablets on the call.",
     previous_call_when: "yesterday",
   });
   expect((await getDashboardState(readClient())).previousSummary).toBe(variablesSent(sent).previous_call_summary);

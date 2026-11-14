@@ -37,11 +37,11 @@ type Day = {
 const history: Day[] = [
   {
     general: "Not too bad. Tired, but I'm up and dressed.",
-    sleep: "Badly. The wind was rattling the window half the night.",
+    sleep: "Badly. I kept waking up.",
     leg: "Swollen again by evening. I kept it up on the stool.",
     reading: { systolic: 142, diastolic: 85, pulse: 70, quote: "One forty-two over eighty-five. Pulse seventy." },
     // Sleep is the only personal detail, so the detail Laura remembers is predictable.
-    summary: "Lidia slept badly; the wind kept rattling the window. Her left leg was swollen by the evening. She took all three tablets on the call.",
+    summary: "Lidia slept badly. Her left leg was swollen by the evening. She took all three tablets on the call.",
   },
   {
     general: "Quite well, thank you. Ona came round with the newspaper.",
