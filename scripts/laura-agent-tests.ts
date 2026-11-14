@@ -1,6 +1,7 @@
 // Checks Laura's replies with ElevenLabs agent tests: no phone call, roughly 50–150 credits per test run.
 // The tests are defined in agent/tests.json and found in ElevenLabs by exact name, so re-running updates them.
-// Run with `npm run laura-agent:test` (reads .env.local); `npm run laura-agent:test -- 3` runs each test 3 times.
+// Run with `npm run laura-agent:test` (reads .env.local); `npm run laura-agent:test -- 3` runs each test 3 times,
+// and `npm run laura-agent:test -- 5 medical` runs only the tests whose name contains "medical", 5 times each.
 // A test passes when its success condition holds and no guardrail fires, or, for "expect": "blocked",
 // when a guardrail fires. The tests read Laura's words only: they do not hear the audio.
 import { readFileSync } from "node:fs";
@@ -19,7 +20,9 @@ type Run = {
 const apiKey = env("ELEVENLABS_API_KEY");
 const agentId = env("ELEVENLABS_AGENT_ID");
 const repeat = Number(process.argv[2] ?? 1);
-const tests: Test[] = JSON.parse(readFileSync(new URL("../agent/tests.json", import.meta.url), "utf8"));
+const only = process.argv[3];
+const tests: Test[] = (JSON.parse(readFileSync(new URL("../agent/tests.json", import.meta.url), "utf8")) as Test[]).filter((t) => !only || t.name.includes(only));
+if (!tests.length) throw new Error(`No test in agent/tests.json has "${only}" in its name.`);
 
 async function api(method: string, path: string, body?: unknown) {
   const res = await fetch(`https://api.elevenlabs.io${path}`, {
