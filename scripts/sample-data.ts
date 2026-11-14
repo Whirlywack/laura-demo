@@ -38,8 +38,8 @@ const history: Day[] = [
     sleep: "Badly. The wind was rattling the window half the night.",
     leg: "Swollen again by evening. I kept it up on the stool.",
     reading: { systolic: 142, diastolic: 85, pulse: 70, quote: "One forty-two over eighty-five. Pulse seventy." },
-    summary:
-      "Lidia slept badly; the wind kept rattling the window. She was looking forward to Ona coming round for coffee. Her left leg was swollen by the evening. She took all three tablets on the call.",
+    // Sleep is the only personal detail, so the detail Laura remembers is predictable.
+    summary: "Lidia slept badly; the wind kept rattling the window. Her left leg was swollen by the evening. She took all three tablets on the call.",
   },
   {
     general: "Quite well, thank you. Ona came round with the newspaper.",
