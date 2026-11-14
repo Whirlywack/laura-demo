@@ -2,17 +2,19 @@ import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { Card } from "./Card";
 
 // Ported from .claude/skills/laura-design/components/core/QuietRow.jsx.
-// With `onToggle` it is folded until opened; without it, it is always open.
+// With `onToggle` it is folded until opened; without it, it is always open. `action` replaces "Show"/"Hide",
+// for a row whose button goes somewhere else (History's "Open").
 type Props = {
   title: string;
   note?: ReactNode;
   open?: boolean;
   onToggle?: () => void;
+  action?: string;
   children?: ReactNode;
   style?: CSSProperties;
 };
 
-export function QuietRow({ title, note, open = true, onToggle, children, style }: Props) {
+export function QuietRow({ title, note, open = true, onToggle, action, children, style }: Props) {
   return (
     <Card compact style={style}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
@@ -24,10 +26,11 @@ export function QuietRow({ title, note, open = true, onToggle, children, style }
           <button
             type="button"
             onClick={onToggle}
-            aria-expanded={open}
+            aria-expanded={action ? undefined : open}
+            className="laura-button"
             style={{ border: 0, background: "none", padding: "10px 0", minHeight: "var(--hit-min)", font: "var(--text-quote)", fontWeight: 700, color: "var(--accent)", cursor: "pointer", whiteSpace: "nowrap" }}
           >
-            {open ? "Hide" : "Show"}
+            {action ?? (open ? "Hide" : "Show")}
           </button>
         ) : null}
       </div>

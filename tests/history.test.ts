@@ -14,7 +14,7 @@ const daysAgo = (n: number) => calendarDay(Date.now() - n * 24 * 60 * 60 * 1000)
 test("before the first Call there is no Today, and History holds one Call a day for about two weeks, back from yesterday", async () => {
   const state = await getDashboardState(readClient());
 
-  expect(state).toMatchObject({ callStatus: "not called yet", summary: null, feed: [] });
+  expect(state).toMatchObject({ callStatus: "not called yet", todayAt: null, summary: null, feed: [] });
   expect(state.history.map((c) => calendarDay(c.at))).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(daysAgo));
 });
 
@@ -29,7 +29,7 @@ test("every sample Call in History has her Wellbeing, sleep and a status for eac
   expect(history.filter((c) => c.reading).length).toBeGreaterThanOrEqual(10);
 });
 
-test("once the next Call starts, Today's Call moves to the top of History with its Wellbeing, sleep, Reading and Doses", async () => {
+test("once the next Call starts, Today's Call moves to the top of History with its Wellbeing, sleep, Reading, Doses, left leg and Errands", async () => {
   const call_id = await startCall();
   await sendTool("log_wellbeing", { call_id, quote: "I'm all right. A bit tired, but all right.", aspect: "general" });
   await sendTool("log_wellbeing", { call_id, quote: "I woke at four and couldn't get back off.", aspect: "sleep" });
@@ -37,6 +37,9 @@ test("once the next Call starts, Today's Call moves to the top of History with i
   await sendTool("record_dose", { call_id, quote: "Found it. Taken.", medication: "eliquis", status: "taken on call" });
   await sendTool("record_dose", { call_id, quote: "I took that one with breakfast.", medication: "Concor", status: "says taken earlier" });
   await sendTool("log_reading", { call_id, quote: "138 over 82, pulse 71.", systolic: 138, diastolic: 82, pulse: 71 });
+  await sendTool("log_remark", { call_id, quote: "A little swollen by the evening." });
+  await sendTool("add_errand", { call_id, quote: "I'm nearly out of tea.", item: "Tea" });
+  await sendTool("add_errand", { call_id, quote: "And bread, a small loaf.", item: "Bread" });
 
   await startCall();
 
@@ -51,6 +54,8 @@ test("once the next Call starts, Today's Call moves to the top of History with i
       { name: "Sanoral HCT", strength: "40/10/12.5 mg, one tablet", timeOfDay: "morning", status: "not confirmed", quote: null },
       { name: "Eliquis", strength: "2.5 mg, one tablet", timeOfDay: "morning", status: "taken on call", quote: "Found it. Taken." },
     ],
+    remark: { quote: "A little swollen by the evening.", at: expect.any(String) },
+    errands: ["Tea", "Bread"],
   });
   expect(calendarDay(state.history[0].at)).toBe(daysAgo(0));
   expect(calendarDay(state.history[1].at)).toBe(daysAgo(1));
@@ -67,7 +72,11 @@ test("before the first Call, the Left leg and Blood pressure areas hold the earl
 });
 
 test("re-running the script removes every Call and Entry, rehearsals included, and recreates the same data", async () => {
-  const withoutIds = ({ errands, ...state }: DashboardState) => ({ ...state, errands: errands.map(({ id: _, ...e }) => e) });
+  const withoutIds = ({ errands, lastCall, ...state }: DashboardState) => ({
+    ...state,
+    errands: errands.map(({ id: _, ...e }) => e),
+    lastCall: lastCall && { ...lastCall, feed: lastCall.feed.map(({ id: _, ...c }) => c) },
+  });
   const first = withoutIds(await getDashboardState(readClient()));
   const call_id = await startCall();
   await sendTool("log_remark", { call_id, quote: "Rehearsal: the leg is fine." });
@@ -92,10 +101,20 @@ test("during Today's Call the last-call summary is still the one before it, and 
   expect((await getDashboardState(readClient())).previousSummary).toBe("Lidia slept well for once. She is expecting Ona for coffee.");
 });
 
+// Before Today's Call the feed shows the last call's items, so the page is not empty in the morning.
+test("before the first Call, the last call's feed is yesterday's Entries, newest first", async () => {
+  const { lastCall } = await getDashboardState(readClient());
+
+  expect(calendarDay(lastCall!.at)).toBe(daysAgo(1));
+  expect(lastCall!.feed.map((c) => c.title)).toEqual(expect.arrayContaining(["Today", "Sleep", "Left leg", "Concor · Taken on call"]));
+  expect(lastCall!.feed.map((c) => c.at)).toEqual([...lastCall!.feed.map((c) => c.at)].sort().reverse());
+});
+
 test("Today's Call is not in History while it is Today", async () => {
   await startCall();
 
   const state = await getDashboardState(readClient());
   expect(state.callStatus).toBe("live");
   expect(state.history.map((c) => calendarDay(c.at))).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(daysAgo));
+  expect(calendarDay(state.todayAt!)).toBe(daysAgo(0));
 });

@@ -27,16 +27,21 @@ export type Errand = { id: string; item: string; quote: string; at: string; done
 /** Something Laura promised to pass on to the Family carer, in her words. */
 export type PassOn = { quote: string; at: string };
 
-/** A Call before Today, as the History shows it: when it started, her Wellbeing, her Reading and the Doses. */
+/** A Call before Today, as the History shows it: when it started, her Wellbeing, her Reading, the Doses, her left leg
+ * and what she asked for (Errand items, in the order she named them). */
 export type HistoryCall = {
   at: string;
   wellbeing: { general: string | null; sleep: string | null };
   reading: Reading | null;
   doses: Dose[];
+  remark: Remark | null;
+  errands: string[];
 };
 
 export type DashboardState = {
   callStatus: CallStatus;
+  /** When Today's Call started; null before the first Call. */
+  todayAt: string | null;
   /** Laura's summary of Today's Call, in her words. Recorded as she closes the Call; null until then. */
   summary: string | null;
   /** Today's Wellbeing in her own words: the latest Quote for each aspect. */
@@ -58,6 +63,8 @@ export type DashboardState = {
   previousSummary: string | null;
   /** Every Call before Today, newest first. */
   history: HistoryCall[];
+  /** The latest Call before Today and its Entries as feed cards, newest first: the feed before Today's Call starts. */
+  lastCall: { at: string; feed: FeedCard[] } | null;
   /** Doses taken on call, out of every Dose (Medication × Call) on every Call in the last 14 days, Today included. */
   tabletCount: { confirmed: number; total: number };
 };
@@ -89,6 +96,8 @@ function feedTitle(entry: Entry) {
   if (entry.kind === "pass_on") return "For Paul";
   return entry.kind;
 }
+
+const feedCard = (e: Entry): FeedCard => ({ id: e.id, title: feedTitle(e), quote: e.quote, at: e.created_at });
 
 // Her Wellbeing on one Call: the latest Quote for each aspect. Entries are newest first.
 function wellbeingOn(entries: Entry[]) {
@@ -159,6 +168,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
 
   return {
     callStatus: today?.status ?? "not called yet",
+    todayAt: today?.started_at ?? null,
     summary: today?.summary ?? null,
     wellbeing: wellbeingOn(entries),
     doses: dosesOn(entries, medications),
@@ -168,13 +178,22 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
       .filter((e) => e.kind === "errand")
       .map((e) => ({ id: e.id, item: e.details.item, quote: e.quote, at: e.created_at, done: e.done_at !== null })),
     passOns: entries.filter((e) => e.kind === "pass_on").map((e) => ({ quote: e.quote, at: e.created_at })),
-    feed: entries.map((e) => ({ id: e.id, title: feedTitle(e), quote: e.quote, at: e.created_at })),
+    feed: entries.map(feedCard),
     carePlan: { medications, watchItems: plan.data.watch_items, familyPhrase: plan.data.family_phrase },
     previousSummary: previous?.summary ?? null,
     history: history.map((c) => {
       const latestReading = c.entries.find((e) => e.kind === "reading");
-      return { at: c.started_at, wellbeing: wellbeingOn(c.entries), reading: latestReading ? reading(latestReading) : null, doses: dosesOn(c.entries, medications) };
+      const latestRemark = c.entries.find((e) => e.kind === "remark");
+      return {
+        at: c.started_at,
+        wellbeing: wellbeingOn(c.entries),
+        reading: latestReading ? reading(latestReading) : null,
+        doses: dosesOn(c.entries, medications),
+        remark: latestRemark ? { quote: latestRemark.quote, at: latestRemark.created_at } : null,
+        errands: c.entries.filter((e) => e.kind === "errand").reverse().map((e) => e.details.item),
+      };
     }),
+    lastCall: history[0] ? { at: history[0].started_at, feed: history[0].entries.map(feedCard) } : null,
     tabletCount: { confirmed: recentDoses.filter((d) => d.status === "taken on call").length, total: recentDoses.length },
   };
 }
