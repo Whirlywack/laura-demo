@@ -104,6 +104,9 @@ a:hover { color: var(--ink); }
 /* The tick box input is hidden behind its drawn box, so the drawn box shows keyboard focus. */
 .laura-check:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 3px; }
 .laura-button:focus-visible, .laura-input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+/* A day's column on the History timeline, shaded while the pointer is on it. */
+.laura-column rect { fill: transparent; }
+.laura-column:hover rect { fill: var(--rule); }
 @keyframes laura-arrive {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: none; }

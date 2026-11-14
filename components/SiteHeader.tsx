@@ -2,9 +2,16 @@ import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
 // The header the home page and the dashboard share, from the design system's home page: the "laura" wordmark
-// (back to the home page), a menu (the home page's sections unless the page passes its own, as the dashboard's
-// tabs), and whatever the page puts on the right (children).
+// (back to the home page), a menu (the home page's sections unless the page passes its own, as the dashboard and
+// the History pages do), and whatever the page puts on the right (children).
 const link: CSSProperties = { color: "inherit", textDecoration: "none", padding: "10px 0" };
+
+/** A menu item on the dashboard and History pages, underlined when it is the page you are on. */
+export const menuItem = (active: boolean): CSSProperties => ({
+  display: "inline-flex", alignItems: "center", boxSizing: "border-box", minHeight: "var(--hit-min)", padding: "8px 0", border: 0,
+  borderBottom: `3px solid ${active ? "var(--ink)" : "transparent"}`, background: "none", font: "inherit", fontWeight: active ? 700 : 400,
+  color: "inherit", textDecoration: "none", cursor: "pointer",
+});
 
 export function SiteHeader({ menu, children }: { menu?: ReactNode; children: ReactNode }) {
   return (

@@ -82,7 +82,7 @@ You need Node 24, the Supabase CLI with Docker for the tests, and an ElevenLabs 
 npm install
 cp .env.example .env.local      # fill in the values, including CALL_NOW_PASSWORD
 supabase db push                # create the tables in your Supabase project
-npm run sample-data             # Lidia's care plan and two weeks of History
+npm run sample-data             # Lidia's care plan and a year of History
 npm run laura-agent             # create Laura in ElevenLabs and attach the phone number
 npm run dev
 ```

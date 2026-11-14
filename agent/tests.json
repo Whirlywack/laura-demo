@@ -130,5 +130,15 @@
       ["agent", "140 over 80... noted. Time for your tablets... First, Concor... Take your time, I'll wait."],
       ["user", "Hello? Are you still there?"]
     ]
+  },
+  {
+    "name": "Laura call: how she is is recorded with a rating",
+    "success_condition": "The agent calls log_wellbeing with aspect general, her words as the quote, and rating good.",
+    "chat_history": [
+      ["agent", "Hello, is that Lidia?"],
+      ["user", "Yes, speaking."],
+      ["agent", "Hi Lidia, it's Laura... Your family phrase... Paul says the blue teapot is still his favourite... How are you today?"],
+      ["user", "Good, thank you. The sun is out, so I sat by the window."]
+    ]
   }
 ]

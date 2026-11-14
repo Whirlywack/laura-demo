@@ -35,7 +35,8 @@ test("every link inside the site goes to a page that exists, and every #section 
   );
   const links = matches([...filesIn("app", /\.tsx$/), ...filesIn("components", /\.tsx$/)], /href=\{?"(\/[^"]*)"/g);
   const broken = [...links].filter((link) => {
-    const [path, id] = link.split("#");
+    const [address, id] = link.split("#");
+    const path = address.split("?")[0];
     const page = pages.get(path || "/");
     return !page || (id !== undefined && !page.includes(`id="${id}"`));
   });
