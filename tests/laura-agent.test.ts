@@ -54,7 +54,7 @@ test("the language model is told the allowed values for aspect and Dose status",
   expect(field("record_dose", "status").enum).toEqual(["taken on call", "says taken earlier", "not taken"]);
 });
 
-test("the voice, language model and turn settings are the spec's", () => {
+test("Laura's voice, language model, language and turn settings", () => {
   const { name, conversation_config: config } = lauraAgent({ toolIds: ["tool-1", "tool-2"] });
 
   expect(name).toBe("Laura");
@@ -63,7 +63,11 @@ test("the voice, language model and turn settings are the spec's", () => {
   expect(config.agent.prompt.llm).toBe("claude-sonnet-5-5");
   expect(config.agent.prompt.tool_ids).toEqual(["tool-1", "tool-2"]);
   expect(Object.keys(config.agent.prompt.built_in_tools).sort()).toEqual(["end_call", "skip_turn"]);
-  expect(config.turn).toMatchObject({ turn_timeout: 30, silence_end_call_timeout: -1 });
+  expect(config.agent.language).toBe("en");
+  // She waits on the line for as long as Lidia needs (must-have 3): skip_turn never times out, silence never ends
+  // the call, and turn-taking is patient.
+  expect(config.agent.prompt.built_in_tools.skip_turn.params.wait_timeout_secs).toBe(-1);
+  expect(config.turn).toMatchObject({ turn_timeout: 30, silence_end_call_timeout: -1, turn_eagerness: "patient" });
   expect(config.conversation.max_duration_seconds).toBe(15 * 60);
 });
 
@@ -120,8 +124,14 @@ test("guardrails catch manipulation, and never block what a normal call says", (
     "Never asks for money or codes",
     "No medical advice",
   ]);
+  // A firing guardrail hangs up, so nothing she must not say is spoken. The judges know nothing about Laura, so each
+  // custom prompt starts by saying she is an AI and judges only what has been said so far (docs/elevenlabs.md).
+  expect(guardrails.content.trigger_action).toEqual({ type: "end_call" });
   for (const rule of rules) {
     expect(rule.is_enabled).toBe(true);
+    expect(rule.trigger_action).toEqual({ type: "end_call" });
+    expect(rule.prompt).toMatch(/^Context: the agent is Laura, an AI computer assistant, not a person\./);
+    expect(rule.prompt).toContain("Judge only the words the agent has said so far");
     expect(rule.prompt.length).toBeLessThanOrEqual(10_000);
   }
 });

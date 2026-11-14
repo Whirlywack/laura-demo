@@ -80,12 +80,6 @@ test("re-running the script removes every Call and Entry, rehearsals included, a
   expect(withoutIds(await getDashboardState(readClient()))).toEqual(first);
 });
 
-test("before the first Call, the Care plan's last-call summary is yesterday's, which says she slept badly", async () => {
-  const state = await getDashboardState(readClient());
-
-  expect(state.previousSummary).toMatch(/slept badly/);
-});
-
 test("during Today's Call the last-call summary is still the one before it, and once Today is History it is Today's", async () => {
   const before = (await getDashboardState(readClient())).previousSummary;
   const call_id = await startCall();

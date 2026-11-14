@@ -4,7 +4,7 @@ import { configDefaults, defineConfig } from "vitest/config";
 // - "unit" needs nothing running: Laura's definition and checks over the repo's files (`npm run test:unit`).
 // - "db" runs against the local Supabase (`supabase start`), never the hosted one. Its address and keys come from
 //   tests/local-supabase.ts, which fails within 10 seconds when Supabase or Docker is not answering.
-const unit = ["tests/laura-agent.test.ts", "tests/repo.test.ts"];
+const unit = ["tests/laura-agent.test.ts", "tests/repo.test.ts", "tests/scripts.test.ts"];
 
 export default defineConfig({
   test: {
