@@ -1,3 +1,4 @@
+import { calendarDay, previousCall } from "../../../lib/dashboard";
 import { env } from "../../../lib/env";
 import { fromAnotherSite, refuseAnotherSite } from "../../../lib/same-origin";
 import { writeClient } from "../../../lib/supabase";
@@ -5,9 +6,6 @@ import { writeClient } from "../../../lib/supabase";
 // The database has no field for their names; the page says "Povilas" too.
 const CARE_RECIPIENT = "Lidia";
 const FAMILY_CARER = "Povilas";
-
-// The date on her calendar in Lithuania, e.g. "2026-11-14".
-const calendarDay = (at: string | number) => new Date(at).toLocaleDateString("en-CA", { timeZone: "Europe/Vilnius" });
 
 // How long ago a Call was, in the words Laura says: "earlier today", "yesterday", "3 days ago".
 function howLongAgo(at: string) {
@@ -31,14 +29,9 @@ export async function POST(request: Request) {
   const outbound = { agent_id: env("ELEVENLABS_AGENT_ID"), agent_phone_number_id: env("ELEVENLABS_PHONE_NUMBER_ID"), to_number: env("LIDIA_PHONE_NUMBER") };
 
   const db = writeClient();
-  const [plan, previous] = await Promise.all([
-    db.from("care_plan").select("family_phrase, medications, watch_items").single(),
-    // The latest Call with a summary: one nobody answered has none, and Laura should still remember the one before.
-    // The Care plan's "From the last call:" uses the same rule.
-    db.from("calls").select("summary, started_at").not("summary", "is", null).order("started_at", { ascending: false }).limit(1).maybeSingle(),
-  ]);
+  // Before the new Call starts, every Call is earlier, so none is left out as Today.
+  const [plan, previous] = await Promise.all([db.from("care_plan").select("family_phrase, medications, watch_items").single(), previousCall(db)]);
   if (plan.error) throw new Error(`Could not read the care plan: ${plan.error.message}`);
-  if (previous.error) throw new Error(`Could not read the previous call: ${previous.error.message}`);
 
   // One Call a minute at most, so a double click or a stranger cannot ring her phone again and again.
   // The database checks and starts the Call in one step (start_call), so two requests at once cannot both get through.
@@ -61,8 +54,8 @@ export async function POST(request: Request) {
       .map((m: Medication) => `${m.name} ${m.strength}`)
       .join("; "),
     watch_items: plan.data.watch_items.join("; "),
-    previous_call_summary: previous.data?.summary ?? "none",
-    previous_call_when: previous.data ? howLongAgo(previous.data.started_at) : "none",
+    previous_call_summary: previous?.summary ?? "none",
+    previous_call_when: previous ? howLongAgo(previous.started_at) : "none",
   };
 
   const response = await fetch(`${apiUrl}/v1/convai/sip-trunk/outbound-call`, {

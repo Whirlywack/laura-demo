@@ -100,6 +100,22 @@ function dosesOn(entries: Entry[], medications: Medication[]): Dose[] {
   });
 }
 
+/** The date on her calendar in Lithuania, e.g. "2026-11-14". Dates compare as strings. */
+export const calendarDay = (at: string | number) => new Date(at).toLocaleDateString("en-CA", { timeZone: "Europe/Vilnius" });
+
+/**
+ * The Call Laura remembers: the latest Call with a summary, other than Today when its id is given.
+ * A Call nobody answered has no summary, so Laura still remembers the one before it.
+ * Call now gives Laura this summary, and the Care plan shows it as "From the last call:".
+ */
+export async function previousCall(db: SupabaseClient, today?: string): Promise<{ summary: string; started_at: string } | null> {
+  let query = db.from("calls").select("summary, started_at").not("summary", "is", null);
+  if (today) query = query.neq("id", today);
+  const { data, error } = await query.order("started_at", { ascending: false }).limit(1).maybeSingle();
+  if (error) throw new Error(`Could not read the previous call: ${error.message}`);
+  return data;
+}
+
 // The one function that derives everything the page shows from the three tables.
 export async function getDashboardState(db: SupabaseClient): Promise<DashboardState> {
   const [plan, calls] = await Promise.all([
@@ -118,6 +134,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
   // Today is the latest Call (ADR-0001). The sample History is never Today, so before the first Call there is none.
   const today = calls.data.find((c) => !c.sample) ?? null;
   const history = calls.data.filter((c) => c !== today);
+  const previous = await previousCall(db, today?.id);
   const entries = today?.entries ?? [];
   const everyEntry = calls.data.flatMap((c) => c.entries).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
   const medications: Medication[] = plan.data.medications.map((m: { name: string; strength: string; time_of_day: string }) => ({
@@ -132,8 +149,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     return { today: latest ? shape(latest) : null, earlier: all.filter((e) => e !== latest).map(shape) };
   };
 
-  // The last 14 days on her calendar in Lithuania: today and the 13 days before it. Dates compare as "2026-11-14".
-  const calendarDay = (at: string | number) => new Date(at).toLocaleDateString("en-CA", { timeZone: "Europe/Vilnius" });
+  // The last 14 days on her calendar in Lithuania: today and the 13 days before it.
   const firstDay = calendarDay(Date.now() - 13 * 24 * 60 * 60 * 1000);
   const recentDoses = calls.data.filter((c) => calendarDay(c.started_at) >= firstDay).flatMap((c) => dosesOn(c.entries, medications));
 
@@ -150,8 +166,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     passOns: entries.filter((e) => e.kind === "pass_on").map((e) => ({ quote: e.quote, at: e.created_at })),
     feed: entries.map((e) => ({ id: e.id, title: feedTitle(e), quote: e.quote, at: e.created_at })),
     carePlan: { medications, watchItems: plan.data.watch_items, familyPhrase: plan.data.family_phrase },
-    // The latest earlier Call with a summary, as Call now gives Laura: a Call nobody answered has none.
-    previousSummary: history.find((c) => c.summary)?.summary ?? null,
+    previousSummary: previous?.summary ?? null,
     history: history.map((c) => {
       const latestReading = c.entries.find((e) => e.kind === "reading");
       return { at: c.started_at, wellbeing: wellbeingOn(c.entries), reading: latestReading ? reading(latestReading) : null, doses: dosesOn(c.entries, medications) };
