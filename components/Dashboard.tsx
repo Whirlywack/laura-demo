@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState, type CSSProperties } from "react";
+import Link from "next/link";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DOSE_STATUSES, calendarDay, type CallStatus, type DashboardState, type Dose } from "../lib/dashboard";
 import { day, sentence, time } from "../lib/format";
 import { AnswerCard } from "./AnswerCard";
@@ -9,17 +10,17 @@ import { Card } from "./Card";
 import { DatedList } from "./DatedList";
 import { DoseBars } from "./DoseBars";
 import { Errands } from "./Errands";
-import { HistoryView } from "./HistoryView";
 import { LiveFeed } from "./LiveFeed";
 import { KeyValueRows, QuietRow } from "./QuietRow";
 import { QuoteFact } from "./QuoteFact";
-import { SiteHeader } from "./SiteHeader";
+import { menuItem, SiteHeader } from "./SiteHeader";
 import { StatLine } from "./StatLine";
 import { StatusLabel } from "./StatusLabel";
 
 // The dashboard at /demo, from .claude/skills/laura-design/ui_kits/dashboard/Dashboard.jsx: the three answer cards on
-// top, then Today or History on the left and the feed on the right, on every tab. The server reads the state
-// (app/demo/page.tsx) and live updates refresh it; which tab is open stays here.
+// top, then Today on the left and the feed on the right. The server reads the state (app/demo/page.tsx) and live updates
+// refresh it. History is a page of its own (app/demo/history); `openPlan` (from ?plan=1, its menu's Care plan) opens the
+// Care plan.
 
 // Today's Doses in words, under the bars that show them: e.g. "2 taken on call, 1 says taken earlier."
 const dosesInWords = (doses: Dose[], callStatus: CallStatus) => {
@@ -37,34 +38,18 @@ const line: CSSProperties = { marginTop: 4, color: "var(--text-secondary)" };
 const detailCard: CSSProperties = { flex: "1 1 260px", minWidth: 0, padding: "28px 30px 26px", display: "flex", flexDirection: "column" };
 const strongQuote: CSSProperties = { marginTop: 14, font: "var(--text-quote)", fontWeight: 700 };
 
-export function Dashboard({ state, now }: { state: DashboardState; now: string }) {
-  const { callStatus, todayAt, summary, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan, previousSummary, history, lastCall, tabletCount } = state;
-  const [tab, setTab] = useState<"today" | "history">("today");
-  const [openDay, setOpenDay] = useState<number | null>(null);
-  const [planOpen, setPlanOpen] = useState(false);
+export function Dashboard({ state, now, openPlan = false }: { state: DashboardState; now: string; openPlan?: boolean }) {
+  const { callStatus, summary, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan, previousSummary, lastCall, tabletCount } = state;
+  const [planOpen, setPlanOpen] = useState(openPlan);
   const plan = useRef<HTMLDivElement>(null);
 
-  const showHistory = () => {
-    setTab("history");
-    setOpenDay(null);
-  };
   const showCarePlan = () => {
-    setTab("today");
     setPlanOpen(true);
     requestAnimationFrame(() => plan.current?.scrollIntoView({ block: "center" }));
   };
-
-  const menuItem = (label: string, active: boolean, onClick: () => void) => (
-    <button
-      type="button"
-      className="laura-button"
-      aria-current={active ? "page" : undefined}
-      onClick={onClick}
-      style={{ border: 0, borderBottom: `3px solid ${active ? "var(--ink)" : "transparent"}`, background: "none", padding: "8px 0", minHeight: "var(--hit-min)", font: "inherit", fontWeight: active ? 700 : 400, color: "inherit", cursor: "pointer" }}
-    >
-      {label}
-    </button>
-  );
+  useEffect(() => {
+    if (openPlan) plan.current?.scrollIntoView({ block: "center" });
+  }, [openPlan]);
 
   const reading = bloodPressure.today;
   const sevenDaysAgo = calendarDay(Date.parse(now) - 6 * 24 * 60 * 60 * 1000);
@@ -77,9 +62,9 @@ export function Dashboard({ state, now }: { state: DashboardState; now: string }
       <SiteHeader
         menu={
           <>
-            {menuItem("Today", tab === "today", () => setTab("today"))}
-            {menuItem("Care plan", false, showCarePlan)}
-            {menuItem("History", tab === "history", showHistory)}
+            <Link href="/demo" aria-current="page" style={menuItem(true)}>Today</Link>
+            <button type="button" className="laura-button" onClick={showCarePlan} style={menuItem(false)}>Care plan</button>
+            <Link href="/demo/history" style={menuItem(false)}>History</Link>
           </>
         }
       >
@@ -126,76 +111,63 @@ export function Dashboard({ state, now }: { state: DashboardState; now: string }
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
         <div style={{ flex: "3 1 640px", minWidth: 0 }}>
-          {tab === "history" ? (
-            <HistoryView
-              calls={history}
-              today={{ status: callStatus, at: todayAt, now }}
-              tabletCount={tabletCount}
-              open={openDay}
-              onOpen={setOpenDay}
-              onToday={() => setTab("today")}
-            />
-          ) : (
-            <>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", alignItems: "stretch" }}>
-                <Card style={detailCard}>
-                  <div style={title}>Tablets</div>
-                  <div style={line}>Laura waits while she takes them.</div>
-                  <div style={{ marginTop: 14 }}>
-                    {doses.map((d) => (
-                      <QuoteFact key={d.name} fact={d.name} detail={d.strength} quote={d.quote} muted={d.status === "not confirmed"} status={<StatusLabel status={d.status} />} />
-                    ))}
-                  </div>
-                  <div style={{ flex: 1, minHeight: 20 }} />
-                  <div style={{ paddingTop: 12, borderTop: "1px solid var(--rule)" }}>
-                    {tabletCount.total ? (
-                      <StatLine label="Confirmed on the call:" value={`${tabletCount.confirmed} of ${tabletCount.total}`} suffix="in the last two weeks" />
-                    ) : (
-                      <span style={{ font: "var(--text-quote)", color: "var(--text-secondary)" }}>No calls in the last two weeks</span>
-                    )}
-                  </div>
-                </Card>
-                {/* Shown as she read it out, in plain ink: never coloured, ranked or commented on. */}
-                <Card tone="quiet" style={detailCard}>
-                  <div style={title}>Blood pressure</div>
-                  <div style={line}>{reading ? "She read it out on the call." : callStatus === "done" ? "Not read on this call." : "Not read yet today."}</div>
-                  {reading ? <div style={{ ...strongQuote, fontWeight: 400 }}>“{reading.quote}”</div> : null}
-                  <DatedList
-                    style={{ marginTop: 14 }}
-                    items={readings.map((r) => ({ date: "strong" in r ? "Today" : day(r.at), value: `${r.systolic}/${r.diastolic}`, strong: "strong" in r }))}
-                    limit={Math.max(1, readings.filter((r) => calendarDay(r.at) >= sevenDaysAgo).length)}
-                    onShowAll={showHistory}
-                  />
-                </Card>
-                <Card style={detailCard}>
-                  <div style={title}>Left leg</div>
-                  <div style={line}>{leftLeg.today ? "In her words today." : callStatus === "done" ? "Not asked on this call." : "Not asked yet today."}</div>
-                  {leftLeg.today ? <div style={strongQuote}>“{leftLeg.today.quote}”</div> : null}
-                  <DatedList style={{ marginTop: 14 }} items={leftLeg.earlier.map((r) => ({ date: day(r.at), quote: r.quote }))} onShowAll={showHistory} />
-                </Card>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", alignItems: "stretch" }}>
+            <Card style={detailCard}>
+              <div style={title}>Tablets</div>
+              <div style={line}>Laura waits while she takes them.</div>
+              <div style={{ marginTop: 14 }}>
+                {doses.map((d) => (
+                  <QuoteFact key={d.name} fact={d.name} detail={d.strength} quote={d.quote} muted={d.status === "not confirmed"} status={<StatusLabel status={d.status} />} />
+                ))}
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
-                <div ref={plan} style={{ flex: "1 1 360px", minWidth: 0 }}>
-                  <QuietRow title="Care plan" note="What Laura knows about her · read-only" open={planOpen} onToggle={() => setPlanOpen((o) => !o)}>
-                    <KeyValueRows
-                      rows={[
-                        ...carePlan.medications.map((m) => ({ label: m.name, value: `${m.strength} · ${m.timeOfDay}` })),
-                        { label: "Asks about", value: sentence(carePlan.watchItems.join(", ")) },
-                        { label: "Family phrase", value: carePlan.familyPhrase },
-                      ]}
-                    />
-                    {/* Where Laura's remembered detail comes from. Her own words, so no quotation marks. */}
-                    {previousSummary ? (
-                      <div style={{ padding: "11px 0", borderTop: "1px solid var(--rule)" }}>
-                        <span style={{ color: "var(--text-primary)" }}>From the last call:</span> {previousSummary}
-                      </div>
-                    ) : null}
-                  </QuietRow>
-                </div>
-                <QuietRow style={{ flex: "1 1 360px", minWidth: 0 }} title="History" note="Every call before today" open={false} onToggle={showHistory} action="Open" />
+              <div style={{ flex: 1, minHeight: 20 }} />
+              <div style={{ paddingTop: 12, borderTop: "1px solid var(--rule)" }}>
+                {tabletCount.total ? (
+                  <StatLine label="Confirmed on the call:" value={`${tabletCount.confirmed} of ${tabletCount.total}`} suffix="in the last two weeks" />
+                ) : (
+                  <span style={{ font: "var(--text-quote)", color: "var(--text-secondary)" }}>No calls in the last two weeks</span>
+                )}
               </div>
-            </>
-          )}
+            </Card>
+            {/* Shown as she read it out, in plain ink: never coloured, ranked or commented on. */}
+            <Card tone="quiet" style={detailCard}>
+              <div style={title}>Blood pressure</div>
+              <div style={line}>{reading ? "She read it out on the call." : callStatus === "done" ? "Not read on this call." : "Not read yet today."}</div>
+              {reading ? <div style={{ ...strongQuote, fontWeight: 400 }}>“{reading.quote}”</div> : null}
+              <DatedList
+                style={{ marginTop: 14 }}
+                items={readings.map((r) => ({ date: "strong" in r ? "Today" : day(r.at), value: `${r.systolic}/${r.diastolic}`, strong: "strong" in r }))}
+                limit={Math.max(1, readings.filter((r) => calendarDay(r.at) >= sevenDaysAgo).length)}
+                moreHref="/demo/history"
+              />
+            </Card>
+            <Card style={detailCard}>
+              <div style={title}>Left leg</div>
+              <div style={line}>{leftLeg.today ? "In her words today." : callStatus === "done" ? "Not asked on this call." : "Not asked yet today."}</div>
+              {leftLeg.today ? <div style={strongQuote}>“{leftLeg.today.quote}”</div> : null}
+              <DatedList style={{ marginTop: 14 }} items={leftLeg.earlier.map((r) => ({ date: day(r.at), quote: r.quote }))} moreHref="/demo/history" />
+            </Card>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
+            <div ref={plan} style={{ flex: "1 1 360px", minWidth: 0 }}>
+              <QuietRow title="Care plan" note="What Laura knows about her · read-only" open={planOpen} onToggle={() => setPlanOpen((o) => !o)}>
+                <KeyValueRows
+                  rows={[
+                    ...carePlan.medications.map((m) => ({ label: m.name, value: `${m.strength} · ${m.timeOfDay}` })),
+                    { label: "Asks about", value: sentence(carePlan.watchItems.join(", ")) },
+                    { label: "Family phrase", value: carePlan.familyPhrase },
+                  ]}
+                />
+                {/* Where Laura's remembered detail comes from. Her own words, so no quotation marks. */}
+                {previousSummary ? (
+                  <div style={{ padding: "11px 0", borderTop: "1px solid var(--rule)" }}>
+                    <span style={{ color: "var(--text-primary)" }}>From the last call:</span> {previousSummary}
+                  </div>
+                ) : null}
+              </QuietRow>
+            </div>
+            <QuietRow style={{ flex: "1 1 360px", minWidth: 0 }} title="History" note="Every call, a month to a year at a time" href="/demo/history" action="Open" />
+          </div>
         </div>
 
         <Card tone="quiet" style={{ flex: "1 1 340px", minWidth: 0, padding: "32px 32px 28px" }}>

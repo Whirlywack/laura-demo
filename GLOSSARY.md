@@ -43,7 +43,7 @@ The latest Call and everything recorded on it, whatever the calendar date.
 _Avoid_: Today's date
 
 **History**:
-Every Call before the latest one.
+Every Call before the latest one. The History page shows every Call that recorded something, Today's included, one per date on her calendar.
 
 ## What Laura records
 

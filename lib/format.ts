@@ -10,6 +10,9 @@ export const day = (at: string) => new Date(at).toLocaleDateString("en-GB", { we
 /** "Thursday 12 November" */
 export const fullDate = (at: string) => new Date(at).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", ...where });
 
+/** "Thursday 12 November 2026" */
+export const longDate = (at: string) => new Date(at).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", ...where });
+
 /** "Thursday" */
 export const weekday = (at: string) => new Date(at).toLocaleDateString("en-GB", { weekday: "long", ...where });
 

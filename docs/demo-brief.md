@@ -79,20 +79,22 @@ Passed in as per-call variables: the `call_id`, Lidia's name, Paul's name, the f
 
 ## The website
 
-Two pages, no sign-in: the home page at `/`, and the dashboard at `/demo`, which looks good enough to present and updates live during the call. Both share one header; on the dashboard its menu is Today, Care plan and History. "Today" means the latest Call, not the calendar date (ADR-0001).
+No sign-in: the home page at `/`, the dashboard at `/demo`, which looks good enough to present and updates live during the call, and the History page at `/demo/history` with a page per day. They share one header; on the dashboard and History pages its menu is Today, Care plan and History. "Today" means the latest Call, not the calendar date (ADR-0001).
 
-The dashboard has the three answer cards on top on every tab, the live feed in a column on the right on every tab, and on the left either Today or History. Nothing opens over the feed: every "See all" goes to the History tab.
+The dashboard has the three answer cards on top, Today's cards on the left and the live feed in a column on the right. It reads only the last 14 days; every "See all" goes to the History page.
 
 | Area | Shows |
 | --- | --- |
 | Today | How Lidia is, in her own words, with sleep on its own line. Call status: not called yet, live, done. The Call summary once done. A "For Paul" list of Pass-ons |
 | Tablets card | "Laura waits while she takes them." Each Medication with its Strength and its Dose status on Today's Call: not confirmed, taken on call, says taken earlier, not taken. The two-week count at the bottom |
-| Blood pressure card | "Not read yet today.", or "She read it out on the call." with her words. The Readings of the last 7 days as a dated list, today's first and in bold; "See all N" opens History. Plain colours, no chart |
-| Left leg card | "Not asked yet today.", or "In her words today." with her Remark in bold. The last 3 earlier Remarks; "See all N" opens History |
-| Errands | Every open Errand from any Call, each with a tick box. Ticked ones stay visible as done until the sample data is reset |
+| Blood pressure card | "Not read yet today.", or "She read it out on the call." with her words. The Readings of the last 7 days as a dated list, today's first and in bold; "See all in History" opens the History page. Plain colours, no chart |
+| Left leg card | "Not asked yet today.", or "In her words today." with her Remark in bold. The last 3 earlier Remarks; "See all in History" opens the History page |
+| Errands | Every open Errand from any Call, however old, each with a tick box. Ticked ones stay visible as done for the 14 days |
 | Live call feed | A card for each Entry, arriving as it is said, with Lidia's quoted words. Titled "Yesterday's call" (with yesterday's cards) before Today's Call, "Live from the call" during it, "Today's call" after |
-| Care plan | A folded row under the Today cards: what Laura knows about Lidia, read-only: her Medications, the Watch items, the family phrase, and "From the last call:" with the previous Call's summary. This shows where Laura's questions come from. "Care plan" in the menu opens it |
-| History | A tab. "Earlier calls": a grid of date tiles, newest first, Today's first (pressing it goes back to Today). Each tile: the weekday, the date, "N of 3 tablets" and the Reading. Pressing a day shows it: "Called at", the tablets taken on the call, her words and her left leg, each Dose, her Reading, and what she asked for. "Day before", "Day after" and "All days" move between them. No charts and no good or bad colours |
+| Care plan | A folded row under the Today cards: what Laura knows about Lidia, read-only: her Medications, the Watch items, the family phrase, and "From the last call:" with the previous Call's summary. This shows where Laura's questions come from. "Care plan" in the menu opens it (from the History pages, `/demo?plan=1`) |
+| History row | A row beside the Care plan: "Open" goes to the History page |
+| History page | `/demo/history?range=1m`, `3m` or `1y` (30, 91 or 365 days to today). One timeline, a column per day, every row lined up: Blood pressure (a line from the lower number to the higher, on a fixed 60–190 scale), Pulse (a dot, 40–120), How she felt (Good, Okay, Bad) and How she slept (Well, Not well): a dot per day for a month; for 3 months per week and for a year per calendar month, how many days she gave each answer, with a bar as long as its share. Nothing averaged or smoothed, no line across a day without a Reading. Beside it a calendar, one month at a time (arrows and a month dropdown), where days with a Call are links; it is the keyboard path. Hovering a column shades it and shows its date. Every Call that recorded something, Today's included, one per date (the latest that day). Ink only: no good or bad colours |
+| Day page | `/demo/history/2026-11-13`: How she felt and How she slept (the rating and her words), Blood pressure with pulse and her words, Left leg, each Tablet with its status; Laura's summary on the right. Not what she asked to pass on to Paul. "All days" (back to the range she came from), "Day before" and "Day after". A date with no Call is a 404 |
 | The numbers | "Tablets confirmed on the call: 39 of 42 in the last two weeks". Confirmed means "taken on call" only, out of every Dose on every Call in the last 14 days, Today included, so it moves live during the call |
 | Call now | The button that starts the call. The server refuses a new Call within 60 seconds of the last one |
 
@@ -158,7 +160,7 @@ Everything is fictional sample data, created by a script. The demo says so out l
 - **Paul**, her grandson and family carer, who looks at the website.
 - **Family phrase:** "Paul says the blue teapot is still his favourite."
 - **Care plan:** stored as data, not typed in during the demo. Morning Medications, and two Watch items: blood pressure and left leg swelling.
-- **History:** about two weeks of earlier Calls, so the page is not empty: wellbeing and sleep lines, Readings, Doses, Remarks about the leg, a few Errands done. Yesterday's Call summary says Lidia slept badly, which is the detail Laura remembers. The tablet count on the page is worked out from this history, not typed in.
+- **History:** a year of earlier Calls, so the pages are not empty: wellbeing and sleep with their ratings, Readings, Doses, Remarks about the leg, a few Errands done. The last 13 days are written by hand; the rest are made up from a fixed seed, so every reset writes the same year, with about 3 days in 100 missed. Yesterday's Call summary says Lidia slept badly, which is the detail Laura remembers. The tablet count on the page is worked out from this history, not typed in.
 - **Resetting:** the sample-data script clears every Call it did not create, so rehearsals disappear. Run it before the real demo, or Laura will remember the last rehearsal instead of "yesterday, you slept badly".
 
 ### Morning Medications (sample data, confirmed)

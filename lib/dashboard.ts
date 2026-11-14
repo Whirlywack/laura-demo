@@ -57,7 +57,7 @@ export type DashboardState = {
   leftLeg: { today: Remark | null; earlier: Remark[] };
   /** The latest Reading on Today's Call, and every other Reading beneath it, newest first. */
   bloodPressure: { today: Reading | null; earlier: Reading[] };
-  /** Every Errand from every Call, open and done, newest first. */
+  /** Every open Errand, and those done in the last 14 days, newest first. */
   errands: Errand[];
   /** The "For Paul" list: every Pass-on on Today's Call, newest first. */
   passOns: PassOn[];
@@ -66,7 +66,7 @@ export type DashboardState = {
   carePlan: { medications: Medication[]; watchItems: string[]; familyPhrase: string };
   /** "From the last call:": Laura's summary of the latest Call before Today that has one, where her remembered detail comes from. */
   previousSummary: string | null;
-  /** Every Call before Today, newest first. */
+  /** Every Call before Today in the last 14 days, newest first. */
   history: HistoryCall[];
   /** The latest Call before Today and its Entries as feed cards, newest first: the feed before Today's Call starts. */
   lastCall: { at: string; feed: FeedCard[] } | null;
@@ -75,12 +75,26 @@ export type DashboardState = {
 };
 
 // `details` holds the kind's own fields, e.g. a Dose's medication and status, or a Reading's numbers.
-type Entry = { id: string; call_id: string; kind: string; quote: string; details: Record<string, any>; created_at: string; done_at: string | null };
-type Call = { id: string; status: "live" | "done"; summary: string | null; started_at: string; sample: boolean; entries: Entry[] };
+export type Entry = { id: string; call_id: string; kind: string; quote: string; details: Record<string, any>; created_at: string; done_at: string | null };
+export type Call = { id: string; status: "live" | "done"; summary: string | null; started_at: string; sample: boolean; entries: Entry[] };
+
+/** Every Call started since `since` (an ISO time) with its Entries, newest first, and newest first within each Call. */
+export const callsWithEntries = (db: SupabaseClient, since: string) =>
+  db
+    .from("calls")
+    .select("id, status, summary, started_at, sample, entries(id, call_id, kind, quote, details, created_at, done_at)")
+    .gte("started_at", since)
+    .order("started_at", { ascending: false })
+    .order("created_at", { referencedTable: "entries", ascending: false })
+    .overrideTypes<Call[], { merge: false }>();
+
+/** The Care plan's Medications, as stored. */
+export const medicationsOf = (plan: { medications: { name: string; strength: string; time_of_day: string }[] }): Medication[] =>
+  plan.medications.map((m) => ({ name: m.name, strength: m.strength, timeOfDay: m.time_of_day }));
 
 const sentence = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-const reading = (e: Entry): Reading => ({
+export const reading = (e: Entry): Reading => ({
   systolic: e.details.systolic,
   diastolic: e.details.diastolic,
   pulse: e.details.pulse ?? null,
@@ -111,7 +125,7 @@ function wellbeingOn(entries: Entry[]) {
 }
 
 // Each Medication's Dose on one Call. Entries are newest first, so the first one found is the latest: it wins.
-function dosesOn(entries: Entry[], medications: Medication[]): Dose[] {
+export function dosesOn(entries: Entry[], medications: Medication[]): Dose[] {
   return medications.map((m) => {
     const latest = entries.find((e) => e.kind === "dose" && e.details.medication === m.name);
     return { ...m, status: (latest?.details.status as DoseStatus) ?? "not confirmed", quote: latest?.quote ?? null };
@@ -134,32 +148,30 @@ export async function previousCall(db: SupabaseClient, today?: string): Promise<
   return data;
 }
 
-// The one function that derives everything the page shows from the three tables.
+// The one function that derives everything the page shows from the three tables. It reads the last 14 days on her
+// calendar in Lithuania, today and the 13 days before it: the History page (lib/history.ts) holds the rest.
 export async function getDashboardState(db: SupabaseClient): Promise<DashboardState> {
-  const [plan, calls] = await Promise.all([
+  const firstDay = calendarDay(Date.now() - 13 * 24 * 60 * 60 * 1000);
+  // A day's margin either side of her midnight; the exact cut is by her calendar, below.
+  const since = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString();
+  const [plan, recent, errandEntries] = await Promise.all([
     db.from("care_plan").select("family_phrase, medications, watch_items").single(),
-    // Every Call with its Entries, newest first.
-    db
-      .from("calls")
-      .select("id, status, summary, started_at, sample, entries(id, call_id, kind, quote, details, created_at, done_at)")
-      .order("started_at", { ascending: false })
-      .order("created_at", { referencedTable: "entries", ascending: false })
-      .overrideTypes<Call[], { merge: false }>(),
+    callsWithEntries(db, since),
+    // An Errand stays on the list until Paul ticks it, however old; done ones only for the 14 days.
+    db.from("entries").select("id, quote, details, created_at, done_at").eq("kind", "errand").or(`done_at.is.null,created_at.gte.${since}`).order("created_at", { ascending: false }),
   ]);
   if (plan.error) throw new Error(`Could not read the care plan: ${plan.error.message}`);
-  if (calls.error) throw new Error(`Could not read the calls: ${calls.error.message}`);
+  if (recent.error) throw new Error(`Could not read the calls: ${recent.error.message}`);
+  if (errandEntries.error) throw new Error(`Could not read the errands: ${errandEntries.error.message}`);
+  const calls = recent.data.filter((c) => calendarDay(c.started_at) >= firstDay);
 
   // Today is the latest Call (ADR-0001). The sample History is never Today, so before the first Call there is none.
-  const today = calls.data.find((c) => !c.sample) ?? null;
-  const history = calls.data.filter((c) => c !== today);
+  const today = calls.find((c) => !c.sample) ?? null;
+  const history = calls.filter((c) => c !== today);
   const previous = await previousCall(db, today?.id);
   const entries = today?.entries ?? [];
-  const everyEntry = calls.data.flatMap((c) => c.entries).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
-  const medications: Medication[] = plan.data.medications.map((m: { name: string; strength: string; time_of_day: string }) => ({
-    name: m.name,
-    strength: m.strength,
-    timeOfDay: m.time_of_day,
-  }));
+  const everyEntry = calls.flatMap((c) => c.entries).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+  const medications = medicationsOf(plan.data);
   // The latest Entry of a kind on Today's Call, and every other one of that kind beneath it.
   const todayAndEarlier = <T>(kind: string, shape: (e: Entry) => T) => {
     const all = everyEntry.filter((e) => e.kind === kind);
@@ -167,9 +179,7 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     return { today: latest ? shape(latest) : null, earlier: all.filter((e) => e !== latest).map(shape) };
   };
 
-  // The last 14 days on her calendar in Lithuania: today and the 13 days before it.
-  const firstDay = calendarDay(Date.now() - 13 * 24 * 60 * 60 * 1000);
-  const recentDoses = calls.data.filter((c) => calendarDay(c.started_at) >= firstDay).flatMap((c) => dosesOn(c.entries, medications));
+  const recentDoses = calls.flatMap((c) => dosesOn(c.entries, medications));
 
   return {
     callStatus: today?.status ?? "not called yet",
@@ -179,8 +189,8 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     doses: dosesOn(entries, medications),
     leftLeg: todayAndEarlier("remark", (e): Remark => ({ quote: e.quote, at: e.created_at })),
     bloodPressure: todayAndEarlier("reading", reading),
-    errands: everyEntry
-      .filter((e) => e.kind === "errand")
+    errands: errandEntries.data
+      .filter((e) => e.done_at === null || calendarDay(e.created_at) >= firstDay)
       .map((e) => ({ id: e.id, item: e.details.item, quote: e.quote, at: e.created_at, done: e.done_at !== null })),
     passOns: entries.filter((e) => e.kind === "pass_on").map((e) => ({ quote: e.quote, at: e.created_at })),
     feed: entries.map(feedCard),
