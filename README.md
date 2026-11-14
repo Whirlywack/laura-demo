@@ -2,7 +2,7 @@
 
 A daily phone companion for elderly people who live alone, and a live page for the family member who looks after them.
 
-Press **Call now** and Laura, an AI voice agent, phones Lidia, who is 94. As Lidia answers, the page Paul reads fills in with her own words: how she slept, how her leg is, her blood pressure, which tablets she took while on the line, what she needs from the shop, and anything she wants passed on.
+Press **Call now** on the demo page and Laura, a voice agent, phones Lidia, who is 94. As Lidia answers, the page Paul reads fills in with her own words: how she slept, how her leg is, her blood pressure, which tablets she took while on the line, what she needs from the shop, and anything she wants passed on.
 
 **Live demo:** https://laura-demo.vercel.app
 
@@ -57,7 +57,7 @@ sequenceDiagram
 - **Laura is defined in this repo.** Her instructions, seven tools, voice and guardrails are in [`agent/`](agent/), and `npm run laura-agent` creates or updates her in ElevenLabs.
 - **One webhook, seven tools.** [`app/api/tools/[tool]/route.ts`](app/api/tools/%5Btool%5D/route.ts) checks a shared secret on every request. The `call_id` is filled in by ElevenLabs from the per-call variables, so the language model never sees or invents it.
 - **One table for everything Lidia says** ([ADR 0002](docs/adr/0002-one-entries-table.md)), and "today" is simply the latest Call ([ADR 0001](docs/adr/0001-today-is-the-latest-call.md)).
-- **Call now cannot be spammed.** A Postgres function takes a lock and allows one Call a minute, and the route refuses requests from other websites.
+- **Call now is guarded.** The site is public, so Call now asks for a password (`CALL_NOW_PASSWORD`) before anything else; without the variable it places no calls at all. A Postgres function takes a lock and allows one Call a minute, and the route refuses requests from other websites.
 - **The page reads, the server writes.** The browser only has a read-only key; every write goes through the server.
 
 ## Repo map
@@ -80,7 +80,7 @@ You need Node 24, the Supabase CLI with Docker for the tests, and an ElevenLabs 
 
 ```bash
 npm install
-cp .env.example .env.local      # fill in the values
+cp .env.example .env.local      # fill in the values, including CALL_NOW_PASSWORD
 supabase db push                # create the tables in your Supabase project
 npm run sample-data             # Lidia's care plan and two weeks of History
 npm run laura-agent             # create Laura in ElevenLabs and attach the phone number

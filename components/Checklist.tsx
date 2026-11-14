@@ -1,4 +1,4 @@
-// Ported from .claude/skills/laura-design/components/core/Checklist.jsx, on the straw card. A ticked item stays ticked.
+// Ported from .claude/skills/laura-design/components/core/Checklist.jsx, on the chamomile (action) card. A ticked item stays ticked.
 export type ChecklistItem = { label: string; quote: string; meta: string; done: boolean };
 
 export function Checklist({ items, onTick }: { items: ChecklistItem[]; onTick: (index: number) => void }) {

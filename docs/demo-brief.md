@@ -79,7 +79,7 @@ Passed in as per-call variables: the `call_id`, Lidia's name, Paul's name, the f
 
 ## The website
 
-One page, no sign-in, that looks good enough to present and updates live during the call. "Today" means the latest Call, not the calendar date (ADR-0001).
+Two pages, no sign-in: the home page at `/`, and the dashboard at `/demo`, which looks good enough to present and updates live during the call. Both share one header. "Today" means the latest Call, not the calendar date (ADR-0001).
 
 | Area | Shows |
 | --- | --- |
@@ -98,11 +98,11 @@ One page, no sign-in, that looks good enough to present and updates live during 
 
 The look comes from the `laura-design` skill in `.claude/skills/laura-design/`: its colours, type, spacing, radii, motion and components. Load it before building or changing any part of the page.
 
-The skill decides how things look. This brief decides what the page shows: every area in the table above, the wording of statuses, and the data. The skill's two reference pages, their sample people and tablets, the simulated call and the home page are illustrations and are not built. Where the skill and this brief disagree about content, this brief wins. The points below still hold.
+The skill decides how things look. This brief decides what the page shows: every area in the table above, the wording of statuses, and the data. The skill's dashboard reference page and its sample people and tablets are illustrations. The home page is built from the skill's home reference, with Lidia's own three tablets. Where the skill and this brief disagree about content, this brief wins. The points below still hold.
 
 - Uses the full width of the screen. No narrow centred column with empty space on both sides.
 - Calm and contemporary, with clear hierarchy, good typography and generous spacing.
-- A neutral accent colour. No orange or red-orange anywhere, because that reads as machine-made. Red is reserved for an urgent alert, which is not in the demo, so no red at all.
+- The accent is the skill's burgundy, the only red, used small: Call now, the live dot, a tablet's tick, the carer's questions. No orange and no bright red, because that reads as machine-made, and no colour-coded health values.
 - Pass-ons are in plain colours too, and never called an alert or a flag.
 - Lidia's quoted words are visible on every card, since they are the proof.
 - Motion only where it carries meaning: a card arriving on the live feed, a Dose changing to taken.
@@ -112,7 +112,7 @@ The skill decides how things look. This brief decides what the page shows: every
 
 Laura reminds and records. She never interprets and never advises. These rules are in her instructions from the first call.
 
-- **The family phrase.** She says "So you know Paul set up this call, here is your family phrase:" and then "Paul says the blue teapot is still his favourite" as a full sentence, only after the person confirms she is Lidia. If not (a neighbour, a voicemail), Laura says she will call another time, records nothing and hangs up. Lidia never has to prove anything, and Laura never asks for money, passwords or codes.
+- **The family phrase.** She says "Your family phrase..." and then "Paul says the blue teapot is still his favourite" as a full sentence, only after the person confirms she is Lidia. If not (a neighbour, a voicemail), Laura says she will call another time, records nothing and hangs up. Lidia never has to prove anything, and Laura never asks for money, passwords or codes.
 - **No medical advice.** Asked "is that bad?" or "should I take half a tablet?", she declines kindly, says she will pass the question to Paul, and records it as a Pass-on.
 - **Emergencies.** If Lidia describes an emergency, Laura records a Pass-on, tells her to hang up now and call 112, records a short Call summary, ends the call herself, and skips every remaining beat. No text message and no alert feature.
 - **Readings are repeated, not judged.** "I've noted 150 over 95." Nothing about whether it is good or bad, and no reassurance either.
@@ -153,7 +153,7 @@ All keys, the webhook secret and the phone number Laura dials live in environmen
 Everything is fictional sample data, created by a script. The demo says so out loud.
 
 - **Lidia**, 94, the person Laura phones. Her number is whichever phone should ring in the demo, read from an environment variable.
-- **Paul**, her family carer, who looks at the website.
+- **Paul**, her grandson and family carer, who looks at the website.
 - **Family phrase:** "Paul says the blue teapot is still his favourite."
 - **Care plan:** stored as data, not typed in during the demo. Morning Medications, and two Watch items: blood pressure and left leg swelling.
 - **History:** about two weeks of earlier Calls, so the page is not empty: wellbeing and sleep lines, Readings, Doses, Remarks about the leg, a few Errands done. Yesterday's Call summary says Lidia slept badly, which is the detail Laura remembers. The tablet count on the page is worked out from this history, not typed in.
@@ -208,7 +208,7 @@ All settled.
 - **The leg question.** In, as a Remark.
 - **Typing a note to create the care plan.** Out. The care plan is stored sample data, shown read-only on the page.
 - **Urgent alert.** Out of the demo. No urgent alert and no text messages.
-- **No sign-in.** No sign-in and no password for the demo.
+- **No sign-in.** No sign-in. The site is public, so Call now asks for a password (`CALL_NOW_PASSWORD`) before it places a call; everything else can be seen without one.
 - **The morning Medications.** Confirmed as sample data, as listed above.
-- **Paul's relation to Lidia.** Not stated. Laura only uses his name, so it stays open.
+- **Paul's relation to Lidia.** Her grandson, as the home page says. Laura only uses his name.
 - **Git flow overnight.** One spec, tickets that each do one thing, one integration branch, one code review at the end, one draft PR. Nothing is merged to `main` overnight.

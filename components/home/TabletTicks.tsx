@@ -15,7 +15,8 @@ const MARK: Record<Mark, { label: string; mark: CSSProperties; tick: string | nu
 
 export function TabletTicks({ tablets, initial }: { tablets: string[]; initial: Mark[] }) {
   const [marks, setMarks] = useState(initial);
-  const taken = marks.filter((m) => m !== "none").length;
+  // Only "taken on call" counts, as on the dashboard: "says taken earlier" is her word, not a confirmation.
+  const taken = marks.filter((m) => m === "taken").length;
 
   return (
     <>
