@@ -3,12 +3,13 @@ import { CallStatus } from "../components/CallStatus";
 import { Card } from "../components/Card";
 import { DatedList } from "../components/DatedList";
 import { Errands } from "../components/Errands";
+import { FoldedRow } from "../components/FoldedRow";
 import { LiveFeed } from "../components/LiveFeed";
 import { LiveUpdates } from "../components/LiveUpdates";
 import { KeyValueRows, QuietRow } from "../components/QuietRow";
 import { QuoteFact } from "../components/QuoteFact";
 import { StatusLabel } from "../components/StatusLabel";
-import { getDashboardState, readingValue } from "../lib/dashboard";
+import { getDashboardState, readingValue, type Dose } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -23,11 +24,19 @@ const time = (at: string) =>
 const day = (at: string) =>
   new Date(at).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Europe/Vilnius" });
 
+// The Doses on an earlier Call: how many were taken on call, and the status of each one that was not.
+const tablets = (doses: Dose[]) => {
+  const onCall = doses.filter((d) => d.status === "taken on call").length;
+  const others = doses.filter((d) => d.status !== "taken on call").map((d) => `${d.name} ${d.status}`);
+  return [`${onCall} of ${doses.length} tablets taken on call`, ...others].join(" · ");
+};
+
 const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
 export default async function Page() {
-  const { callStatus, summary, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan } = await getDashboardState(readClient());
+  const { callStatus, summary, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan, previousSummary, history } =
+    await getDashboardState(readClient());
   const reading = bloodPressure.today;
 
   return (
@@ -137,15 +146,45 @@ export default async function Page() {
               </div>
             </div>
           </Card>
-          <QuietRow style={{ marginTop: "var(--gap-cards)" }} title="Care plan" note="What Laura knows about her · read-only">
-            <KeyValueRows
-              rows={[
-                ...carePlan.medications.map((m) => ({ label: m.name, value: `${m.strength} · ${m.timeOfDay}` })),
-                { label: "Asks about", value: sentence(carePlan.watchItems.join(", ")) },
-                { label: "Family phrase", value: carePlan.familyPhrase },
-              ]}
-            />
-          </QuietRow>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
+            <QuietRow style={{ flex: "1 1 300px", minWidth: 0 }} title="Care plan" note="What Laura knows about her · read-only">
+              <KeyValueRows
+                rows={[
+                  ...carePlan.medications.map((m) => ({ label: m.name, value: `${m.strength} · ${m.timeOfDay}` })),
+                  { label: "Asks about", value: sentence(carePlan.watchItems.join(", ")) },
+                  { label: "Family phrase", value: carePlan.familyPhrase },
+                ]}
+              />
+              {/* Where Laura's remembered detail comes from. Her own words, so no quotation marks. */}
+              {previousSummary ? (
+                <div style={{ padding: "11px 0", borderTop: "1px solid var(--rule)" }}>
+                  <span style={{ color: "var(--text-primary)" }}>From the last call:</span> {previousSummary}
+                </div>
+              ) : null}
+            </QuietRow>
+            <FoldedRow
+              style={{ flex: "2 1 420px", minWidth: 0 }}
+              title="History"
+              note={history.length ? `${history.length} ${history.length === 1 ? "call" : "calls"} before today` : "No calls before today"}
+            >
+              {history.length ? (
+                <KeyValueRows
+                  rows={history.map((c) => ({
+                    label: day(c.at),
+                    value: (
+                      <>
+                        <div style={{ color: "var(--text-primary)" }}>{c.wellbeing.general ? `“${c.wellbeing.general}”` : "Not asked how she was"}</div>
+                        <div>Sleep · {c.wellbeing.sleep ? `“${c.wellbeing.sleep}”` : "not asked"}</div>
+                        <div style={{ fontVariantNumeric: "tabular-nums" }}>
+                          {c.reading ? readingValue(c.reading) : "No reading"} · {tablets(c.doses)}
+                        </div>
+                      </>
+                    ),
+                  }))}
+                />
+              ) : null}
+            </FoldedRow>
+          </div>
         </div>
 
         <Card tone="quiet" style={{ flex: "1 1 340px", minWidth: 0, padding: "32px 32px 28px" }}>
