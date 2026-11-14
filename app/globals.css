@@ -104,6 +104,11 @@ a:hover { color: var(--ink); }
 /* The tick box input is hidden behind its drawn box, so the drawn box shows keyboard focus. */
 .laura-check:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 3px; }
 .laura-button:focus-visible, .laura-input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+/* The home page's film: fixed heights for its cards and its talk, so it never changes size as it plays. */
+:root { --film-pad: 36px; --film-card: 266px; --film-card-small: 266px; --film-talk: 380px; }
+@media (max-width: 760px) {
+  :root { --film-pad: 14px; --film-card: 236px; --film-card-small: 150px; --film-talk: 470px; }
+}
 /* A day's column on the History timeline, shaded while the pointer is on it. */
 .laura-column rect { fill: transparent; }
 .laura-column:hover rect { fill: var(--rule); }

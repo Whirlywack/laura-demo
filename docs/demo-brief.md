@@ -81,6 +81,8 @@ Passed in as per-call variables: the `call_id`, Lidia's name, Paul's name, the f
 
 No sign-in: the home page at `/`, the dashboard at `/demo`, which looks good enough to present and updates live during the call, and the History page at `/demo/history` with a page per day. They share one header; on the dashboard and History pages its menu is Today, Care plan and History. "Today" means the latest Call, not the calendar date (ADR-0001).
 
+The home page says what Laura is, then plays a film, "Listen to a call": the words of a real call on 14 November spoken again (Laura in her own voice, Lidia in a generated voice, and the page says so), with a small copy of Paul's page filling in as each answer is recorded. The film keeps one height throughout. Under it, a made-up month drawn with the History page's timeline (blood pressure; how she felt and slept) and a link to History.
+
 The dashboard has the three answer cards on top, Today's cards on the left and the live feed in a column on the right. It reads only the last 14 days; every "See all" goes to the History page.
 
 | Area | Shows |

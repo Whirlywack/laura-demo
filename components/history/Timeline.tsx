@@ -8,7 +8,7 @@ import type { HistoryDay, Range } from "../../lib/history";
 // counted, with a bar as long as that answer's share of that period's Calls. A column with a Call links to its day
 // (CSS shades it on hover; its title is the date); the calendar beside it is the keyboard path, so these links are
 // left out of the tab order.
-const W = 900, L = 110, R = 8;
+const L = 110, R = 8;
 const ink: CSSProperties = { fill: "var(--ink)" };
 const meta: CSSProperties = { fill: "var(--ink-3)", font: "var(--text-meta-font)" };
 const rule: CSSProperties = { stroke: "var(--rule)" };
@@ -16,13 +16,17 @@ const FELT = [["good", "Good"], ["okay", "Okay"], ["bad", "Bad"]] as const;
 const SLEPT = [["well", "Well"], ["not well", "Not well"]] as const;
 const lane = (i: number) => 14 + i * 30;
 
-export function Timeline({ dates, days, range }: { dates: string[]; days: HistoryDay[]; range: Range }) {
+// `width` is the drawing's width in px at full size (the home page's blocks are narrower than the History page's card).
+// `label` says what the drawing shows, for a screen reader.
+export function Timeline({ dates, days, range, only, width: W = 900, label = "Blood pressure, pulse, how she felt and how she slept, day by day. Use the calendar to open a day." }: { dates: string[]; days: HistoryDay[]; range: Range; only?: string[]; width?: number; label?: string }) {
   const byDate = new Map(days.map((d) => [d.date, d]));
   const step = (W - L - R) / dates.length;
   const x = (i: number) => L + i * step + step / 2;
   const width = Math.max(1.2, Math.min(5, step * 0.5));
   const dot = Math.max(1.6, width * 0.75);
   const perDay = range === "1m";
+  // Day numbers under a month: every one when there is room, otherwise every second or third, ending on the newest.
+  const every = Math.ceil(24 / step);
 
   // Periods for the counts: 7-day blocks from the start for 3 months, calendar months for a year.
   const groupOf = (i: number) => (range === "1y" ? dates[i].slice(0, 7) : Math.floor(i / 7));
@@ -90,7 +94,8 @@ export function Timeline({ dates, days, range }: { dates: string[]; days: Histor
   }
 
   let top = 0;
-  const drawn = rows.map((row) => {
+  // `only` names the rows to draw (the home page shows them one block at a time).
+  const drawn = rows.filter((row) => !only || only.includes(row.title)).map((row) => {
     const g0 = top + 28;
     top = g0 + row.height + 12;
     return (
@@ -116,7 +121,7 @@ export function Timeline({ dates, days, range }: { dates: string[]; days: Histor
     if (range === "1m")
       return (
         <g key={date}>
-          <text x={x(i)} y={top + 18} textAnchor="middle" style={meta}>{n}</text>
+          {(dates.length - 1 - i) % every === 0 ? <text x={x(i)} y={top + 18} textAnchor="middle" style={meta}>{n}</text> : null}
           {n === 1 || i === 0 ? <text x={x(i)} y={top + 40} textAnchor="middle" style={{ ...meta, fill: "var(--ink)", fontWeight: 700 }}>{month}</text> : null}
         </g>
       );
@@ -129,9 +134,10 @@ export function Timeline({ dates, days, range }: { dates: string[]; days: Histor
   top += range === "1m" ? 48 : 28;
 
   return (
-    // On a narrow screen it scrolls sideways; right-to-left makes it open at the newest days.
+    // On a narrow screen the full-size drawing scrolls sideways, so its type keeps its size (a narrower one may shrink
+    // by up to three tenths first, so a phone shows all of it); right-to-left makes it open at the newest days.
     <div style={{ overflowX: "auto", direction: "rtl" }}>
-      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label="Blood pressure, pulse, how she felt and how she slept, day by day. Use the calendar to open a day." style={{ display: "block", minWidth: 760, direction: "ltr" }}>
+      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label={label} style={{ display: "block", minWidth: W < 760 ? W * 0.7 : 760, direction: "ltr" }}>
         {dates.map((date, i) => {
           const d = byDate.get(date);
           return d ? (
