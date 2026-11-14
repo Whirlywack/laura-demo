@@ -13,7 +13,7 @@ const db = createClient(env("NEXT_PUBLIC_SUPABASE_URL"), env("SUPABASE_SERVICE_R
 const carePlan = {
   family_phrase: "Paul says the blue teapot is still his favourite.",
   medications: [
-    { name: "Metoprolol", strength: "47.5 mg, one tablet", time_of_day: "morning" },
+    { name: "Concor", strength: "5 mg, one tablet", time_of_day: "morning" },
     { name: "Sanoral HCT", strength: "40/10/12.5 mg, one tablet", time_of_day: "morning" },
     { name: "Eliquis", strength: "2.5 mg, one tablet", time_of_day: "morning" },
   ],
@@ -119,9 +119,9 @@ const history: Day[] = [
     sleep: "Well. I had a warm milk before bed.",
     leg: "Swollen by the evening, fine in the morning.",
     reading: { systolic: 137, diastolic: 81, pulse: 69, quote: "One thirty-seven over eighty-one. Sixty-nine." },
-    doses: { Metoprolol: { status: "says taken earlier", quote: "I had that one at eight, with my porridge." } },
+    doses: { Concor: { status: "says taken earlier", quote: "I had that one at eight, with my porridge." } },
     summary:
-      "Lidia's knees were sore but she was otherwise fine. She slept well after a warm milk. Her leg was swollen by the evening. She took two tablets on the call and says she took the Metoprolol earlier.",
+      "Lidia's knees were sore but she was otherwise fine. She slept well after a warm milk. Her leg was swollen by the evening. She took two tablets on the call and says she took the Concor earlier.",
   },
   {
     general: "Happy. The radio played my old waltz.",
@@ -141,7 +141,7 @@ const history: Day[] = [
 
 // What she says as she takes each tablet on the call, varied a little from day to day.
 const takenOnCall: Record<string, string[]> = {
-  Metoprolol: ["There. I've swallowed it.", "The first one, done.", "Yes, that one's down."],
+  Concor: ["There. I've swallowed it.", "The first one, done.", "Yes, that one's down."],
   "Sanoral HCT": ["And the white one, yes.", "Done, with a sip of water.", "That's the second."],
   Eliquis: ["The little yellow one. Done.", "Eliquis, taken.", "All three now."],
 };

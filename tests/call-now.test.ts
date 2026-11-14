@@ -46,7 +46,7 @@ test("Laura is given every per-call variable as a string, with yesterday's summa
     care_recipient_name: "Lidia",
     family_carer_name: "Paul",
     family_phrase: "Paul says the blue teapot is still his favourite.",
-    morning_medications: "Metoprolol 47.5 mg, one tablet; Sanoral HCT 40/10/12.5 mg, one tablet; Eliquis 2.5 mg, one tablet",
+    morning_medications: "Concor 5 mg, one tablet; Sanoral HCT 40/10/12.5 mg, one tablet; Eliquis 2.5 mg, one tablet",
     watch_items: "blood pressure; left leg swelling",
     previous_call_summary:
       "Lidia slept badly; the wind kept rattling the window. Her left leg was swollen by the evening. She took all three tablets on the call.",

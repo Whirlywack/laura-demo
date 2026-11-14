@@ -28,10 +28,10 @@ The demo is one call: eight beats, about three to four minutes. After each answe
 | 2. How are you | "How are you doing today?" She listens and responds warmly. Then the remembered detail: "You told me yesterday you slept badly. How did you sleep last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep | Today's wellbeing line, and sleep on its own line |
 | 3. The leg | "How is your left leg today?" A kind word about her answer | `log_remark` | A new Remark on the left leg card, above the earlier ones |
 | 4. Blood pressure | "Have you measured your blood pressure this morning? What did it show?" Reads the numbers back. Asked before the tablets, because two of them lower blood pressure | `log_reading` | The Reading, added to the blood pressure history |
-| 5. Tablets, one at a time | "I'd also like to remind you that it's time to take your morning tablets. We'll take them one at a time." Then names one morning Medication from the care plan with its strength. "Take it now, take your time, I'll wait." Stays quiet until Lidia says it is taken, then the next | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
+| 5. Tablets, one at a time | "Now it's time for your morning tablets. We'll take them one at a time." Then names one morning Medication from the care plan, by name only (the Strength stays on the page). "Take it now, take your time, I'll wait." Stays quiet until Lidia says it is taken, then the next | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
 | 6. Anything missing | "Is there anything you're running out of at home that Paul could bring?" | `add_errand`, once per item | Each item on the errands list |
 | 7. A message | "Is there anything you'd like me to tell Paul?" | `pass_on`, if she gives a message | A Pass-on in the live feed and in the "For Paul" list |
-| 8. A kind close | Says out loud what she noted, that she will pass it on to Paul, something warm and goodbye. Then, without waiting for a reply, she records the summary and hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
+| 8. A kind close | Says out loud, in a few words: "Thank you, Lidia. I'll pass everything on to Paul. Take care. Goodbye." Then, without waiting for a reply, she records the summary and hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
 | Any time | Whenever she says she will pass something on to Paul: a medical question, a worry, an emergency | `pass_on` | A Pass-on in the live feed and in the "For Paul" list |
 
 ### The seven tools
@@ -163,7 +163,7 @@ Everything is fictional sample data, created by a script. The demo says so out l
 
 | Medication | Strength |
 | --- | --- |
-| Metoprolol | 47.5 mg, one tablet |
+| Concor | 5 mg, one tablet |
 | Sanoral HCT | 40/10/12.5 mg, one tablet |
 | Eliquis | 2.5 mg, one tablet |
 

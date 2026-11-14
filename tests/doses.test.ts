@@ -14,12 +14,12 @@ test.each(["taken on call", "says taken earlier", "not taken"])(
   async (status) => {
     const call_id = await startCall();
 
-    const response = await sendTool("record_dose", { call_id, quote: "The Metoprolol, yes.", medication: "Metoprolol", status });
+    const response = await sendTool("record_dose", { call_id, quote: "The Concor, yes.", medication: "Concor", status });
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ ok: true });
     expect(await doses()).toEqual([
-      { name: "Metoprolol", strength: "47.5 mg, one tablet", timeOfDay: "morning", status, quote: "The Metoprolol, yes." },
+      { name: "Concor", strength: "5 mg, one tablet", timeOfDay: "morning", status, quote: "The Concor, yes." },
       { name: "Sanoral HCT", strength: "40/10/12.5 mg, one tablet", timeOfDay: "morning", status: "not confirmed", quote: null },
       { name: "Eliquis", strength: "2.5 mg, one tablet", timeOfDay: "morning", status: "not confirmed", quote: null },
     ]);

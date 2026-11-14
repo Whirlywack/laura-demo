@@ -23,7 +23,7 @@ test("every sample Call in History has her Wellbeing, sleep and a status for eac
 
   for (const call of history) {
     expect(call.wellbeing).toEqual({ general: expect.any(String), sleep: expect.any(String) });
-    expect(call.doses.map((d) => d.name)).toEqual(["Metoprolol", "Sanoral HCT", "Eliquis"]);
+    expect(call.doses.map((d) => d.name)).toEqual(["Concor", "Sanoral HCT", "Eliquis"]);
     expect(call.doses.map((d) => d.status)).not.toContain("not confirmed");
   }
   expect(history.filter((c) => c.reading).length).toBeGreaterThanOrEqual(10);
@@ -35,7 +35,7 @@ test("once the next Call starts, Today's Call moves to the top of History with i
   await sendTool("log_wellbeing", { call_id, quote: "I woke at four and couldn't get back off.", aspect: "sleep" });
   await sendTool("record_dose", { call_id, quote: "I can't find the Eliquis.", medication: "Eliquis", status: "not taken" });
   await sendTool("record_dose", { call_id, quote: "Found it. Taken.", medication: "eliquis", status: "taken on call" });
-  await sendTool("record_dose", { call_id, quote: "I took that one with breakfast.", medication: "Metoprolol", status: "says taken earlier" });
+  await sendTool("record_dose", { call_id, quote: "I took that one with breakfast.", medication: "Concor", status: "says taken earlier" });
   await sendTool("log_reading", { call_id, quote: "138 over 82, pulse 71.", systolic: 138, diastolic: 82, pulse: 71 });
 
   await startCall();
@@ -47,7 +47,7 @@ test("once the next Call starts, Today's Call moves to the top of History with i
     wellbeing: { general: "I'm all right. A bit tired, but all right.", sleep: "I woke at four and couldn't get back off." },
     reading: { systolic: 138, diastolic: 82, pulse: 71, quote: "138 over 82, pulse 71.", at: expect.any(String) },
     doses: [
-      { name: "Metoprolol", strength: "47.5 mg, one tablet", timeOfDay: "morning", status: "says taken earlier", quote: "I took that one with breakfast." },
+      { name: "Concor", strength: "5 mg, one tablet", timeOfDay: "morning", status: "says taken earlier", quote: "I took that one with breakfast." },
       { name: "Sanoral HCT", strength: "40/10/12.5 mg, one tablet", timeOfDay: "morning", status: "not confirmed", quote: null },
       { name: "Eliquis", strength: "2.5 mg, one tablet", timeOfDay: "morning", status: "taken on call", quote: "Found it. Taken." },
     ],

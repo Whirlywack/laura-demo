@@ -17,7 +17,7 @@ test("Today's Doses count from the moment the Call starts, and only taken on cal
   const call_id = await startCall();
   expect(await tabletCount()).toEqual({ confirmed: 36, total: 42 });
 
-  await sendTool("record_dose", { call_id, quote: "There. I've swallowed it.", medication: "Metoprolol", status: "taken on call" });
+  await sendTool("record_dose", { call_id, quote: "There. I've swallowed it.", medication: "Concor", status: "taken on call" });
   expect(await tabletCount()).toEqual({ confirmed: 37, total: 42 });
 
   await sendTool("record_dose", { call_id, quote: "That one I took with breakfast already.", medication: "Sanoral HCT", status: "says taken earlier" });
@@ -28,7 +28,7 @@ test("Today's Doses count from the moment the Call starts, and only taken on cal
 test("when she corrects herself, the later Entry is the one counted, so all three taken on call make 39 of 42", async () => {
   const call_id = await startCall();
 
-  await sendTool("record_dose", { call_id, quote: "There. I've swallowed it.", medication: "Metoprolol", status: "taken on call" });
+  await sendTool("record_dose", { call_id, quote: "There. I've swallowed it.", medication: "Concor", status: "taken on call" });
   await sendTool("record_dose", { call_id, quote: "I took that one earlier.", medication: "Sanoral HCT", status: "says taken earlier" });
   await sendTool("record_dose", { call_id, quote: "No, I haven't. Here, I'm taking it now.", medication: "Sanoral HCT", status: "taken on call" });
   await sendTool("record_dose", { call_id, quote: "I can't find the Eliquis.", medication: "Eliquis", status: "not taken" });
@@ -39,7 +39,7 @@ test("when she corrects herself, the later Entry is the one counted, so all thre
 
 test("a Call more than 14 days ago is not counted", async () => {
   const fortnightAgo = await startCall(14);
-  await sendTool("record_dose", { call_id: fortnightAgo, quote: "There. I've swallowed it.", medication: "Metoprolol", status: "taken on call" });
+  await sendTool("record_dose", { call_id: fortnightAgo, quote: "There. I've swallowed it.", medication: "Concor", status: "taken on call" });
   await startCall();
 
   expect(await tabletCount()).toEqual({ confirmed: 36, total: 42 });

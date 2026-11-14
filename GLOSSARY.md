@@ -85,7 +85,7 @@ One item on the Care plan: a name, a Strength and a time of day.
 _Avoid_: Tablet, drug, pill (Laura may say "tablets" aloud)
 
 **Strength**:
-How much of a Medication one intake is, e.g. "47.5 mg, one tablet".
+How much of a Medication one intake is, e.g. "5 mg, one tablet".
 _Avoid_: Dose
 
 **Dose**:

@@ -10,7 +10,7 @@
           "care_recipient_name": "Lidia",
           "family_carer_name": "Paul",
           "family_phrase": "Paul says the blue teapot is still his favourite.",
-          "morning_medications": "Metoprolol 47.5 mg, one tablet; Sanoral HCT 40/10/12.5 mg, one tablet; Eliquis 2.5 mg, one tablet",
+          "morning_medications": "Concor 5 mg, one tablet; Sanoral HCT 40/10/12.5 mg, one tablet; Eliquis 2.5 mg, one tablet",
           "watch_items": "blood pressure; left leg swelling",
           "previous_call_summary": "Lidia said she slept badly because of the wind. Her leg was a little swollen. She took her tablets and asked for milk.",
           "previous_call_when": "yesterday"
@@ -36,7 +36,7 @@
       "suggested_audio_tags": [
         { "tag": "warm", "description": "Greetings, thanks, the family phrase and the goodbye." },
         { "tag": "gentle", "description": "When she says she is unwell, in pain, tired, worried or sad." },
-        { "tag": "slow", "description": "When saying the family phrase, and when naming each tablet and its strength, so she can follow." },
+        { "tag": "slow", "description": "When saying the family phrase, and when naming each tablet, so she can follow." },
         { "tag": "soft laugh", "description": "When she says something funny in small talk. Never about her health." },
         { "tag": "calm, clear", "description": "When telling her to hang up and call 112 in an emergency." }
       ]

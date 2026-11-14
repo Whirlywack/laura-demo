@@ -13,7 +13,7 @@ test("the sample data puts the Care plan on the dashboard, with no Call yet", as
   expect(state.callStatus).toBe("not called yet");
   expect(state.carePlan).toEqual({
     medications: [
-      { name: "Metoprolol", strength: "47.5 mg, one tablet", timeOfDay: "morning" },
+      { name: "Concor", strength: "5 mg, one tablet", timeOfDay: "morning" },
       { name: "Sanoral HCT", strength: "40/10/12.5 mg, one tablet", timeOfDay: "morning" },
       { name: "Eliquis", strength: "2.5 mg, one tablet", timeOfDay: "morning" },
     ],
