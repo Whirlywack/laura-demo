@@ -8,7 +8,9 @@ const CARE_RECIPIENT = "Lidia";
 const FAMILY_CARER = "Povilas";
 
 // How long ago a Call was, in the words Laura says: "earlier today", "yesterday", "3 days ago".
+// Under 12 hours is "earlier today" even across midnight, so ten minutes ago is never "yesterday".
 function howLongAgo(at: string) {
+  if (Date.now() - Date.parse(at) < 12 * 60 * 60 * 1000) return "earlier today";
   const days = (Date.parse(calendarDay(Date.now())) - Date.parse(calendarDay(at))) / (24 * 60 * 60 * 1000);
   return days === 0 ? "earlier today" : days === 1 ? "yesterday" : `${days} days ago`;
 }

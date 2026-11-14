@@ -9,6 +9,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 test("Call now makes Laura phone her: a live Call becomes Today, and every earlier Call stays in History", async () => {
@@ -118,6 +119,20 @@ test("when the last Call was earlier today, Laura is told so, and that Call move
   const state = await getDashboardState(readClient());
   expect(state).toMatchObject({ callStatus: "live", wellbeing: { general: null } });
   expect(state.history[0].wellbeing.general).toBe("Fine, thank you.");
+});
+
+test("a Call ten minutes before midnight is \"earlier today\" to Laura, not \"yesterday\"", async () => {
+  // 00:05 on 11 November in Vilnius, so the Call ten minutes ago was at 23:55 on the 10th.
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-11-10T22:05:00Z"));
+  await clearCalls();
+  const lastNight = await startCall(minutesAgo(10));
+  await sendTool("end_call_summary", { call_id: lastNight, summary: "Lidia could not sleep and was listening to the radio." });
+  const sent = fakeOutboundCall();
+
+  await callNow();
+
+  expect(variablesSent(sent)).toMatchObject({ previous_call_summary: "Lidia could not sleep and was listening to the radio.", previous_call_when: "earlier today" });
 });
 
 test("a minute after a Call nobody answered, Call now replaces it, and Laura still remembers yesterday, not the empty Call", async () => {
