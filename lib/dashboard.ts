@@ -23,6 +23,14 @@ export type Errand = { id: string; item: string; quote: string; at: string; done
 /** Something Laura promised to pass on to the Family carer, in her words. */
 export type PassOn = { quote: string; at: string };
 
+/** A Call before Today, as the History shows it: when it started, her Wellbeing, her Reading and the Doses. */
+export type HistoryCall = {
+  at: string;
+  wellbeing: { general: string | null; sleep: string | null };
+  reading: Reading | null;
+  doses: Dose[];
+};
+
 export type DashboardState = {
   callStatus: CallStatus;
   /** Laura's summary of Today's Call, in her words. Recorded as she closes the Call; null until then. */
@@ -42,10 +50,15 @@ export type DashboardState = {
   /** Every Entry on Today's Call, newest first. */
   feed: FeedCard[];
   carePlan: { medications: Medication[]; watchItems: string[]; familyPhrase: string };
+  /** "From the last call:": Laura's summary of the latest Call before Today, where her remembered detail comes from. */
+  previousSummary: string | null;
+  /** Every Call before Today, newest first. */
+  history: HistoryCall[];
 };
 
 // `details` holds the kind's own fields, e.g. a Dose's medication and status, or a Reading's numbers.
-type Entry = { id: string; kind: string; quote: string; details: Record<string, any>; created_at: string; done_at?: string | null };
+type Entry = { id: string; call_id: string; kind: string; quote: string; details: Record<string, any>; created_at: string; done_at: string | null };
+type Call = { id: string; status: "live" | "done"; summary: string | null; started_at: string; sample: boolean; entries: Entry[] };
 
 const sentence = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -71,31 +84,40 @@ function feedTitle(entry: Entry) {
   return entry.kind;
 }
 
+// Her Wellbeing on one Call: the latest Quote for each aspect. Entries are newest first.
+function wellbeingOn(entries: Entry[]) {
+  const latest = (aspect: string) => entries.find((e) => e.kind === "wellbeing" && e.details.aspect === aspect)?.quote ?? null;
+  return { general: latest("general"), sleep: latest("sleep") };
+}
+
+// Each Medication's Dose on one Call. Entries are newest first, so the first one found is the latest: it wins.
+function dosesOn(entries: Entry[], medications: Medication[]): Dose[] {
+  return medications.map((m) => {
+    const latest = entries.find((e) => e.kind === "dose" && e.details.medication === m.name);
+    return { ...m, status: (latest?.details.status as DoseStatus) ?? "not confirmed", quote: latest?.quote ?? null };
+  });
+}
+
 // The one function that derives everything the page shows from the three tables.
 export async function getDashboardState(db: SupabaseClient): Promise<DashboardState> {
-  const [plan, today, everyCall] = await Promise.all([
+  const [plan, calls] = await Promise.all([
     db.from("care_plan").select("family_phrase, medications, watch_items").single(),
+    // Every Call with its Entries, newest first.
     db
       .from("calls")
-      .select("id, status, summary, entries(id, kind, quote, details, created_at)")
+      .select("id, status, summary, started_at, sample, entries(id, call_id, kind, quote, details, created_at, done_at)")
       .order("started_at", { ascending: false })
       .order("created_at", { referencedTable: "entries", ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    // Remarks, Readings and Errands from every Call, not only Today's.
-    db
-      .from("entries")
-      .select("id, call_id, kind, quote, details, created_at, done_at")
-      .in("kind", ["remark", "reading", "errand"])
-      .order("created_at", { ascending: false }),
+      .overrideTypes<Call[], { merge: false }>(),
   ]);
   if (plan.error) throw new Error(`Could not read the care plan: ${plan.error.message}`);
-  if (today.error) throw new Error(`Could not read the calls: ${today.error.message}`);
-  if (everyCall.error) throw new Error(`Could not read the remarks, readings and errands: ${everyCall.error.message}`);
+  if (calls.error) throw new Error(`Could not read the calls: ${calls.error.message}`);
 
-  const entries: Entry[] = today.data?.entries ?? [];
-  const wellbeing = (aspect: string) =>
-    entries.find((e) => e.kind === "wellbeing" && e.details.aspect === aspect)?.quote ?? null;
+  // Today is the latest Call (ADR-0001). The sample History is never Today, so before the first Call there is none.
+  const today = calls.data.find((c) => !c.sample) ?? null;
+  const history = calls.data.filter((c) => c !== today);
+  const entries = today?.entries ?? [];
+  const everyEntry = calls.data.flatMap((c) => c.entries).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
   const medications: Medication[] = plan.data.medications.map((m: { name: string; strength: string; time_of_day: string }) => ({
     name: m.name,
     strength: m.strength,
@@ -103,27 +125,28 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
   }));
   // The latest Entry of a kind on Today's Call, and every other one of that kind beneath it.
   const todayAndEarlier = <T>(kind: string, shape: (e: Entry) => T) => {
-    const all = everyCall.data.filter((e) => e.kind === kind);
-    const latest = all.find((e) => e.call_id === today.data?.id);
+    const all = everyEntry.filter((e) => e.kind === kind);
+    const latest = all.find((e) => e.call_id === today?.id);
     return { today: latest ? shape(latest) : null, earlier: all.filter((e) => e !== latest).map(shape) };
   };
 
   return {
-    callStatus: today.data?.status ?? "not called yet",
-    summary: today.data?.summary ?? null,
-    wellbeing: { general: wellbeing("general"), sleep: wellbeing("sleep") },
-    doses: medications.map((m) => {
-      // Entries are newest first, so the first one found is the latest: it wins.
-      const latest = entries.find((e) => e.kind === "dose" && e.details.medication === m.name);
-      return { ...m, status: (latest?.details.status as DoseStatus) ?? "not confirmed", quote: latest?.quote ?? null };
-    }),
+    callStatus: today?.status ?? "not called yet",
+    summary: today?.summary ?? null,
+    wellbeing: wellbeingOn(entries),
+    doses: dosesOn(entries, medications),
     leftLeg: todayAndEarlier("remark", (e): Remark => ({ quote: e.quote, at: e.created_at })),
     bloodPressure: todayAndEarlier("reading", reading),
-    errands: everyCall.data
+    errands: everyEntry
       .filter((e) => e.kind === "errand")
       .map((e) => ({ id: e.id, item: e.details.item, quote: e.quote, at: e.created_at, done: e.done_at !== null })),
     passOns: entries.filter((e) => e.kind === "pass_on").map((e) => ({ quote: e.quote, at: e.created_at })),
     feed: entries.map((e) => ({ id: e.id, title: feedTitle(e), quote: e.quote, at: e.created_at })),
     carePlan: { medications, watchItems: plan.data.watch_items, familyPhrase: plan.data.family_phrase },
+    previousSummary: history[0]?.summary ?? null,
+    history: history.map((c) => {
+      const latestReading = c.entries.find((e) => e.kind === "reading");
+      return { at: c.started_at, wellbeing: wellbeingOn(c.entries), reading: latestReading ? reading(latestReading) : null, doses: dosesOn(c.entries, medications) };
+    }),
   };
 }

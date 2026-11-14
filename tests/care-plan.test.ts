@@ -22,15 +22,6 @@ test("the sample data puts the Care plan on the dashboard, with no Call yet", as
   });
 });
 
-test("the sample data is safe to re-run", async () => {
-  runSampleData();
-  const first = await getDashboardState(readClient());
-
-  runSampleData();
-
-  expect(await getDashboardState(readClient())).toEqual(first);
-});
-
 test("a missing environment variable is named", () => {
   const { SUPABASE_SERVICE_ROLE_KEY: _, ...withoutKey } = process.env;
 

@@ -20,12 +20,19 @@ export function tickErrand(id: string) {
   return tick(new Request(`http://localhost/api/errands/${id}/tick`, { method: "POST" }), { params: Promise.resolve({ id }) });
 }
 
+const db = () =>
+  createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
+
 // A live Call, which becomes Today. Stands in for Call now until that exists.
 export async function startCall(): Promise<string> {
-  const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: { persistSession: false },
-  });
-  const { data, error } = await db.from("calls").insert({}).select("id").single();
+  const { data, error } = await db().from("calls").insert({}).select("id").single();
   if (error) throw new Error(`Could not start a call: ${error.message}`);
   return data.id;
+}
+
+// Removes every Call and Entry, the sample History included, and keeps the Care plan.
+// For tests that need a page with nothing recorded yet.
+export async function clearCalls() {
+  const { error } = await db().from("calls").delete().not("id", "is", null);
+  if (error) throw new Error(`Could not clear the calls: ${error.message}`);
 }

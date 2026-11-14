@@ -1,11 +1,12 @@
 import { beforeEach, expect, test } from "vitest";
 import { getDashboardState } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
-import { resetSampleData, sendTool, startCall, tickErrand } from "./helpers";
+import { clearCalls, resetSampleData, sendTool, startCall, tickErrand } from "./helpers";
 
-// Every test starts with no Errands, so the ones listed are only those it makes.
-beforeEach(() => {
+// Every test starts with the Care plan and no Errands, so the ones listed are only those it makes.
+beforeEach(async () => {
   resetSampleData();
+  await clearCalls();
 });
 
 const errand = { id: expect.any(String), at: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/) };
