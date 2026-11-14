@@ -8,3 +8,6 @@ supabase/.temp
 next-env.d.ts
 *.tsbuildinfo
 .playwright-mcp/
+
+# Serena tool workspace (local)
+.serena/

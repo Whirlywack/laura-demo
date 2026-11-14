@@ -15,3 +15,11 @@ Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/ag
 ### Design
 
 The look of every page comes from the `laura-design` skill in `.claude/skills/laura-design/`. Load it before building or changing UI. It decides colours, type, spacing, motion and components; `docs/demo-brief.md` decides what the page shows.
+
+### ElevenLabs
+
+Before changing Laura (`agent/`) or checking a call, read `docs/elevenlabs.md`: the facts verified against ElevenLabs, and the `laura-agent:test` and `last-call` commands.
+
+### Next.js
+
+@AGENTS.md
