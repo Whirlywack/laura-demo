@@ -61,3 +61,4 @@ const agentId: string = laura
 await api("PATCH", `/v1/convai/phone-numbers/${phoneNumberId}`, { agent_id: agentId });
 
 console.log(`${laura ? "Updated" : "Created"} the Laura agent: ${agentId}`);
+console.log("Check her replies, with no phone call: npm run laura-agent:test");

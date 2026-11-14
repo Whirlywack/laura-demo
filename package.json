@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm test",
     "sample-data": "node --env-file=.env.local scripts/sample-data.ts",
-    "laura-agent": "node --env-file=.env.local scripts/laura-agent.ts"
+    "laura-agent": "node --env-file=.env.local scripts/laura-agent.ts",
+    "laura-agent:test": "node --env-file=.env.local scripts/laura-agent-tests.ts",
+    "last-call": "node --env-file=.env.local scripts/last-call.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
