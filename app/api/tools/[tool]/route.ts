@@ -49,6 +49,20 @@ const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
     typeof body.item === "string" && body.item.trim() ? addEntry(body, "errand", { item: body.item }) : refuse("item is required"),
   // Anything Laura promises to pass on to the Family carer: her words are the whole record.
   pass_on: async (body) => addEntry(body, "pass_on", {}),
+  // Laura's words, not a Quote, so they go on the Call rather than in an Entry. Recording them makes the Call done.
+  end_call_summary: async (body) => {
+    if (typeof body.summary !== "string" || !body.summary.trim()) return refuse("summary is required");
+    const { data, error } = await writeClient()
+      .from("calls")
+      .update({ summary: body.summary, status: "done" })
+      .eq("id", body.call_id)
+      .select("id");
+    // 22P02: not a Call id at all; no row updated: no such Call.
+    if (error?.code === "22P02") return refuse("call_id does not name a call");
+    if (error) throw new Error(`Could not record the summary: ${error.message}`);
+    if (!data.length) return refuse("call_id does not name a call");
+    return Response.json({ ok: true });
+  },
 };
 
 export async function POST(request: Request, { params }: { params: Promise<{ tool: string }> }) {
