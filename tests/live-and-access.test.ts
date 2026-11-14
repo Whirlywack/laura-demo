@@ -12,13 +12,18 @@ afterEach(async () => {
 
 // Must-have 1: what Laura records reaches an open page within a second or two, with no reload. The page listens the
 // way this test does (components/LiveUpdates.tsx), with the public key, to changes on calls and entries.
-// Earlier tests reset the sample data, and those few hundred changes may still be queued, so the test first waits for
-// its own new Call to come through (the queue is then clear) and only times Laura's Entry.
+// The live-update service can still be starting (a cold start on CI) or working through earlier tests' changes, so the
+// test starts Calls until one comes through, which shows it is listening and caught up, and only times Laura's Entry.
 test("an Entry Laura records reaches a page listening for live updates within two seconds", async () => {
   const db = readClient();
   const seen: { table: string; row: Record<string, unknown> }[] = [];
   const waiters: (() => void)[] = [];
-  const until = (found: () => unknown) => new Promise<void>((resolve) => { const check = () => (found() ? resolve() : waiters.push(check)); check(); });
+  const within = (ms: number, found: () => unknown) =>
+    new Promise<boolean>((resolve) => {
+      const timer = setTimeout(() => resolve(false), ms);
+      const check = () => (found() ? (clearTimeout(timer), resolve(true)) : waiters.push(check));
+      check();
+    });
   const note = (table: string) => (change: { new: Record<string, unknown> }) => {
     seen.push({ table, row: change.new });
     waiters.splice(0).forEach((check) => check());
@@ -33,16 +38,19 @@ test("an Entry Laura records reaches a page listening for live updates within tw
       if (status === "SUBSCRIBED") subscribed();
     });
   await ready;
-  const call_id = await startCall();
-  await until(() => seen.some((s) => s.table === "calls" && s.row.id === call_id));
+  let call_id: string | undefined;
+  for (let tries = 0; !call_id && tries < 30; tries++) {
+    const id = await startCall();
+    if (await within(1500, () => seen.some((s) => s.table === "calls" && s.row.id === id))) call_id = id;
+  }
+  expect(call_id, "live updates never started").toBeDefined();
 
   await sendTool("log_wellbeing", { call_id, quote: "I'm all right, thank you.", aspect: "general" });
 
   const entry = () => seen.find((s) => s.table === "entries" && s.row.call_id === call_id)?.row;
-  const tooLate = new Promise((_, reject) => setTimeout(() => reject(new Error("No live update within 2 seconds")), 2000));
-  await Promise.race([until(entry), tooLate]);
+  expect(await within(2000, entry), "no live update within 2 seconds").toBe(true);
   expect(entry()).toMatchObject({ call_id, kind: "wellbeing", quote: "I'm all right, thank you." });
-}, 30_000);
+}, 90_000);
 
 // Every visitor's browser holds the public (anon) key, so it must only ever read.
 test("the public key every browser holds can read the page, and nothing it tries to write changes anything", async () => {
