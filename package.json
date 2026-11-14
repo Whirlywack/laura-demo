@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test",
     "sample-data": "node --env-file=.env.local scripts/sample-data.ts",
     "laura-agent": "node --env-file=.env.local scripts/laura-agent.ts"
   },

@@ -1,0 +1,26 @@
+# Type check and every test, on each pull request and each push to main.
+# The database tests run against a local Supabase started here from supabase/config.toml and
+# supabase/migrations; nothing touches the hosted project, and Call now's outbound request is faked.
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.120.0
+      - run: supabase start
+      - run: npm run check
