@@ -39,7 +39,8 @@ export function PageTitle({ title, line, pills, children }: { title: string; lin
 /** The two columns under the title on both pages: the wide one, and the narrow one on the right. */
 export const columns: CSSProperties = { display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", alignItems: "flex-start" };
 export const wide: CSSProperties = { flex: "3 1 600px", minWidth: 0 };
-export const narrow: CSSProperties = { flex: "1 1 350px", minWidth: 0, maxWidth: 440 };
+// No width cap: when the two no longer fit side by side, the narrow one takes the full width under the wide one.
+export const narrow: CSSProperties = { flex: "1 1 350px", minWidth: 0 };
 
 /** A pill-shaped link: the ranges, All days, Day before and Day after. `on` fills it; `off` is a pill with nowhere to go. */
 export const pill = (on = false, off = false): CSSProperties => ({

@@ -74,7 +74,7 @@ export function HistoryCalendar({ first, last, called, range, selected }: { firs
               aria-label={dayName(date)}
               aria-current={date === selected ? "page" : undefined}
               className="laura-button"
-              style={{ ...cell, fontWeight: 700, textDecoration: "none", ...(date === selected ? { background: "var(--accent)", color: "var(--text-on-accent)" } : { background: "var(--surface-quiet)", color: "var(--ink)" }) }}
+              style={{ ...cell, fontWeight: 700, textDecoration: "none", ...(date === selected ? { background: "var(--ink)", color: "var(--text-on-accent)" } : { background: "var(--surface-quiet)", color: "var(--ink)" }) }}
             >
               {i + 1}
             </Link>
@@ -82,6 +82,8 @@ export function HistoryCalendar({ first, last, called, range, selected }: { firs
             <span key={date} style={{ ...cell, color: "var(--text-meta)" }}>{i + 1}</span>
           );
         })}
+        {/* Always six rows of days, so what is under the calendar never moves from month to month. */}
+        {Array.from({ length: 42 - blanks - length }, (_, i) => <span key={`after${i}`} style={cell} />)}
       </div>
     </div>
   );
