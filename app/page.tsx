@@ -9,7 +9,7 @@ import { TabletTicks } from "../components/home/TabletTicks";
 import { SiteHeader } from "../components/SiteHeader";
 
 // The home page, ported from .claude/skills/laura-design/ui_kits/home/Home.jsx: what Laura is, a call to listen to (the film,
-// components/home/films.ts) with a month of her answers drawn under it, then what it adds up to. The tablets are Lidia's own (as in the care plan); "Call now" opens the demo at /demo.
+// components/home/films.ts) with a month of her answers and her tablet count drawn under it, then Laura's two jobs. The tablets are Lidia's own (as in the care plan); "Call now" opens the demo at /demo.
 export const metadata: Metadata = {
   title: "Laura",
   description: "Laura phones her every morning, so nothing gets missed. A daily phone call for your mother or grandmother, and a page for you that fills in as she speaks.",
@@ -112,7 +112,7 @@ export default function Home() {
       </div>
 
       <section id="one-morning" style={{ marginTop: 88, padding: "0 20px", scrollMarginTop: 24 }}>
-        <h2 style={display(64)}>Listen to a call</h2>
+        <h2 style={display(40)}>Listen to a call</h2>
         <p style={{ margin: "18px 0 0", maxWidth: 760, fontSize: 22, lineHeight: 1.4, color: "var(--text-secondary)" }}>
           Lidia is 94. Her grandson Paul looks after her from another city. The words are from a real call on 14 November: Laura speaks in her own voice, and Lidia is voiced by a generated voice.
         </p>
@@ -121,10 +121,10 @@ export default function Home() {
       <DataBlocks />
 
       <section id="what-laura-does" style={{ marginTop: 72, padding: "0 20px", scrollMarginTop: 24 }}>
-        <h2 style={display(64)}>What it adds up to</h2>
+        <h2 style={display(40)}>What Laura does</h2>
       </section>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: 36 }}>
-        <Card style={{ flex: "2.2 1 600px", minWidth: 0, padding: "40px 44px 44px" }}>
+        <Card style={{ flex: "1 1 600px", minWidth: 0, padding: "40px 44px 44px" }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "36px 56px" }}>
             {jobs.map(([job, items]) => (
               <div key={job} style={{ flex: "1 1 300px", minWidth: 0 }}>
@@ -138,16 +138,6 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </Card>
-        <Card tone="quiet" style={{ flex: "1 1 380px", minWidth: 0, padding: "40px 42px 44px" }}>
-          <div style={label}>Day after day</div>
-          <div style={{ font: "700 80px/0.95 var(--font-sans)", letterSpacing: "-.06em", marginTop: 8, whiteSpace: "nowrap" }}>39 of 42</div>
-          <div style={{ marginTop: 10 }}>of Lidia&apos;s tablets confirmed on the call in the last two weeks</div>
-          <div role="img" aria-label="39 of 42 dots filled" style={{ display: "grid", gridTemplateColumns: "repeat(14,1fr)", gap: 8, marginTop: 30 }}>
-            {Array.from({ length: 42 }, (_, i) => (
-              <span key={i} style={{ aspectRatio: "1", borderRadius: "50%", boxSizing: "border-box", ...(i < 39 ? { background: "var(--accent)" } : { border: "2px solid var(--accent)" }) }} />
             ))}
           </div>
         </Card>

@@ -16,16 +16,16 @@ export const menuItem = (active: boolean): CSSProperties => ({
 export function SiteHeader({ menu, children }: { menu?: ReactNode; children: ReactNode }) {
   return (
     <header style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 40px", padding: "26px 20px 22px" }}>
-      <Link href="/" aria-label="Laura, home page" style={{ ...link, padding: 0, font: "700 var(--size-wordmark-large)/1 var(--font-sans)", letterSpacing: "-.06em" }}>
+      <Link className="laura-button" href="/" aria-label="Laura, home page" style={{ ...link, padding: 0, font: "700 var(--size-wordmark-large)/1 var(--font-sans)", letterSpacing: "-.06em" }}>
         laura
       </Link>
       <div style={{ flex: 1 }} />
       <nav style={{ display: "flex", flexWrap: "wrap", gap: "0 36px", whiteSpace: "nowrap" }}>
         {menu ?? (
           <>
-            <Link href="/#one-morning" style={link}>Listen to a call</Link>
-            <Link href="/#what-laura-does" style={link}>What Laura does</Link>
-            <Link href="/#about" style={link}>About</Link>
+            <Link className="laura-button" href="/#one-morning" style={link}>Listen to a call</Link>
+            <Link className="laura-button" href="/#what-laura-does" style={link}>What Laura does</Link>
+            <Link className="laura-button" href="/#about" style={link}>About</Link>
           </>
         )}
       </nav>

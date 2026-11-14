@@ -1,4 +1,5 @@
-// Ported from .claude/skills/laura-design/components/core/Checklist.jsx, on the chamomile (action) card. A ticked item stays ticked.
+// Ported from .claude/skills/laura-design/components/core/Checklist.jsx, on the chamomile (action) card. A ticked item stays
+// ticked, on one line without her words: it is done, and the open ones are what the carer reads.
 export type ChecklistItem = { label: string; quote: string; meta: string; done: boolean };
 
 export function Checklist({ items, onTick }: { items: ChecklistItem[]; onTick: (index: number) => void }) {
@@ -8,7 +9,7 @@ export function Checklist({ items, onTick }: { items: ChecklistItem[]; onTick: (
         <label
           key={i}
           style={{
-            position: "relative", display: "flex", gap: 16, alignItems: "flex-start", padding: "14px 0",
+            position: "relative", display: "flex", gap: 16, alignItems: it.done ? "center" : "flex-start", padding: it.done ? "8px 0" : "14px 0",
             borderTop: "1px solid var(--rule-on-highlight)", cursor: it.done ? "default" : "pointer",
             minHeight: "var(--hit-min)", boxSizing: "border-box", color: it.done ? "var(--text-meta)" : "inherit",
           }}
@@ -36,7 +37,7 @@ export function Checklist({ items, onTick }: { items: ChecklistItem[]; onTick: (
               <b style={{ fontWeight: 700, textDecoration: it.done ? "line-through" : "none" }}>{it.label}</b>
               <span style={{ font: "var(--text-meta-font)", whiteSpace: "nowrap" }}>{it.meta}</span>
             </span>
-            <span style={{ display: "block", font: "var(--text-quote)", marginTop: 2 }}>“{it.quote}”</span>
+            {it.done ? null : <span style={{ display: "block", font: "var(--text-quote)", marginTop: 2 }}>“{it.quote}”</span>}
           </span>
         </label>
       ))}
