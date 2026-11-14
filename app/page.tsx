@@ -11,7 +11,7 @@ import { KeyValueRows, QuietRow } from "../components/QuietRow";
 import { QuoteFact } from "../components/QuoteFact";
 import { StatLine } from "../components/StatLine";
 import { StatusLabel } from "../components/StatusLabel";
-import { getDashboardState, readingValue, type CallStatus, type Dose, type DoseStatus } from "../lib/dashboard";
+import { DOSE_STATUSES, getDashboardState, readingValue, type CallStatus, type Dose } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -35,16 +35,12 @@ const tablets = (doses: Dose[]) => {
 
 // Today's Doses in words, under the bars that show them: e.g. "2 taken on call, 1 says taken earlier."
 const dosesInWords = (doses: Dose[], callStatus: CallStatus) => {
-  const said = (["taken on call", "says taken earlier", "not taken"] as DoseStatus[])
-    .map((status) => ({ status, n: doses.filter((d) => d.status === status).length }))
+  const said = DOSE_STATUSES.map((status) => ({ status, n: doses.filter((d) => d.status === status).length }))
     .filter(({ n }) => n)
     .map(({ status, n }) => `${n} ${status}`);
   if (said.length) return `${sentence(said.join(", "))}.`;
   return callStatus === "done" ? "Not asked on this call." : "Laura will ask on the call.";
 };
-
-// Only the latest few earlier Remarks and Readings, so the details card stays short. History has every earlier Call.
-const EARLIER = 4;
 
 const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
@@ -162,7 +158,7 @@ export default async function Page() {
                   {reading ? <div style={{ font: "var(--text-quote)", marginTop: 10, color: "var(--text-secondary)" }}>“{reading.quote}”</div> : null}
                   <DatedList
                     style={{ marginTop: 16 }}
-                    items={bloodPressure.earlier.slice(0, EARLIER).map((r) => ({ date: day(r.at), value: readingValue(r) }))}
+                    items={bloodPressure.earlier.map((r) => ({ date: day(r.at), value: readingValue(r) }))}
                   />
                 </div>
                 <div style={{ flex: "1 1 300px", minWidth: 0 }}>
@@ -180,7 +176,7 @@ export default async function Page() {
                   >
                     {leftLeg.today ? `“${leftLeg.today.quote}”` : callStatus === "done" ? "Not asked on this call" : "Not asked yet"}
                   </div>
-                  <DatedList style={{ marginTop: 16 }} items={leftLeg.earlier.slice(0, EARLIER).map((r) => ({ date: day(r.at), quote: r.quote }))} />
+                  <DatedList style={{ marginTop: 16 }} items={leftLeg.earlier.map((r) => ({ date: day(r.at), quote: r.quote }))} />
                 </div>
               </div>
             </div>

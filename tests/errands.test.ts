@@ -74,6 +74,20 @@ test("a ticked Errand is still done after the next Call starts", async () => {
 });
 
 test.each([
+  ["a page on another site", { "sec-fetch-site": "cross-site" }],
+  ["a page with another origin", { origin: "https://elsewhere.example" }],
+])("an Errand ticked from %s is refused and stays open", async (_, headers) => {
+  const call_id = await startCall();
+  await sendTool("add_errand", { call_id, quote: "I'm nearly out of tea.", item: "Tea" });
+  const [tea] = (await getDashboardState(readClient())).errands;
+
+  const response = await tickErrand(tea.id, headers);
+
+  expect(response.status).toBe(403);
+  expect((await getDashboardState(readClient())).errands).toMatchObject([{ item: "Tea", done: false }]);
+});
+
+test.each([
   ["an Errand that does not exist", "6f1c2a8e-3b4d-4e5f-8a9b-0c1d2e3f4a5b"],
   ["something that is not an id", "tea"],
 ])("ticking %s is not found", async (_, id) => {

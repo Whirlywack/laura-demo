@@ -14,7 +14,8 @@ const STATES: Record<DoseStatus, { label: string; mark: CSSProperties; color: st
 const change = "background-color var(--motion-state), border-color var(--motion-state), color var(--motion-state)";
 
 export function StatusLabel({ status }: { status: DoseStatus }) {
-  const s = STATES[status];
+  // A status in none of these, written some other way than by Laura, shows as not confirmed, as in the reference.
+  const s = STATES[status] ?? STATES["not confirmed"];
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: "var(--text-meta-font)", color: s.color, whiteSpace: "nowrap", transition: change }}>
       <span style={{ width: "var(--marker)", height: "var(--marker)", borderRadius: "50%", borderWidth: 2, boxSizing: "border-box", flex: "none", transition: change, ...s.mark }} />

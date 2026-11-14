@@ -3,6 +3,7 @@
 // Fictional data for the demo. Run with `npm run sample-data` (reads .env.local).
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import type { DoseStatus } from "../lib/dashboard.ts";
 import { env } from "../lib/env.ts";
 
 const db = createClient(env("NEXT_PUBLIC_SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), {
@@ -19,7 +20,8 @@ const carePlan = {
   watch_items: ["blood pressure", "left leg swelling"],
 };
 
-type Status = "taken on call" | "says taken earlier" | "not taken";
+// A status Laura can record.
+type Status = Exclude<DoseStatus, "not confirmed">;
 
 // One earlier Call a day, yesterday first. Every Dose is taken on call unless `doses` says otherwise.
 type Day = {
@@ -38,8 +40,8 @@ const history: Day[] = [
     sleep: "Badly. The wind was rattling the window half the night.",
     leg: "Swollen again by evening. I kept it up on the stool.",
     reading: { systolic: 142, diastolic: 85, pulse: 70, quote: "One forty-two over eighty-five. Pulse seventy." },
-    summary:
-      "Lidia slept badly; the wind kept rattling the window. She was looking forward to Ona coming round for coffee. Her left leg was swollen by the evening. She took all three tablets on the call.",
+    // Sleep is the only personal detail, so the detail Laura remembers is predictable.
+    summary: "Lidia slept badly; the wind kept rattling the window. Her left leg was swollen by the evening. She took all three tablets on the call.",
   },
   {
     general: "Quite well, thank you. Ona came round with the newspaper.",
