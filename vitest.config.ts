@@ -18,6 +18,13 @@ function localSupabase() {
     SUPABASE_SERVICE_ROLE_KEY: vars.SERVICE_ROLE_KEY,
     SUPABASE_DB_URL: vars.DB_URL,
     LAURA_WEBHOOK_SECRET: "test-webhook-secret",
+    // Placeholders, never the real agent, number or key. Call now's request goes to a host that cannot exist
+    // (.invalid never resolves), and the tests fake that one request (fakeOutboundCall in tests/helpers.ts).
+    ELEVENLABS_API_URL: "https://api.elevenlabs.invalid",
+    ELEVENLABS_API_KEY: "test-elevenlabs-key",
+    ELEVENLABS_AGENT_ID: "agent_test",
+    ELEVENLABS_PHONE_NUMBER_ID: "phnum_test",
+    LIDIA_PHONE_NUMBER: "+37000000000",
   };
 }
 
