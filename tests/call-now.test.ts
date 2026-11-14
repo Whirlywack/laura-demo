@@ -81,6 +81,17 @@ test("a second Call within 60 seconds of the last one started is refused with a 
   expect((await getDashboardState(readClient())).wellbeing.general).toBe("Hello? Who is it?");
 });
 
+test("two presses of Call now at the same moment ring her phone once: one starts the Call, the other is refused", async () => {
+  const sent = fakeOutboundCall();
+
+  const responses = await Promise.all([callNow(), callNow()]);
+
+  expect(responses.map((r) => r.status).sort()).toEqual([200, 429]);
+  expect(sent).toHaveLength(1);
+  // One Call is Today, and the 13 sample Calls are still the only History.
+  expect((await getDashboardState(readClient())).history).toHaveLength(13);
+});
+
 test("when the last Call was earlier today, Laura is told so, and that Call moves to History", async () => {
   const earlier = await startCall(minutesAgo(5));
   await sendTool("log_wellbeing", { call_id: earlier, quote: "Fine, thank you.", aspect: "general" });

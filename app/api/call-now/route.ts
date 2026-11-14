@@ -29,30 +29,28 @@ export async function POST() {
   const outbound = { agent_id: env("ELEVENLABS_AGENT_ID"), agent_phone_number_id: env("ELEVENLABS_PHONE_NUMBER_ID"), to_number: env("LIDIA_PHONE_NUMBER") };
 
   const db = writeClient();
-  const [last, plan, previous] = await Promise.all([
-    db.from("calls").select("started_at").order("started_at", { ascending: false }).limit(1).maybeSingle(),
+  const [plan, previous] = await Promise.all([
     db.from("care_plan").select("family_phrase, medications, watch_items").single(),
     // The latest Call with a summary: one nobody answered has none, and Laura should still remember the one before.
     // The Care plan's "From the last call:" uses the same rule.
     db.from("calls").select("summary, started_at").not("summary", "is", null).order("started_at", { ascending: false }).limit(1).maybeSingle(),
   ]);
-  if (last.error) throw new Error(`Could not read the last call: ${last.error.message}`);
   if (plan.error) throw new Error(`Could not read the care plan: ${plan.error.message}`);
   if (previous.error) throw new Error(`Could not read the previous call: ${previous.error.message}`);
 
   // One Call a minute at most, so a double click or a stranger cannot ring her phone again and again.
-  const sinceLast = last.data ? Date.now() - Date.parse(last.data.started_at) : Infinity;
-  if (sinceLast < 60_000) {
-    const seconds = Math.ceil((60_000 - sinceLast) / 1000);
+  // The database checks and starts the Call in one step (start_call), so two requests at once cannot both get through.
+  const started = await db.rpc("start_call");
+  if (started.error) throw new Error(`Could not start the call: ${started.error.message}`);
+  const call: { id?: string; last_started_at?: string } = started.data;
+  if (!call.id) {
+    const seconds = Math.max(1, Math.ceil((60_000 - (Date.now() - Date.parse(call.last_started_at!))) / 1000));
     return refuse(`Laura phoned her less than a minute ago. You can call again in ${seconds} ${seconds === 1 ? "second" : "seconds"}.`, 429);
   }
 
-  const call = await db.from("calls").insert({}).select("id").single();
-  if (call.error) throw new Error(`Could not start the call: ${call.error.message}`);
-
   // What Laura is given before the call. Every one must be sent, as a string, or the call fails as it starts.
   const dynamic_variables = {
-    call_id: call.data.id,
+    call_id: call.id,
     care_recipient_name: CARE_RECIPIENT,
     family_carer_name: FAMILY_CARER,
     family_phrase: plan.data.family_phrase,
@@ -74,7 +72,7 @@ export async function POST() {
   const result = await response.json().catch(() => null);
   // ElevenLabs says in `success` whether it started the call. If it did not, the phone never rang, so no Call is kept.
   if (!response.ok || result?.success !== true) {
-    const removed = await db.from("calls").delete().eq("id", call.data.id);
+    const removed = await db.from("calls").delete().eq("id", call.id);
     if (removed.error) throw new Error(`Could not remove the call that was not placed: ${removed.error.message}`);
     const said = typeof result?.message === "string" && result.message ? ` ElevenLabs said: ${result.message}` : "";
     return refuse(`The call could not be placed.${said}`, 502);
