@@ -24,8 +24,10 @@ const db = () =>
   createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
 
 // A live Call, which becomes Today. Stands in for Call now until that exists.
-export async function startCall(): Promise<string> {
-  const { data, error } = await db().from("calls").insert({}).select("id").single();
+// `daysAgo` dates it in the past, for the tablet count's 14-day window.
+export async function startCall(daysAgo = 0): Promise<string> {
+  const startedAt: { started_at?: string } = daysAgo ? { started_at: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000).toISOString() } : {};
+  const { data, error } = await db().from("calls").insert(startedAt).select("id").single();
   if (error) throw new Error(`Could not start a call: ${error.message}`);
   return data.id;
 }
