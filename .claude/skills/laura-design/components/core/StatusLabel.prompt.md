@@ -7,4 +7,4 @@ Shows whether a tablet was taken, as a marker plus plain words; use it on every 
 <StatusLabel status="not-taken" />
 ```
 
-Filled petrol = taken on the call; outlined petrol = she says she took it earlier; dashed grey = not confirmed yet; solid black with bold text = not taken.
+Filled burgundy = taken on the call; outlined burgundy = she says she took it earlier; dashed grey = not confirmed yet; solid black with bold text = not taken.

@@ -12,7 +12,7 @@ export interface ChecklistItem {
 export interface ChecklistProps {
   items: ChecklistItem[];
   onToggle?: (index: number) => void;
-  /** True when placed on a straw (action) card; uses the darker rule. */
+  /** True when placed on a chamomile (action) card; uses the darker rule. */
   onHighlight?: boolean;
   style?: React.CSSProperties;
 }
