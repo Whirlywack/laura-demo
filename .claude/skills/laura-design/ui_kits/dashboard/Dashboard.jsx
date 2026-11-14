@@ -8,7 +8,7 @@ export function Dashboard({ L }) {
     { t: '09:31', title: 'Sleep', quote: "I woke at four and couldn't get back off. Otherwise fine.", set: { sleep: true } },
     { t: '09:31', title: 'Left leg', quote: "It's a little better today, less swollen than yesterday.", set: { leg: true } },
     { t: '09:32', title: 'Laura said', quote: "Take them now, take your time, I'll wait.", speaker: 'laura' },
-    { t: '09:32', title: 'Metoprolol · Taken on call', quote: "There. I've swallowed it.", set: { met: 'taken' } },
+    { t: '09:32', title: 'Concor · Taken on call', quote: "There. I've swallowed it.", set: { met: 'taken' } },
     { t: '09:33', title: 'Ramipril · Taken on call', quote: 'And the small white one, yes.', set: { ram: 'taken' } },
     { t: '09:33', title: 'Furosemide · Says taken earlier', quote: 'That one I took with breakfast already.', set: { fur: 'earlier' } },
     { t: '09:34', title: 'Blood pressure · 138/82', quote: 'One thirty-eight over eighty-two. I wrote it down.', set: { bp: true } },
@@ -98,7 +98,7 @@ export function Dashboard({ L }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px 56px', marginTop: 20 }}>
               <div style={{ flex: '1.35 1 320px', minWidth: 0 }}>
                 <div style={{ font: 'var(--text-label)', marginBottom: 12 }}>Tablets</div>
-                <QuoteFact fact="Metoprolol" detail="50 mg" quote={s.met && q('Metoprolol')} muted={!s.met} status={<StatusLabel status={doses[0]} />} />
+                <QuoteFact fact="Concor" detail="50 mg" quote={s.met && q('Concor')} muted={!s.met} status={<StatusLabel status={doses[0]} />} />
                 <QuoteFact fact="Ramipril" detail="5 mg" quote={s.ram && q('Ramipril')} muted={!s.ram} status={<StatusLabel status={doses[1]} />} />
                 <QuoteFact fact="Furosemide" detail="40 mg" quote={s.fur && q('Furosemide')} muted={!s.fur} status={<StatusLabel status={doses[2]} />} />
                 <QuoteFact fact="Atorvastatin" detail="20 mg · evening" muted status={<StatusLabel status="not-confirmed" />} />
@@ -126,10 +126,10 @@ export function Dashboard({ L }) {
             <QuietRow style={col} title="Care plan" note="What Laura knows about her · read-only" open={open.plan} onToggle={() => setOpen((o) => ({ ...o, plan: !o.plan }))}>
               <KeyValueRows rows={[
                 { label: 'Calls', value: 'Every day at 09:30, on her own phone' },
-                { label: 'Morning', value: 'Metoprolol 50 mg, Ramipril 5 mg, Furosemide 40 mg' },
+                { label: 'Morning', value: 'Concor 50 mg, Ramipril 5 mg, Furosemide 40 mg' },
                 { label: 'Evening', value: 'Atorvastatin 20 mg' },
                 { label: 'Asks about', value: 'Sleep, left leg, blood pressure, what is running out' },
-                { label: 'Family', value: 'Povilas, grandson' },
+                { label: 'Family', value: 'Paul, grandson' },
               ]} />
             </QuietRow>
             <QuietRow style={col} title="History" note={<StatLine label="Tablets confirmed on the call:" value="39 of 42" suffix="in the last two weeks" />} open={open.hist} onToggle={() => setOpen((o) => ({ ...o, hist: !o.hist }))}>

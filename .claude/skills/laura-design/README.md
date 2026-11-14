@@ -8,7 +8,7 @@ There are two surfaces:
 - **Carer dashboard** (`ui_kits/dashboard`): one page for the carer, opened for a minute at a time on a laptop or phone.
 - **Home page** (`ui_kits/home`): the marketing page.
 
-The older person never sees a screen. Sample names: the older person is Lidia, 94; the carer is Povilas, her grandson.
+The older person never sees a screen. Sample names: the older person is Lidia, 94; the carer is Paul, her grandson.
 
 ## Rules for copy
 
@@ -25,27 +25,28 @@ The older person never sees a screen. Sample names: the older person is Lidia, 9
 
 ## Rules for visuals
 
-**Colour** (tokens in `tokens/colors.css`). Black ink plus one petrol and one straw yellow on warm off-white. Each colour has one job:
-- Petrol `#1c4e57`: the call is live, a tablet was taken, a carer's question.
-- Straw `#ead98f`: the single thing the carer has to do. Once per screen.
-- Petrol tint `#dbe7e8`: background information (the live feed, folded rows).
-- Ink `#141414`, with greys `#44443f` and `#5c5c58` for supporting text and dates.
-- Paper `#f3f2ee` for the page, white for cards.
-- Never orange or red, never gradients, never a clinical blue-and-white look.
+**Colour** (tokens in `tokens/colors.css`). Warm and a little vintage: brown-black ink on almond cream, with sage, burgundy and golden chamomile. Each colour has one job:
+- Burgundy `#6e2233`: where the eye should go. The "Call now" button, the live dot, a tablet's tick, a carer's question, the dot on what just arrived. Never a large surface.
+- Golden chamomile `#e4c463`: the single thing the carer has to do. Once per screen.
+- Coastal sage `#a9bba6`: her side. The block that holds her phone, and the story block on the home page.
+- Sage tint `#dde3d2`: background information (her words today, the live feed, folded rows).
+- Warm ink `#2b211d`, with browns `#5a4a42` and `#6b5a50` for supporting text and dates. Never pure black.
+- Almond cream `#f1e6d3` for the page, cream `#fbf6ec` for cards. Never pure white.
+- Burgundy is the only red. Never orange or bright red, never gradients, never a clinical blue-and-white look.
 
-**Type** (tokens in `tokens/typography.css`). Helvetica only (`"Helvetica Neue", Helvetica, Arial`), bold and regular. Sizes in px: 72 home headline, 60 answers, 40, 26, 20 body and labels, 18 quotes, 16 dates and statuses. Large type has letter-spacing −0.05em and line-height 1. No monospace, no italics, no uppercase labels. No font files are included.
+**Type** (tokens in `tokens/typography.css`). Helvetica only (`"Helvetica Neue", Helvetica, Arial`), bold and regular. Sizes in px: 60 home headline and answers, 40, 30 card titles on the home page, 26, 20 body and labels, 18 quotes, 16 dates and statuses. Large type has letter-spacing −0.05em and line-height 1. No monospace, no italics, no uppercase labels. No font files are included.
 
-**Hierarchy.** Three levels per page. Level 1 is the only large type (on the dashboard: the three answer cards). Level 2 is one card at reading size. Level 3 is small, to the side or folded away.
+**Hierarchy.** Three levels per page. Level 1 is the only large type (on the dashboard: the three answer cards). Level 2 is one card at reading size. Level 3 is small, to the side or folded away. On the home page every card is led by a 30px title with one plain line under it; a number never leads a card.
 
-**Surfaces** (tokens in `tokens/spacing.css`). Flat rounded cards, radius 32 (folded rows 24), 20px apart, on the paper background. No shadows, no card borders, no textures. Rows inside cards are divided by 1px rules at 16% ink.
+**Surfaces** (tokens in `tokens/spacing.css`). Flat rounded cards, radius 32 (folded rows 24), 20px apart, on the almond background. No shadows, no card borders, no textures. Rows inside cards are divided by 1px rules at 16% ink.
 
-**Shapes.** Pills for the call control and chips. 12px round markers for status, always next to words. 28px tick boxes with 8px radius.
+**Shapes.** Pills for the call control and chips. 12px round markers for status, always next to words. Tablet rows on the home page use a 30px round tick mark instead: filled burgundy with a cream tick = taken on call; outlined with a burgundy tick = says taken earlier; dashed and empty = not confirmed. 28px tick boxes with 8px radius.
 
 **Layout.** Full width, never a narrow centred column. Laptop first; every row wraps so the page stacks on a phone. Hit targets at least 44px.
 
 **Motion.** Only when something arrives or changes state: a new feed item slides down 10px and fades in over 420ms; a dose bar or marker changes over 240ms. Nothing decorative. Respect reduced motion.
 
-**Imagery and icons.** One illustration: her phone, `assets/phone.svg`, shown on petrol. No icon set and no emoji; the only glyph is a tick in a completed tick box. There is no logo: the wordmark is "Laura" in Helvetica Bold 32, letter-spacing −0.04em.
+**Imagery and icons.** One illustration: her cordless home phone standing in its charging stand, `assets/home-phone.svg`, drawn with a 3px ink outline and shown on sage. No icon set and no emoji; the only glyph is a tick, in a completed tick box or a tablet's tick mark. There is no logo: the wordmark is Helvetica Bold: lowercase "laura" at 60px with letter-spacing −0.06em on the home page; "Laura" at 32px with −0.04em on the dashboard. In running text the name is always "Laura".
 
 ## Components (`components/core`)
 
@@ -68,4 +69,4 @@ Each has `Name.jsx`, `Name.d.ts` (props) and `Name.prompt.md` (usage).
 Open `ui_kits/dashboard/index.html` or `ui_kits/home/index.html` in a browser (needs internet for React). `preview/ds-loader.js` only exists to make those two pages run; it is not part of the system.
 
 - **Dashboard**: press "Call now" (or → / Space) to play a simulated call; items arrive every 2.6 seconds.
-- **Home page**: her phone on the left, the dashboard on the right, then a block where items arrive, then two blocks with diagrams, then About. Its dashboard card uses an older layout than the dashboard page; when in doubt, follow the dashboard page.
+- **Home page**: tells the story in three parts. The hero says what Laura is: her phone on sage on the left; on the right the headline, her words today, and three cards divided by colour: Tablets (cream, clickable ticks), Blood pressure (sage tint, her words and a dated list) and To bring her (chamomile). "One morning with Lidia" is a video-like block: press play and a 34-second story runs. A caption sets each scene, Laura's and Lidia's speech bubbles appear in turn, and each thing Lidia says lands on the carer's page on the right, which fills up. It has play / pause and a scrubber. "What it adds up to" lists Laura's two jobs and the two-week tablet count.

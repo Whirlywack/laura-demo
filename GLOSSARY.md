@@ -9,7 +9,7 @@ The person Laura phones; in the demo, Lidia.
 _Avoid_: Patient, user, client, elder
 
 **Family carer**:
-The relative who set Laura up and reads the page; in the demo, Povilas.
+The relative who set Laura up and reads the page; in the demo, Paul.
 _Avoid_: Caregiver, admin, user
 
 **Laura**:
@@ -25,6 +25,10 @@ _Avoid_: Password, code word, passphrase
 **Call**:
 One phone conversation between Laura and the Care recipient.
 _Avoid_: Session, conversation
+
+**Call now password**:
+The password typed into the page before Call now places a Call, because the site is public. It guards her phone from strangers; Laura never hears it, and it is not the Family phrase.
+_Avoid_: Family phrase, PIN
 
 **Call status**:
 Where the Call stands: not called yet, live, or done. A Call is live from the moment it is placed, ringing included, and done only once Laura records its Call summary; a Call that ends any other way stays live until the next Call replaces it.
@@ -85,7 +89,7 @@ One item on the Care plan: a name, a Strength and a time of day.
 _Avoid_: Tablet, drug, pill (Laura may say "tablets" aloud)
 
 **Strength**:
-How much of a Medication one intake is, e.g. "47.5 mg, one tablet".
+How much of a Medication one intake is, e.g. "5 mg, one tablet".
 _Avoid_: Dose
 
 **Dose**:

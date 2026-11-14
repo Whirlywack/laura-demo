@@ -9,7 +9,7 @@ export interface AnswerCardProps {
   question: string;
   /** Her quote, or a short fact such as "3 of 4". */
   answer: React.ReactNode;
-  /** action = straw, for the single thing the carer must do. */
+  /** action = chamomile, for the single thing the carer must do. */
   tone?: 'card' | 'action';
   /** Keep short numeric answers ("3 of 4") on one line. Do not use for word answers; they must be free to wrap. */
   nowrap?: boolean;

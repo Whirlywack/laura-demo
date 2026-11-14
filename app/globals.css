@@ -1,0 +1,113 @@
+/* Tokens and base styles from the laura-design skill (.claude/skills/laura-design/tokens). */
+:root {
+  /* base */
+  --almond: #f1e6d3;
+  --cream: #fbf6ec;
+  --sage: #a9bba6;
+  --sage-tint: #dde3d2;
+  --burgundy: #6e2233;
+  --chamomile: #e4c463;
+  --ink: #2b211d;
+  --ink-2: #5a4a42;
+  --ink-3: #6b5a50;
+  --ink-4: #948478;
+
+  /* semantic */
+  --surface-page: var(--almond);
+  --surface-card: var(--cream);
+  --surface-quiet: var(--sage-tint);
+  --surface-action: var(--chamomile);
+  --surface-live: var(--sage);
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-2);
+  --text-meta: var(--ink-3);
+  --text-on-live: var(--ink);
+  --text-on-accent: var(--cream);
+  --text-question: var(--burgundy);
+  --accent: var(--burgundy);
+  --highlight: var(--chamomile);
+  --rule: rgba(43, 33, 29, 0.16);
+  --rule-on-highlight: rgba(43, 33, 29, 0.3);
+  --status-taken: var(--burgundy);
+  --status-pending: var(--ink-4);
+}
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --weight-regular: 400;
+  --weight-bold: 700;
+
+  /* sizes (px) — the only sizes in use */
+  --size-meta: 16px;
+  --size-quote: 18px;
+  --size-body: 20px;
+  --size-lead: 26px;
+  --size-reading: 40px;
+  --size-answer: 60px;
+  --size-headline: 72px;
+  --size-wordmark: 32px;
+  --size-wordmark-large: 60px;
+
+  --leading-body: 1.35;
+  --leading-lead: 1.12;
+  --leading-display: 1;
+
+  --tracking-display: -0.05em;
+  --tracking-reading: -0.04em;
+  --tracking-lead: -0.03em;
+
+  /* semantic */
+  --text-label: var(--weight-bold) var(--size-body) / var(--leading-body) var(--font-sans);
+  --text-body: var(--weight-regular) var(--size-body) / var(--leading-body) var(--font-sans);
+  --text-quote: var(--weight-regular) var(--size-quote) / var(--leading-body) var(--font-sans);
+  --text-meta-font: var(--weight-regular) var(--size-meta) / var(--leading-body) var(--font-sans);
+  --text-answer: var(--weight-bold) var(--size-answer) / var(--leading-display) var(--font-sans);
+  --text-headline: var(--weight-bold) var(--size-headline) / var(--leading-display) var(--font-sans);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 14px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 36px;
+  --space-9: 40px;
+
+  --gap-cards: var(--space-5);
+  --pad-card: 36px 40px 40px;
+  --pad-card-compact: 22px 32px;
+  --pad-row: var(--space-4) 0;
+
+  --radius-card: 32px;
+  --radius-card-compact: 24px;
+  --radius-check: 8px;
+  --radius-pill: 999px;
+
+  --marker: 12px;
+  --checkbox: 28px;
+  --hit-min: 44px;
+
+  --motion-arrive: 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  --motion-state: 240ms ease-out;
+}
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font: var(--text-body);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:hover { color: var(--ink); }
+/* The tick box input is hidden behind its drawn box, so the drawn box shows keyboard focus. */
+.laura-check:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 3px; }
+.laura-button:focus-visible, .laura-input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+@keyframes laura-arrive {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+}

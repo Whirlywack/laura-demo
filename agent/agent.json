@@ -1,0 +1,96 @@
+{
+  "name": "Laura",
+  "conversation_config": {
+    "agent": {
+      "first_message": "Hello, is that {{care_recipient_name}}?",
+      "language": "en",
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {
+          "call_id": "00000000-0000-0000-0000-000000000000",
+          "care_recipient_name": "Lidia",
+          "family_carer_name": "Paul",
+          "family_phrase": "Paul says the blue teapot is still his favourite.",
+          "morning_medications": "Concor 5 mg, one tablet; Sanoral HCT 40/10/12.5 mg, one tablet; Eliquis 2.5 mg, one tablet",
+          "watch_items": "blood pressure; left leg swelling",
+          "previous_call_summary": "Lidia said she slept badly. Her leg was a little swollen. She took her tablets and asked for milk.",
+          "previous_call_when": "yesterday"
+        }
+      },
+      "prompt": {
+        "llm": "claude-sonnet-5-5",
+        "built_in_tools": {
+          "end_call": { "type": "system", "name": "end_call", "description": "", "params": { "system_tool_type": "end_call" } },
+          "skip_turn": {
+            "type": "system",
+            "name": "skip_turn",
+            "description": "",
+            "params": { "system_tool_type": "skip_turn", "wait_timeout_secs": -1 }
+          }
+        }
+      }
+    },
+    "tts": {
+      "model_id": "eleven_v4_turbo",
+      "voice_id": "5u41aNhyCU6hXOcjPPv0",
+      "expressive_mode": true,
+      "suggested_audio_tags": [
+        { "tag": "warm", "description": "Greetings, thanks, the family phrase and the goodbye." },
+        { "tag": "gentle", "description": "When she says she is unwell, in pain, tired, worried or sad." },
+        { "tag": "slow", "description": "When saying the family phrase, and when naming each tablet, so she can follow." },
+        { "tag": "soft laugh", "description": "When she says something funny in small talk. Never about her health." },
+        { "tag": "calm, clear", "description": "When telling her to hang up and call 112 in an emergency." }
+      ]
+    },
+    "turn": { "turn_timeout": 30, "silence_end_call_timeout": -1, "turn_eagerness": "patient" },
+    "conversation": { "max_duration_seconds": 900 }
+  },
+  "platform_settings": {
+    "guardrails": {
+      "version": "1",
+      "focus": { "is_enabled": true },
+      "prompt_injection": { "is_enabled": true },
+      "content": {
+        "execution_mode": "streaming",
+        "trigger_action": { "type": "end_call" },
+        "config": {
+          "sexual": { "is_enabled": true, "threshold": "medium" },
+          "harassment": { "is_enabled": true, "threshold": "medium" },
+          "profanity": { "is_enabled": true, "threshold": "medium" },
+          "religion_or_politics": { "is_enabled": true, "threshold": "medium" },
+          "medical_and_legal_information": { "is_enabled": false, "threshold": "medium" },
+          "violence": { "is_enabled": false, "threshold": "medium" },
+          "self_harm": { "is_enabled": false, "threshold": "medium" }
+        }
+      },
+      "custom": {
+        "config": {
+          "configs": [
+            {
+              "is_enabled": true,
+              "name": "Never claims to be human",
+              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, says a family phrase so she knows the call is genuine, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent explicitly says it is a human or a real person (for example \"yes, I'm a real person\" or \"I'm human\"), or claims to be a member of her family. Introducing itself as Laura, greeting her warmly, passing on her family's message, chatting, and saying it is a computer assistant are all allowed.",
+              "history_message_count": 1,
+              "execution_mode": "streaming",
+              "trigger_action": { "type": "end_call" }
+            },
+            {
+              "is_enabled": true,
+              "name": "Never asks for money or codes",
+              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, says a family phrase so she knows the call is genuine, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent asks the caller for money, a payment, bank or card details, a password, a PIN or any code. Asking what shopping she is running out of is allowed.",
+              "execution_mode": "streaming",
+              "trigger_action": { "type": "end_call" }
+            },
+            {
+              "is_enabled": true,
+              "name": "No medical advice",
+              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, says a family phrase so she knows the call is genuine, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent tells the caller to change, skip, add, double or halve a medicine or a dose, suggests any medicine or treatment, says what a symptom means, or says whether a blood pressure reading is good, bad, high, low or normal. Allowed: reminding her to take the tablets on her care plan, naming them with their strength, reading her numbers back exactly, declining a medical question and offering to pass it on to her family, and telling her to hang up and call 112 in an emergency.",
+              "execution_mode": "streaming",
+              "history_message_count": 1,
+              "trigger_action": { "type": "end_call" }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

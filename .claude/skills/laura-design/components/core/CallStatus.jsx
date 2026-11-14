@@ -8,8 +8,8 @@ const base = {
 export function CallStatus({ state = 'idle', elapsed, calledAt, onCall, style }) {
   if (state === 'live') {
     return (
-      <span role="status" style={{ ...base, background: 'var(--surface-live)', color: 'var(--text-on-live)', ...style }}>
-        <span style={{ width: 12, height: 12, borderRadius: '50%', background: 'currentColor' }} />
+      <span role="status" style={{ ...base, background: 'var(--surface-quiet)', color: 'var(--text-primary)', ...style }}>
+        <span style={{ width: 12, height: 12, borderRadius: '50%', background: 'var(--accent)' }} />
         <span>Call in progress</span>
         {elapsed ? <span style={{ fontVariantNumeric: 'tabular-nums' }}>{elapsed}</span> : null}
       </span>
@@ -25,7 +25,7 @@ export function CallStatus({ state = 'idle', elapsed, calledAt, onCall, style })
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 16, ...style }}>
       <span style={{ font: 'var(--text-body)', color: 'var(--text-secondary)' }}>Not called yet</span>
-      <button type="button" onClick={onCall} style={{ ...base, background: 'var(--ink)', color: 'var(--paper)', cursor: 'pointer' }}>Call now</button>
+      <button type="button" onClick={onCall} style={{ ...base, background: 'var(--accent)', color: 'var(--text-on-accent)', cursor: 'pointer' }}>Call now</button>
     </span>
   );
 }
