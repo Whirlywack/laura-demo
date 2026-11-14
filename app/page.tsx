@@ -8,6 +8,7 @@ import { LiveFeed } from "../components/LiveFeed";
 import { LiveUpdates } from "../components/LiveUpdates";
 import { KeyValueRows, QuietRow } from "../components/QuietRow";
 import { QuoteFact } from "../components/QuoteFact";
+import { StatLine } from "../components/StatLine";
 import { StatusLabel } from "../components/StatusLabel";
 import { getDashboardState, readingValue, type Dose } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
@@ -35,7 +36,7 @@ const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
 export default async function Page() {
-  const { callStatus, summary, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan, previousSummary, history } =
+  const { callStatus, summary, wellbeing, doses, bloodPressure, leftLeg, errands, passOns, feed, carePlan, previousSummary, history, tabletCount } =
     await getDashboardState(readClient());
   const reading = bloodPressure.today;
 
@@ -165,7 +166,13 @@ export default async function Page() {
             <FoldedRow
               style={{ flex: "2 1 420px", minWidth: 0 }}
               title="History"
-              note={history.length ? `${history.length} ${history.length === 1 ? "call" : "calls"} before today` : "No calls before today"}
+              note={
+                tabletCount.total ? (
+                  <StatLine label="Tablets confirmed on the call:" value={`${tabletCount.confirmed} of ${tabletCount.total}`} suffix="in the last two weeks" />
+                ) : (
+                  "No calls in the last two weeks"
+                )
+              }
             >
               {history.length ? (
                 <KeyValueRows

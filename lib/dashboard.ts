@@ -54,6 +54,8 @@ export type DashboardState = {
   previousSummary: string | null;
   /** Every Call before Today, newest first. */
   history: HistoryCall[];
+  /** Doses taken on call, out of every Dose (Medication × Call) on every Call in the last 14 days, Today included. */
+  tabletCount: { confirmed: number; total: number };
 };
 
 // `details` holds the kind's own fields, e.g. a Dose's medication and status, or a Reading's numbers.
@@ -130,6 +132,11 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
     return { today: latest ? shape(latest) : null, earlier: all.filter((e) => e !== latest).map(shape) };
   };
 
+  // The last 14 days on her calendar in Lithuania: today and the 13 days before it. Dates compare as "2026-11-14".
+  const calendarDay = (at: string | number) => new Date(at).toLocaleDateString("en-CA", { timeZone: "Europe/Vilnius" });
+  const firstDay = calendarDay(Date.now() - 13 * 24 * 60 * 60 * 1000);
+  const recentDoses = calls.data.filter((c) => calendarDay(c.started_at) >= firstDay).flatMap((c) => dosesOn(c.entries, medications));
+
   return {
     callStatus: today?.status ?? "not called yet",
     summary: today?.summary ?? null,
@@ -148,5 +155,6 @@ export async function getDashboardState(db: SupabaseClient): Promise<DashboardSt
       const latestReading = c.entries.find((e) => e.kind === "reading");
       return { at: c.started_at, wellbeing: wellbeingOn(c.entries), reading: latestReading ? reading(latestReading) : null, doses: dosesOn(c.entries, medications) };
     }),
+    tabletCount: { confirmed: recentDoses.filter((d) => d.status === "taken on call").length, total: recentDoses.length },
   };
 }
