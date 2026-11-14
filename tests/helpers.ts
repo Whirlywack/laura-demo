@@ -17,13 +17,17 @@ export function sendTool(tool: string, body: object, headers: Record<string, str
   return POST(request, { params: Promise.resolve({ tool }) });
 }
 
+// What a browser adds to a request the page itself sends. Tests pass other headers to act as another site.
+const fromThePage = { origin: "http://localhost", "sec-fetch-site": "same-origin" };
+
 // The Family carer ticking an Errand on the page: POST /api/errands/<id>/tick, with no body.
-export function tickErrand(id: string) {
-  return tick(new Request(`http://localhost/api/errands/${id}/tick`, { method: "POST" }), { params: Promise.resolve({ id }) });
+export function tickErrand(id: string, headers: Record<string, string> = fromThePage) {
+  return tick(new Request(`http://localhost/api/errands/${id}/tick`, { method: "POST", headers }), { params: Promise.resolve({ id }) });
 }
 
 // Pressing Call now on the page: POST /api/call-now, with no body. Install fakeOutboundCall first.
-export const callNow = () => callNowRoute();
+export const callNow = (headers: Record<string, string> = fromThePage) =>
+  callNowRoute(new Request("http://localhost/api/call-now", { method: "POST", headers }));
 
 // What Call now would have sent to ElevenLabs.
 export type OutboundCall = { url: string; apiKey: string | null; body: any };

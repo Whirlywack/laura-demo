@@ -81,6 +81,20 @@ test("a second Call within 60 seconds of the last one started is refused with a 
   expect((await getDashboardState(readClient())).wellbeing.general).toBe("Hello? Who is it?");
 });
 
+// There is no sign-in, so the page's own Call now is told apart from another site by what the browser says.
+test.each([
+  ["a page on another site", { "sec-fetch-site": "cross-site" }],
+  ["a page with another origin", { origin: "https://elsewhere.example" }],
+])("Call now sent from %s is refused, and the phone is not rung", async (_, headers) => {
+  const sent = fakeOutboundCall();
+
+  const response = await callNow(headers);
+
+  expect(response.status).toBe(403);
+  expect(sent).toHaveLength(0);
+  expect(await getDashboardState(readClient())).toMatchObject({ callStatus: "not called yet" });
+});
+
 test("two presses of Call now at the same moment ring her phone once: one starts the Call, the other is refused", async () => {
   const sent = fakeOutboundCall();
 

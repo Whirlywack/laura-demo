@@ -1,4 +1,5 @@
 import { env } from "../../../lib/env";
+import { fromAnotherSite, refuseAnotherSite } from "../../../lib/same-origin";
 import { writeClient } from "../../../lib/supabase";
 
 // The database has no field for their names; the page says "Povilas" too.
@@ -21,7 +22,8 @@ const refuse = (message: string, status: number) => Response.json({ ok: false, m
 
 // Call now: creates the Call as live, which makes it Today (ADR-0001), then has ElevenLabs phone her
 // from the Peoplefone number over the SIP trunk.
-export async function POST() {
+export async function POST(request: Request) {
+  if (fromAnotherSite(request)) return refuseAnotherSite();
   // Read first, so a missing variable leaves no Call behind. Tests and local checks point ELEVENLABS_API_URL at a fake,
   // so they can never ring her phone; when it is not set, the request goes to ElevenLabs.
   const apiUrl = process.env.ELEVENLABS_API_URL ?? "https://api.elevenlabs.io";
