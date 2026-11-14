@@ -4,7 +4,7 @@ A daily phone companion for elderly people who live alone, and a live page for t
 
 Press **Call now** on the demo page and Laura, a voice agent, phones Lidia, who is 94. As Lidia answers, the page Paul reads fills in with her own words: how she slept, how her leg is, her blood pressure, which tablets she took while on the line, what she needs from the shop, and anything she wants passed on.
 
-**Live demo:** https://laura-demo.vercel.app
+**Live demo:** https://lauracalled.com
 
 All people, phone conversations and medical data in this repo are fictional sample data.
 
