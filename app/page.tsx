@@ -42,9 +42,6 @@ const dosesInWords = (doses: Dose[], callStatus: CallStatus) => {
   return callStatus === "done" ? "Not asked on this call." : "Laura will ask on the call.";
 };
 
-// Only the latest few earlier Remarks and Readings, so the details card stays short. History has every earlier Call.
-const EARLIER = 4;
-
 const waiting = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 
@@ -161,7 +158,7 @@ export default async function Page() {
                   {reading ? <div style={{ font: "var(--text-quote)", marginTop: 10, color: "var(--text-secondary)" }}>“{reading.quote}”</div> : null}
                   <DatedList
                     style={{ marginTop: 16 }}
-                    items={bloodPressure.earlier.slice(0, EARLIER).map((r) => ({ date: day(r.at), value: readingValue(r) }))}
+                    items={bloodPressure.earlier.map((r) => ({ date: day(r.at), value: readingValue(r) }))}
                   />
                 </div>
                 <div style={{ flex: "1 1 300px", minWidth: 0 }}>
@@ -179,7 +176,7 @@ export default async function Page() {
                   >
                     {leftLeg.today ? `“${leftLeg.today.quote}”` : callStatus === "done" ? "Not asked on this call" : "Not asked yet"}
                   </div>
-                  <DatedList style={{ marginTop: 16 }} items={leftLeg.earlier.slice(0, EARLIER).map((r) => ({ date: day(r.at), quote: r.quote }))} />
+                  <DatedList style={{ marginTop: 16 }} items={leftLeg.earlier.map((r) => ({ date: day(r.at), quote: r.quote }))} />
                 </div>
               </div>
             </div>
