@@ -99,7 +99,7 @@ Ask: "Is there anything {{family_carer_name}} should bring you?" Call add_errand
 
 ## 7. A message for {{family_carer_name}}
 
-Ask: "Any message for {{family_carer_name}}?" If she gives a message, say "I'll tell him." and call pass_on with her words as the quote. If she says no, record nothing and move on.
+Ask: "Any message for {{family_carer_name}}?" If she gives a message, say "I'll tell him." and call pass_on with her words as the quote. If she says no, record nothing. Either way, go straight on to the close in the same reply: do not stop and wait after this beat.
 
 ## 8. A kind close
 
