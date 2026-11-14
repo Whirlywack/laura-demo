@@ -9,6 +9,7 @@ import { LiveFeed } from "../../components/LiveFeed";
 import { LiveUpdates } from "../../components/LiveUpdates";
 import { KeyValueRows, QuietRow } from "../../components/QuietRow";
 import { QuoteFact } from "../../components/QuoteFact";
+import { SiteHeader } from "../../components/SiteHeader";
 import { StatLine } from "../../components/StatLine";
 import { StatusLabel } from "../../components/StatusLabel";
 import { DOSE_STATUSES, getDashboardState, readingValue, type CallStatus, type Dose } from "../../lib/dashboard";
@@ -53,12 +54,10 @@ export default async function Page() {
   return (
     <main style={{ padding: "0 24px 28px", boxSizing: "border-box" }}>
       <LiveUpdates />
-      <header style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 40px", padding: "22px 20px" }}>
-        <div style={{ font: "700 var(--size-wordmark)/1 var(--font-sans)", letterSpacing: "-.04em" }}>Laura</div>
-        <div style={{ flex: 1 }} />
+      <SiteHeader>
         <div>Lidia, 94</div>
         <CallNow status={callStatus} />
-      </header>
+      </SiteHeader>
 
       {/* The three questions the Family carer has, answered in the only large type on the page. */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Fragment, type CSSProperties } from "react";
+import Link from "next/link";
 import { Card } from "../components/Card";
 import { Story, type Beat } from "../components/home/Story";
 import { TabletTicks } from "../components/home/TabletTicks";
+import { SiteHeader } from "../components/SiteHeader";
 import { StatusLabel } from "../components/StatusLabel";
 
 // The home page, ported from .claude/skills/laura-design/ui_kits/home/Home.jsx: what Laura is, one morning step by
@@ -48,16 +50,9 @@ const jobs: [string, string[]][] = [
 export default function Home() {
   return (
     <div style={{ padding: "0 24px 8px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
-      <header style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 40px", padding: "26px 20px 22px" }}>
-        <div style={{ font: "700 var(--size-wordmark-large)/1 var(--font-sans)", letterSpacing: "-.06em" }}>laura</div>
-        <div style={{ flex: 1 }} />
-        <nav style={{ display: "flex", flexWrap: "wrap", gap: "8px 36px", whiteSpace: "nowrap" }}>
-          <a href="#one-morning" style={{ color: "inherit", textDecoration: "none" }}>One morning</a>
-          <a href="#what-laura-does" style={{ color: "inherit", textDecoration: "none" }}>What Laura does</a>
-          <a href="#about" style={{ color: "inherit", textDecoration: "none" }}>About</a>
-        </nav>
-        <a href="/demo" style={pill}>Call now</a>
-      </header>
+      <SiteHeader>
+        <Link href="/demo" style={pill}>Call now</Link>
+      </SiteHeader>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
         <Card tone="live" style={{ flex: "1 1 380px", minWidth: 0, padding: "36px 40px 30px", display: "flex", flexDirection: "column" }}>
