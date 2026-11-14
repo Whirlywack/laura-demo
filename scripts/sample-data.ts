@@ -3,6 +3,7 @@
 // Fictional data for the demo. Run with `npm run sample-data` (reads .env.local).
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import type { DoseStatus } from "../lib/dashboard.ts";
 import { env } from "../lib/env.ts";
 
 const db = createClient(env("NEXT_PUBLIC_SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), {
@@ -19,7 +20,8 @@ const carePlan = {
   watch_items: ["blood pressure", "left leg swelling"],
 };
 
-type Status = "taken on call" | "says taken earlier" | "not taken";
+// A status Laura can record.
+type Status = Exclude<DoseStatus, "not confirmed">;
 
 // One earlier Call a day, yesterday first. Every Dose is taken on call unless `doses` says otherwise.
 type Day = {

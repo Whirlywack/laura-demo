@@ -1,3 +1,4 @@
+import { DOSE_STATUSES } from "../../../../lib/dashboard";
 import { env } from "../../../../lib/env";
 import { writeClient } from "../../../../lib/supabase";
 
@@ -16,8 +17,6 @@ async function addEntry(body: Body, kind: string, details: object) {
   return Response.json({ ok: true });
 }
 
-const DOSE_STATUSES = ["taken on call", "says taken earlier", "not taken"];
-
 // One handler per tool Laura can call.
 const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
   log_wellbeing: async (body) =>
@@ -27,7 +26,7 @@ const TOOLS: Record<string, (body: Body) => Promise<Response>> = {
   // Every Remark is about the left leg, the only Watch item without a Reading, so there is no subject field.
   log_remark: async (body) => addEntry(body, "remark", {}),
   record_dose: async (body) => {
-    if (!DOSE_STATUSES.includes(body.status as string)) return refuse(`status must be one of: ${DOSE_STATUSES.join(", ")}`);
+    if (!DOSE_STATUSES.some((status) => status === body.status)) return refuse(`status must be one of: ${DOSE_STATUSES.join(", ")}`);
     if (typeof body.medication !== "string") return refuse("medication is required");
     const plan = await writeClient().from("care_plan").select("medications").single();
     if (plan.error) throw new Error(`Could not read the care plan: ${plan.error.message}`);

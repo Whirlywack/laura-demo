@@ -6,7 +6,11 @@ export type Medication = { name: string; strength: string; timeOfDay: string };
 
 export type FeedCard = { id: string; title: string; quote: string; at: string };
 
-export type DoseStatus = "not confirmed" | "taken on call" | "says taken earlier" | "not taken";
+/** The statuses Laura can record for a Dose, in the order the page lists them. */
+export const DOSE_STATUSES = ["taken on call", "says taken earlier", "not taken"] as const;
+
+/** A Dose's status: the latest one Laura recorded, or "not confirmed" until she records one. */
+export type DoseStatus = "not confirmed" | (typeof DOSE_STATUSES)[number];
 
 /** One Medication on Today's Call: what she last said about it, if anything. */
 export type Dose = Medication & { status: DoseStatus; quote: string | null };

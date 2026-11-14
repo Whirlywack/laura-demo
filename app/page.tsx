@@ -11,7 +11,7 @@ import { KeyValueRows, QuietRow } from "../components/QuietRow";
 import { QuoteFact } from "../components/QuoteFact";
 import { StatLine } from "../components/StatLine";
 import { StatusLabel } from "../components/StatusLabel";
-import { getDashboardState, readingValue, type CallStatus, type Dose, type DoseStatus } from "../lib/dashboard";
+import { DOSE_STATUSES, getDashboardState, readingValue, type CallStatus, type Dose } from "../lib/dashboard";
 import { readClient } from "../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -35,8 +35,7 @@ const tablets = (doses: Dose[]) => {
 
 // Today's Doses in words, under the bars that show them: e.g. "2 taken on call, 1 says taken earlier."
 const dosesInWords = (doses: Dose[], callStatus: CallStatus) => {
-  const said = (["taken on call", "says taken earlier", "not taken"] as DoseStatus[])
-    .map((status) => ({ status, n: doses.filter((d) => d.status === status).length }))
+  const said = DOSE_STATUSES.map((status) => ({ status, n: doses.filter((d) => d.status === status).length }))
     .filter(({ n }) => n)
     .map(({ status, n }) => `${n} ${status}`);
   if (said.length) return `${sentence(said.join(", "))}.`;
