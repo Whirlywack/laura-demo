@@ -26,8 +26,9 @@ export function tickErrand(id: string, headers: Record<string, string> = fromThe
 }
 
 // Pressing Call now on the page: POST /api/call-now, with no body. Install fakeOutboundCall first.
-export const callNow = (headers: Record<string, string> = fromThePage) =>
-  callNowRoute(new Request("http://localhost/api/call-now", { method: "POST", headers }));
+// Call now from the page, with the password typed in unless a test passes another one (null sends none).
+export const callNow = (headers: Record<string, string> = fromThePage, password: string | null = process.env.CALL_NOW_PASSWORD!) =>
+  callNowRoute(new Request("http://localhost/api/call-now", { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(password === null ? {} : { password }) }));
 
 // What Call now would have sent to ElevenLabs.
 export type OutboundCall = { url: string; apiKey: string | null; body: any };

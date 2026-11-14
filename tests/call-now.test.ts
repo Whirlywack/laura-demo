@@ -82,6 +82,21 @@ test("a second Call within 60 seconds of the last one started is refused with a 
   expect((await getDashboardState(readClient())).wellbeing.general).toBe("Hello? Who is it?");
 });
 
+// The site is public, so only someone with the password can ring her phone.
+test.each([
+  ["no password", null],
+  ["a wrong password", "guess"],
+])("Call now with %s is refused, and the phone is not rung", async (_, password) => {
+  const sent = fakeOutboundCall();
+
+  const response = await callNow(undefined, password);
+
+  expect(response.status).toBe(401);
+  expect(await response.json()).toEqual({ ok: false, message: "Wrong password." });
+  expect(sent).toHaveLength(0);
+  expect(await getDashboardState(readClient())).toMatchObject({ callStatus: "not called yet" });
+});
+
 // There is no sign-in, so the page's own Call now is told apart from another site by what the browser says.
 test.each([
   ["a page on another site", { "sec-fetch-site": "cross-site" }],

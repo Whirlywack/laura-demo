@@ -18,6 +18,7 @@ function localSupabase() {
     SUPABASE_SERVICE_ROLE_KEY: vars.SERVICE_ROLE_KEY,
     SUPABASE_DB_URL: vars.DB_URL,
     LAURA_WEBHOOK_SECRET: "test-webhook-secret",
+    CALL_NOW_PASSWORD: "test-call-now-password",
     // Placeholders, never the real agent, number or key. Call now's request goes to a host that cannot exist
     // (.invalid never resolves), and the tests fake that one request (fakeOutboundCall in tests/helpers.ts).
     ELEVENLABS_API_URL: "https://api.elevenlabs.invalid",
