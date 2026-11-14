@@ -28,11 +28,10 @@ export function lauraTools({ appUrl, secretId }: { appUrl: string; secretId: str
 }
 
 // The agent from agent/agent.json, with agent/instructions.md as its prompt.
-// The script reads the voice id from the "Ivy test" agent and passes the ids of the tools it created.
-export function lauraAgent({ voiceId, toolIds }: { voiceId: string; toolIds: string[] }) {
+// The script passes the ids of the tools it created.
+export function lauraAgent({ toolIds }: { toolIds: string[] }) {
   const agent = JSON.parse(read("agent.json"));
   agent.conversation_config.agent.prompt.prompt = read("instructions.md");
   agent.conversation_config.agent.prompt.tool_ids = toolIds;
-  agent.conversation_config.tts.voice_id = voiceId;
   return agent;
 }

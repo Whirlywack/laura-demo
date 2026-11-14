@@ -1,7 +1,7 @@
 // Creates or updates the Laura agent in ElevenLabs from the files in agent/, assigns her to the
 // Peoplefone number and prints her id. Run with `npm run laura-agent` (reads .env.local).
 // Safe to re-run: the secret, the tools and the agent are found by exact name and updated in place.
-// It never changes the "Ivy test" agent (it only reads its voice) and never places a call.
+// It never changes the "Ivy test" agent and never places a call.
 import { env } from "../lib/env.ts";
 import { lauraAgent, lauraTools } from "../lib/laura-agent.ts";
 
@@ -49,12 +49,9 @@ for (const tool_config of lauraTools({ appUrl, secretId })) {
   toolIds.push(saved.id);
 }
 
-// The agent, with the voice of the "Ivy test" agent.
+// The agent.
 const { agents } = await api("GET", "/v1/convai/agents?page_size=100");
-const ivy = byName(agents, "Ivy test");
-if (!ivy) throw new Error('No "Ivy test" agent in ElevenLabs to take the voice from.');
-const { conversation_config: ivyConfig } = await api("GET", `/v1/convai/agents/${ivy.agent_id}`);
-const agent = lauraAgent({ voiceId: ivyConfig.tts.voice_id, toolIds });
+const agent = lauraAgent({ toolIds });
 const laura = byName(agents, agent.name);
 const agentId: string = laura
   ? (await api("PATCH", `/v1/convai/agents/${laura.agent_id}`, agent), laura.agent_id)

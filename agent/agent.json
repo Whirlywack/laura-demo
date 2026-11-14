@@ -29,7 +29,18 @@
         }
       }
     },
-    "tts": { "model_id": "eleven_v4_turbo" },
+    "tts": {
+      "model_id": "eleven_v4_turbo",
+      "voice_id": "kkPJzQOWz2Oz9cUaEaQd",
+      "expressive_mode": true,
+      "suggested_audio_tags": [
+        { "tag": "warm", "description": "Greetings, thanks, the family phrase and the goodbye." },
+        { "tag": "gentle", "description": "When she says she is unwell, in pain, tired, worried or sad." },
+        { "tag": "slow", "description": "When naming each tablet and its strength, so she can follow." },
+        { "tag": "soft laugh", "description": "When she says something funny in small talk. Never about her health." },
+        { "tag": "calm, clear", "description": "When telling her to hang up and call 112 in an emergency." }
+      ]
+    },
     "turn": { "turn_timeout": 30, "silence_end_call_timeout": -1, "turn_eagerness": "patient" },
     "conversation": { "max_duration_seconds": 900 }
   }

@@ -55,10 +55,11 @@ test("the language model is told the allowed values for aspect and Dose status",
 });
 
 test("the voice, language model and turn settings are the spec's", () => {
-  const { name, conversation_config: config } = lauraAgent({ voiceId: "ivy-voice", toolIds: ["tool-1", "tool-2"] });
+  const { name, conversation_config: config } = lauraAgent({ toolIds: ["tool-1", "tool-2"] });
 
   expect(name).toBe("Laura");
-  expect(config.tts).toEqual({ model_id: "eleven_v4_turbo", voice_id: "ivy-voice" });
+  // Beatrice, from the ElevenLabs Voice Library, with expressive audio tags.
+  expect(config.tts).toMatchObject({ model_id: "eleven_v4_turbo", voice_id: "kkPJzQOWz2Oz9cUaEaQd", expressive_mode: true });
   expect(config.agent.prompt.llm).toBe("claude-sonnet-5-5");
   expect(config.agent.prompt.tool_ids).toEqual(["tool-1", "tool-2"]);
   expect(Object.keys(config.agent.prompt.built_in_tools).sort()).toEqual(["end_call", "skip_turn"]);
@@ -66,8 +67,20 @@ test("the voice, language model and turn settings are the spec's", () => {
   expect(config.conversation.max_duration_seconds).toBe(15 * 60);
 });
 
+test("the suggested audio tags fit ElevenLabs' limits", () => {
+  const { suggested_audio_tags: tags } = lauraAgent({ toolIds: [] }).conversation_config.tts;
+
+  expect(tags.length).toBeGreaterThan(0);
+  expect(tags.length).toBeLessThanOrEqual(20);
+  for (const { tag, description } of tags) {
+    expect(tag.length).toBeGreaterThan(0);
+    expect(tag.length).toBeLessThanOrEqual(30);
+    expect(description.length).toBeLessThanOrEqual(200);
+  }
+});
+
 test("the per-call variables are the spec's list, and every one Laura uses has a placeholder", () => {
-  const { agent } = lauraAgent({ voiceId: "ivy-voice", toolIds: [] }).conversation_config;
+  const { agent } = lauraAgent({ toolIds: [] }).conversation_config;
   const placeholders = Object.keys(agent.dynamic_variables.dynamic_variable_placeholders);
   const used = [...`${agent.first_message} ${agent.prompt.prompt}`.matchAll(/{{(\w+)}}/g)].map(([, name]) => name);
 
@@ -86,7 +99,7 @@ test("the per-call variables are the spec's list, and every one Laura uses has a
 });
 
 test("the instructions name every tool Laura can call", () => {
-  const { prompt } = lauraAgent({ voiceId: "ivy-voice", toolIds: [] }).conversation_config.agent.prompt;
+  const { prompt } = lauraAgent({ toolIds: [] }).conversation_config.agent.prompt;
 
   for (const tool of [...Object.keys(specTable), "skip_turn", "end_call"]) expect(prompt).toContain(tool);
 });

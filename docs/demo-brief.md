@@ -20,17 +20,18 @@ There is no sign-in. This brief replaces the longer "Laura: build brief" for the
 
 ## The call
 
-The demo is one call: seven beats, about three to four minutes. Each tool call except `end_call_summary` becomes one Entry, shown as one card on the dashboard with Lidia's own words.
+The demo is one call: eight beats, about three to four minutes. After each answer Laura replies in one short, warm sentence, and she always speaks before she waits or hangs up. Each tool call except `end_call_summary` becomes one Entry, shown as one card on the dashboard with Lidia's own words.
 
 | Beat | What Laura says | Tool | What appears on the dashboard |
 | --- | --- | --- | --- |
 | 1. Opening | "Hello, is that Lidia?" Only once she confirms: "Hi Lidia, it's Laura. Povilas says thank you again for the cherry jam." | none | Call status is already live (it turns live when Call now places the call) |
 | 2. How are you | "How are you doing today?" She listens and responds warmly. Then the remembered detail: "You told me yesterday you slept badly. How was last night?" | `log_wellbeing`, once per answer: `aspect` general, then sleep | Today's wellbeing line, and sleep on its own line |
-| 3. The leg | "How is your left leg today?" | `log_remark` | A new Remark on the left leg card, above the earlier ones |
-| 4. Tablets, on the line | Names each morning Medication from the care plan. "Take them now, take your time, I'll wait." Stays quiet until Lidia says they are taken | `record_dose`, once per Medication | Each Dose changes to its status, usually "taken on call" |
-| 5. Blood pressure | "Have you measured your blood pressure this morning? What did it show?" Reads the numbers back | `log_reading` | The Reading, added to the blood pressure history |
+| 3. The leg | "How is your left leg today?" A kind word about her answer | `log_remark` | A new Remark on the left leg card, above the earlier ones |
+| 4. Blood pressure | "Have you measured your blood pressure this morning? What did it show?" Reads the numbers back. Asked before the tablets, because two of them lower blood pressure | `log_reading` | The Reading, added to the blood pressure history |
+| 5. Tablets, one at a time | Names one morning Medication from the care plan with its strength. "Take it now, take your time, I'll wait." Stays quiet until Lidia says it is taken, then the next | `record_dose`, as soon as she answers about each one | Each Dose changes to its status, usually "taken on call", and the tablet count moves once per tablet |
 | 6. Anything missing | "Is there anything you're running out of at home that Povilas could bring?" | `add_errand`, once per item | Each item on the errands list |
-| 7. A kind close | Says what she noted, that she will pass it on to Povilas, and something warm to end on. Then she hangs up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
+| 7. A message | "Is there anything you'd like me to tell Povilas?" | `pass_on`, if she gives a message | A Pass-on in the live feed and in the "For Povilas" list |
+| 8. A kind close | Says out loud what she noted, that she will pass it on to Povilas, something warm and goodbye. Only then does she record the summary and hang up | `end_call_summary`, then the built-in `end_call` | The Call summary in the Today area; status changes to done |
 | Any time | Whenever she says she will pass something on to Povilas: a medical question, a worry, an emergency | `pass_on` | A Pass-on in the live feed and in the "For Povilas" list |
 
 ### The seven tools
@@ -192,11 +193,12 @@ The work is cut into tickets that each do one thing, built on one integration br
 - [ ] Press Call now. The phone rings, the status shows live, and Laura opens with Lidia's name and the family phrase.
 - [ ] Say how you are. She asks about last night's sleep, mentioning that you slept badly yesterday. The wellbeing and sleep lines appear while you are still on the call.
 - [ ] She asks about the left leg. Your answer appears on the leg card.
-- [ ] Let her name the tablets, stay silent for a full minute, then say they are taken. She waits, each Dose changes to taken, and the tablet count goes up.
 - [ ] Give a blood pressure reading. She reads it back, and it appears.
+- [ ] She names the first tablet. Stay silent for a full minute, then say it is taken. She waits, that Dose changes to taken, and the tablet count goes up. She does the same for the other two.
 - [ ] Name two things you are out of. Both appear on the errands list.
 - [ ] Ask "should I take half a tablet?" She declines, says she will pass it to Povilas, and a Pass-on appears in the feed and the "For Povilas" list.
-- [ ] She closes warmly, hangs up, and the call shows as done with a summary.
+- [ ] She asks whether there is anything to tell Povilas. Give a message; a Pass-on appears.
+- [ ] She says goodbye out loud, hangs up, and the call shows as done with a summary.
 
 ## Decisions
 
