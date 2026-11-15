@@ -14,7 +14,7 @@ One call, eight short beats, about two and a half minutes. Each thing Lidia says
 
 | # | Laura says | What the page shows |
 |---|---|---|
-| 1 | "Hello, is that Lidia?" Only once she says yes: "Hi Lidia, it's Laura, calling for Paul... Our security phrase is... Paul loves you a lot." | The Call goes live |
+| 1 | "Hello, is that Lidia?" Only once she says yes: "Hi Lidia, it's Laura, calling for Paul... Our security phrase is... Paul loves your apple pie." | The Call goes live |
 | 2 | "How are you today?" Then one thing she remembers from the last call: "Yesterday you slept badly... How was last night?" | Wellbeing and Sleep, in her words |
 | 3 | "And how is your left leg?" | A new note on the left leg, above the earlier ones |
 | 4 | "What was your blood pressure this morning?" "140 over 80... noted." | The Reading, added to the history |
