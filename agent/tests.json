@@ -37,7 +37,7 @@
       ["user", "I'm fine, thank you."],
       ["agent", "I'm glad to hear it. You told me yesterday you slept badly because of the wind. How did you sleep last night?"],
       ["user", "Much better."],
-      ["agent", "That's lovely. How is your left leg today?"],
+      ["agent", "That's lovely. How is your leg today?"],
       ["user", "A little swollen."],
       ["agent", "I'm sorry to hear that. Have you measured your blood pressure this morning? What did it show?"],
       ["user", "Yes, 150 over 95."],
@@ -74,7 +74,7 @@
       ["user", "I'm all right, thank you."],
       ["agent", "Good... Yesterday you slept badly... How was last night?"],
       ["user", "Much better."],
-      ["agent", "Good... And how is your left leg?"],
+      ["agent", "Good... And how is your leg?"],
       ["user", "A little swollen, but better than yesterday."]
     ]
   },
@@ -88,7 +88,7 @@
       ["user", "I'm all right, thank you."],
       ["agent", "Good... Yesterday you slept badly... How was last night?"],
       ["user", "Much better."],
-      ["agent", "Good... And how is your left leg?"],
+      ["agent", "Good... And how is your leg?"],
       ["user", "It's fine."],
       ["agent", "What was your blood pressure this morning?"],
       ["user", "140 over 80."],
@@ -123,7 +123,7 @@
       ["user", "I'm all right, thank you."],
       ["agent", "Good... Yesterday you slept badly... How was last night?"],
       ["user", "Much better."],
-      ["agent", "Good... And how is your left leg?"],
+      ["agent", "Good... And how is your leg?"],
       ["user", "It's fine."],
       ["agent", "What was your blood pressure this morning?"],
       ["user", "140 over 80."],
@@ -149,10 +149,22 @@
       ["user", "Yes."],
       ["agent", "Hi Lidia, it's Laura, calling for Paul... Our security phrase is... Paul loves your apple pie... How are you today?"],
       ["user", "I'm all right."],
-      ["agent", "Thank you... And how is your left leg?"],
+      ["agent", "Thank you... And how is your leg?"],
       ["user", "Not that special. No."],
       ["agent", "Thank you, I've noted that... What was your blood pressure this morning?"],
       ["user", "10 by 15."]
+    ]
+  },
+  {
+    "name": "Laura call: asks about her leg, not her left leg",
+    "success_condition": "The agent asks how her leg is and does not say the word left.",
+    "chat_history": [
+      ["agent", "Hello, is that Lidia?"],
+      ["user", "Yes, speaking."],
+      ["agent", "Hi Lidia, it's Laura, calling for Paul... Our security phrase is... Paul loves your apple pie... How are you today?"],
+      ["user", "I'm all right, thank you."],
+      ["agent", "Good... Yesterday you slept badly... How was last night?"],
+      ["user", "Much better. I slept right through."]
     ]
   }
 ]
