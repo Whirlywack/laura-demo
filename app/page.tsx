@@ -37,7 +37,7 @@ const onTheCall: [string, string, string][] = [
   ["Laura remembers.", "You told me yesterday you slept badly. How was last night?", "Each call starts from the last one."],
   ["You see it live.", "Concor · Taken on call · 09:32", "It is on your page while the call is still going."],
   // The family phrase is the family's own sentence, so it is the one line here in quotation marks.
-  ["They know it is Laura.", q("Paul loves you a lot."), "A safety check. Once they have said who they are, Laura gives a phrase only your family knows, so they can hang up on anyone else."],
+  ["They know it is Laura.", q("Paul loves your apple pie."), "A safety check. Once they have said who they are, Laura gives a phrase only your family knows, so they can hang up on anyone else."],
 ];
 
 export default function Home() {
