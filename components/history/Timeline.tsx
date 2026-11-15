@@ -7,9 +7,11 @@ import type { HistoryDay, Range } from "../../lib/history";
 // fixed scales: nothing averaged, smoothed or coloured, and no line across a day without a Reading. For 1 month her
 // answers are a dot per day; for 3 months (weeks from the start of the range) and 1 year (calendar months) they are
 // counted, with a bar as long as that answer's share of that period's Calls. A column with a Call links to its day
-// (CSS shades it on hover; its title is the date); the calendar beside it is the keyboard path, so these links are
-// left out of the tab order.
-const L = 110, R = 8;
+// (CSS shades it on hover; its title is the date and what she said); the calendar beside it is the keyboard path, so
+// these links are left out of the tab order.
+// The home page draws the same timeline for a sample month: with a Tablets row (a dot per Dose), the newest Reading
+// written at the end of its row, and columns that only shade on hover (`links` off: its days are not real ones).
+const L = 110;
 const ink: CSSProperties = { fill: "var(--ink)" };
 const meta: CSSProperties = { fill: "var(--ink-3)", font: "var(--text-meta-font)" };
 const rule: CSSProperties = { stroke: "var(--rule)" };
@@ -17,14 +19,40 @@ const FELT = [["good", "Good"], ["okay", "Okay"], ["bad", "Bad"]] as const;
 const SLEPT = [["well", "Well"], ["not well", "Not well"]] as const;
 const lane = (i: number) => 14 + i * 30;
 
-// `width` is the drawing's width in px at full size (the home page's blocks are narrower than the History page's card).
-// `label` says what the drawing shows, for a screen reader.
-export function Timeline({ dates, days, range, only, width: W = 900, label = "Blood pressure, pulse, how she felt and how she slept, day by day. Use the calendar to open a day." }: { dates: string[]; days: HistoryDay[]; range: Range; only?: string[]; width?: number; label?: string }) {
+const W = 900;
+const sentence = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+// How a Dose is drawn, as StatusLabel marks it: filled burgundy taken on call, a burgundy ring says taken earlier,
+// filled ink not taken. Not confirmed draws nothing.
+const DOSE: Record<string, CSSProperties> = {
+  "taken on call": { fill: "var(--status-taken)" },
+  "says taken earlier": { fill: "var(--surface-card)", stroke: "var(--status-taken)", strokeWidth: 2 },
+  "not taken": { fill: "var(--ink)" },
+};
+
+type Props = {
+  dates: string[];
+  days: HistoryDay[];
+  range: Range;
+  /** The rows to draw, by title; all of them when left out. */
+  only?: string[];
+  /** A Tablets row under her answers (a month only). */
+  tablets?: boolean;
+  /** Write the newest Reading at the end of its row. */
+  latest?: boolean;
+  /** Off: a day's column shades on hover but goes nowhere. */
+  links?: boolean;
+  /** What the drawing shows, for a screen reader. */
+  label?: string;
+};
+
+export function Timeline({ dates, days, range, only, tablets = false, latest = false, links = true, label = "Blood pressure, pulse, how she felt and how she slept, day by day. Use the calendar to open a day." }: Props) {
+  // Room on the right for the newest Reading's numbers.
+  const R = latest ? 84 : 8;
   const byDate = new Map(days.map((d) => [d.date, d]));
   const step = (W - L - R) / dates.length;
   const x = (i: number) => L + i * step + step / 2;
   const width = Math.max(1.2, Math.min(5, step * 0.5));
-  const dot = Math.max(1.6, width * 0.75);
+  const dot = Math.max(1.6, width * 0.8);
   const perDay = range === "1m";
   // Day numbers under a month: every one when there is room, otherwise every second or third, ending on the newest.
   const every = Math.ceil(24 / step);
@@ -72,6 +100,9 @@ export function Timeline({ dates, days, range, only, width: W = 900, label = "Bl
       return r ? <line key={date} x1={x(i)} x2={x(i)} y1={bp(r.systolic)} y2={bp(r.diastolic)} strokeWidth={width} strokeLinecap="round" style={{ stroke: "var(--ink)" }} /> : null;
     }),
   });
+  // The one number written on the drawing: the newest Reading, beside its line.
+  const newest = latest ? days.findLast((d) => d.reading)?.reading : undefined;
+  if (newest) rows[0].marks = [rows[0].marks, <text key="newest" x={W - R + 12} y={bp((newest.systolic + newest.diastolic) / 2) + 6} style={{ ...ink, font: "var(--text-meta-font)", fontWeight: 700 }}>{newest.systolic}/{newest.diastolic}</text>];
   rows.push({
     title: "Pulse", height: 74, lines: true, ticks: [120, 80, 40].map((v) => [String(v), pulse(v)]),
     marks: dates.map((date, i) => {
@@ -94,8 +125,27 @@ export function Timeline({ dates, days, range, only, width: W = 900, label = "Bl
     });
   }
 
+  if (tablets && perDay) {
+    const names = days.find((d) => d.doses.length)?.doses.map((d) => d.name) ?? [];
+    rows.push({
+      title: "Tablets", height: lane(names.length - 1) + 16, lines: true, ticks: names.map((name, k) => [name, lane(k)]),
+      marks: dates.flatMap((date, i) =>
+        (byDate.get(date)?.doses ?? []).map((d) => (DOSE[d.status] ? <circle key={date + d.name} cx={x(i)} cy={lane(names.indexOf(d.name))} r={dot} style={DOSE[d.status]} /> : null)),
+      ),
+    });
+  }
+
+  // A day in words, for its column's title: the date, then what she said.
+  const inWords = (d: HistoryDay) =>
+    [
+      shortDay(d.at),
+      d.reading ? `${d.reading.systolic}/${d.reading.diastolic}` : null,
+      d.felt.rating ? `felt ${d.felt.rating}` : null,
+      d.slept.rating ? `slept ${d.slept.rating}` : null,
+      tablets && d.doses.length ? `${d.doses.filter((x) => x.status === "taken on call").length} of ${d.doses.length} tablets on the call` : null,
+    ].filter(Boolean).map((part, i) => (i ? part : sentence(part!))).join(" · ");
+
   let top = 0;
-  // `only` names the rows to draw (the home page shows them one block at a time).
   const drawn = rows.filter((row) => !only || only.includes(row.title)).map((row) => {
     const g0 = top + 28;
     top = g0 + row.height + 12;
@@ -135,18 +185,23 @@ export function Timeline({ dates, days, range, only, width: W = 900, label = "Bl
   top += range === "1m" ? 48 : 28;
 
   return (
-    // On a narrow screen the full-size drawing scrolls sideways, so its type keeps its size (a narrower one may shrink
-    // by up to three tenths first, so a phone shows all of it); right-to-left makes it open at the newest days.
+    // On a narrow screen it scrolls sideways, so its type keeps its size; right-to-left makes it open at the newest days.
     <div style={{ overflowX: "auto", direction: "rtl" }}>
-      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label={label} style={{ display: "block", minWidth: W < 760 ? W * 0.7 : 700, direction: "ltr" }}>
+      <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label={label} style={{ display: "block", minWidth: 700, direction: "ltr" }}>
         {dates.map((date, i) => {
           const d = byDate.get(date);
-          return d ? (
-            <Link key={date} href={`/demo/history/${date}?range=${range}`} prefetch={false} tabIndex={-1} className="laura-column">
-              <title>{shortDay(d.at)}</title>
+          if (!d) return null;
+          const column = (
+            <>
+              <title>{inWords(d)}</title>
               <rect x={L + i * step} y={0} width={step} height={plotted} />
-            </Link>
-          ) : null;
+            </>
+          );
+          return links ? (
+            <Link key={date} href={`/demo/history/${date}?range=${range}`} prefetch={false} tabIndex={-1} className="laura-column">{column}</Link>
+          ) : (
+            <g key={date} className="laura-column">{column}</g>
+          );
         })}
         <g style={{ pointerEvents: "none" }}>
           {drawn}
