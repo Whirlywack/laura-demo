@@ -16,6 +16,6 @@ test("the sample data puts the Care plan on the dashboard, with no Call yet", as
       { name: "Eliquis", strength: "2.5 mg, one tablet", timeOfDay: "morning" },
     ],
     watchItems: ["blood pressure", "left leg swelling"],
-    familyPhrase: "Paul says the blue teapot is still his favourite.",
+    familyPhrase: "Paul loves you a lot.",
   });
 });
