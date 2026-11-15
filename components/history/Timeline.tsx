@@ -58,11 +58,13 @@ type Props = {
   latest?: boolean;
   /** Off: a day's column reads out on hover but goes nowhere (the home page's sample days). */
   links?: boolean;
+  /** Off: no line saying to point at a day; the readout only appears while pointing (the home page). */
+  hint?: boolean;
   /** What the drawing shows, for a screen reader. */
   label?: string;
 };
 
-export function Timeline({ dates, days, range, only, latest = false, links = true, label = "Blood pressure, pulse, how she felt, how she slept and her tablets, day by day. Use the calendar to open a day." }: Props) {
+export function Timeline({ dates, days, range, only, latest = false, links = true, hint = true, label = "Blood pressure, pulse, how she felt, how she slept and her tablets, day by day. Use the calendar to open a day." }: Props) {
   const [pointed, setPointed] = useState<number | null>(null);
   // Room on the right for the newest Reading's numbers.
   const R = latest ? 84 : 8;
@@ -245,20 +247,20 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
         return d ? [{ key: date, x0: L + i * step, w: step, read: dayRead(d), href: links ? `/demo/history/${date}?range=${range}` : null }] : [];
       });
   const reading = columns.find((c, i) => i === pointed)?.read;
-  const hint = byMonth ? "Point at a month to read it. The calendar opens a day." : links ? "Point at a day to read it. Press it to open it." : "Point at a day to read it.";
+  const hintText = byMonth ? "Point at a month to read it. The calendar opens a day." : "Point at a day to read it. Press it to open it.";
 
   return (
     <div>
       {/* The readout keeps its height, so the drawing never moves under the pointer. */}
-      <div aria-hidden="true" style={{ minHeight: 44, font: "var(--text-meta-font)", color: "var(--text-meta)" }}>
+      <div aria-hidden="true" style={{ minHeight: hint ? 44 : 30, font: "var(--text-meta-font)", color: "var(--text-meta)" }}>
         {reading ? (
           <span style={{ color: "var(--text-secondary)" }}>
             <b style={{ color: "var(--text-primary)" }}>{reading[0]}</b>
             {reading[1].map((part) => ` · ${part}`).join("")}
           </span>
-        ) : (
-          hint
-        )}
+        ) : hint ? (
+          hintText
+        ) : null}
       </div>
       {/* On a narrow screen it scrolls sideways, so its type keeps its size; right-to-left makes it open at the newest days. */}
       <div style={{ overflowX: "auto", direction: "rtl" }}>
