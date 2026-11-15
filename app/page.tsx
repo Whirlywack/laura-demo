@@ -43,7 +43,7 @@ const onTheCall: [string, string, string][] = [
 export default function Home() {
   return (
     <div style={{ padding: "0 24px 8px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
-      <SiteHeader>
+      <SiteHeader current="home">
         <Link href="/demo" className="laura-button" style={pill}>See the demo</Link>
       </SiteHeader>
 
