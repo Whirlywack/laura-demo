@@ -46,7 +46,7 @@ The older person never sees a screen. Sample names: the older person is Lidia, 9
 
 **Motion.** Only when something arrives or changes state: a new feed item slides down 10px and fades in over 420ms; a dose bar or marker changes over 240ms. Nothing decorative. Respect reduced motion.
 
-**Imagery and icons.** One illustration: her cordless home phone standing in its charging stand, `assets/home-phone.svg`, drawn with a 3px ink outline and shown on sage. No icon set and no emoji; the only glyph is a tick, in a completed tick box or a tablet's tick mark. There is no logo: the wordmark is Helvetica Bold: lowercase "laura" at 60px with letter-spacing −0.06em on the home page; "Laura" at 32px with −0.04em on the dashboard. In running text the name is always "Laura".
+**Imagery and icons.** One illustration: her cordless home phone standing in its charging stand, `assets/home-phone.svg`, drawn with a 3px ink outline and shown on sage. (In this repo the home page draws it in `components/home/Phone.tsx`, so its screen and handset can move.) No icon set and no emoji; the only glyph is a tick, in a completed tick box or a tablet's tick mark. There is no logo: the wordmark is Helvetica Bold: lowercase "laura" at 60px with letter-spacing −0.06em on the home page; "Laura" at 32px with −0.04em on the dashboard. In running text the name is always "Laura".
 
 ## Components (`components/core`)
 

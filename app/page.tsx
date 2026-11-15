@@ -3,6 +3,7 @@ import { Fragment, type CSSProperties } from "react";
 import Link from "next/link";
 import { Card } from "../components/Card";
 import { Film } from "../components/home/Film";
+import { Phone } from "../components/home/Phone";
 import { DataBlocks } from "../components/home/DataBlocks";
 import { realCall } from "../components/home/films";
 import { TabletTicks } from "../components/home/TabletTicks";
@@ -11,7 +12,7 @@ import { SiteHeader } from "../components/SiteHeader";
 // The home page, ported from .claude/skills/laura-design/ui_kits/home/Home.jsx: what Laura is, a call to listen to (the film,
 // components/home/films.ts) with a month of her answers and her tablet count drawn under it, then Laura's two jobs. The tablets are Lidia's own (as in the care plan); "See the demo" opens the dashboard at /demo.
 export const metadata: Metadata = {
-  title: "Laura: a phone call every morning for an older family member",
+  title: "Laura: a phone call every day for an older family member",
   description: "Laura phones an older family member every morning on the phone they already have. You see how they are, whether the tablets were taken and what is running low, as they speak.",
 };
 
@@ -48,8 +49,7 @@ export default function Home() {
         <Card tone="live" style={{ flex: "1 1 380px", minWidth: 0, padding: "36px 40px 30px", display: "flex", flexDirection: "column" }}>
           <div style={label}>Their side · the phone they already have</div>
           <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 0" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG drawing, nothing to optimise */}
-            <img src="/home-phone.svg" alt="A cordless home phone standing in its charging stand" style={{ height: 500, maxHeight: "60vh", maxWidth: "100%" }} />
+            <Phone style={{ height: 500, maxHeight: "60vh", maxWidth: "100%" }} />
           </div>
           <div>
             <div style={lead}>No smartphone needed.</div>
@@ -64,12 +64,12 @@ export default function Home() {
                 <span style={{ width: 10, height: 10, borderRadius: "50%", background: "var(--accent)", flex: "none" }} />
                 <span>One family&apos;s morning · Lidia, 94 · on the phone now</span>
               </span>
-              <h1 style={{ ...display(60), marginTop: 22, maxWidth: 760 }}>A phone call every morning, so nothing gets missed.</h1>
+              <h1 style={{ ...display(60), marginTop: 22, maxWidth: 760 }}>A phone call every day, so nothing gets missed.</h1>
               <p style={{ margin: "20px 0 0", maxWidth: 520, lineHeight: 1.4, color: "var(--text-secondary)" }}>
                 Laura phones an older family member who lives alone: a parent, a grandparent, an aunt or uncle. You get a page that fills in as they speak.
               </p>
             </div>
-            <Card tone="quiet" style={{ flex: "1 1 300px", minWidth: 0, padding: 30, display: "flex", flexDirection: "column" }}>
+            <Card className="laura-story-1" tone="quiet" style={{ flex: "1 1 300px", minWidth: 0, padding: 30, display: "flex", flexDirection: "column" }}>
               <div style={{ ...label, color: "var(--text-question)" }}>Today, in her words</div>
               <div style={{ ...reading, marginTop: 14 }}>{q("I'm all right. A bit tired, but all right.")}</div>
               <div style={{ flex: 1, minHeight: 16 }} />
@@ -78,11 +78,11 @@ export default function Home() {
             </Card>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
-            <Card style={{ flex: "1.2 1 320px", minWidth: 0, padding: "28px 30px 26px" }}>
+            <Card className="laura-story-2" style={{ flex: "1.2 1 320px", minWidth: 0, padding: "28px 30px 26px" }}>
               <div style={title}>Tablets</div>
               <TabletTicks tablets={["Concor", "Sanoral HCT", "Eliquis"]} initial={["taken", "taken", "earlier"]} />
             </Card>
-            <Card tone="quiet" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
+            <Card className="laura-story-3" tone="quiet" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
               <div style={title}>Blood pressure</div>
               <div style={{ marginTop: 4, color: "var(--text-secondary)" }}>She read it out on the call.</div>
               <div style={{ marginTop: 16 }}>{q("One thirty-eight over eighty-two. I wrote it down.")}</div>
@@ -95,7 +95,7 @@ export default function Home() {
                 ))}
               </div>
             </Card>
-            <Card tone="action" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
+            <Card className="laura-story-4" tone="action" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
               <div style={title}>To bring Lidia</div>
               <div style={{ marginTop: 4 }}>2 things she&apos;s running out of.</div>
               <div style={{ marginTop: 16, borderTop: "1px solid var(--rule-on-highlight)", padding: "12px 0 14px" }}>
@@ -125,9 +125,6 @@ export default function Home() {
         <h2 style={{ ...display(40), marginTop: 12, maxWidth: 980 }}>Lidia is 94. Her grandson Paul looks after her from another city.</h2>
         <p style={{ ...lead, margin: "22px 0 0", maxWidth: 860, textWrap: "balance" }}>
           He can&apos;t phone her every morning, and that is when her tablets are due. So Laura phones for him. She waits while Lidia takes them, asks how she is, and Paul sees it all as they talk.
-        </p>
-        <p style={{ margin: "22px 0 0", maxWidth: 760, color: "var(--text-secondary)" }}>
-          Listen to one of their calls. The words are from a real call on 14 November. Laura&apos;s voice is the one you would hear on the phone. Lidia&apos;s side is read by a generated voice.
         </p>
       </section>
       <Film data={realCall} />
@@ -176,7 +173,9 @@ export default function Home() {
         <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>
           Once they have said who they are, Laura gives a phrase your family chose, so they know it is really Laura and can hang up on anyone else. Asked if she is a person, Laura says she is not. In an emergency she tells them to call 112.
         </div>
-        <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>Lidia and Paul are sample people, and everything on these pages is sample data.</div>
+        <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>
+          Lidia and Paul are sample people, and everything on these pages is sample data. The call you can listen to uses the words of a real call on 14 November; Lidia&apos;s side is read by a generated voice.
+        </div>
       </footer>
     </div>
   );
