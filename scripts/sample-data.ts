@@ -14,7 +14,7 @@ const db = createClient(env("NEXT_PUBLIC_SUPABASE_URL"), env("SUPABASE_SERVICE_R
 });
 
 const carePlan = {
-  family_phrase: "Paul says the blue teapot is still his favourite.",
+  family_phrase: "Paul loves you a lot.",
   medications: [
     { name: "Concor", strength: "5 mg, one tablet", time_of_day: "morning" },
     { name: "Sanoral HCT", strength: "40/10/12.5 mg, one tablet", time_of_day: "morning" },
