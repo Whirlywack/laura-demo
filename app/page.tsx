@@ -14,7 +14,7 @@ import { SiteHeader } from "../components/SiteHeader";
 // components/home/films.ts) with a month of her answers and her tablet count drawn under it, then Laura's two jobs. The tablets are Lidia's own (as in the care plan); "See the demo" opens the dashboard at /demo.
 export const metadata: Metadata = {
   title: "Laura: a phone call every day for an older family member",
-  description: "Laura phones an older family member every morning on the phone they already have. You see how they are, whether the tablets were taken and what is running low, as they speak.",
+  description: "Laura phones an older family member every day on the phone they already have. You see how they are, whether the tablets were taken and what is running low, as they speak.",
 };
 
 const display = (size: number): CSSProperties => ({ font: `700 ${size}px/0.98 var(--font-sans)`, letterSpacing: "var(--tracking-display)", textWrap: "balance", margin: 0 });

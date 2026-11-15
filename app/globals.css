@@ -115,11 +115,11 @@ a:hover { color: var(--ink); }
 .laura-check:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 3px; }
 .laura-button:focus-visible, .laura-input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 /* The home page's film: fixed heights for its cards and its talk, so it never changes size as it plays. */
-:root { --film-pad: 36px; --film-card: 266px; --film-card-small: 266px; --film-talk: 380px; }
+:root { --tablets-note: 4.05em; --film-pad: 36px; --film-card: 266px; --film-card-small: 266px; --film-talk: 380px; }
 @media (max-width: 760px) {
   :root { --film-pad: 14px; --film-card: 236px; --film-card-small: 150px; --film-talk: 470px; }
   /* On a phone an answer is a sentence ("Laura hasn't called yet today."), so it steps down to the reading size. */
-  :root { --size-answer: var(--size-reading); }
+  :root { --size-answer: var(--size-reading); --tablets-note: 5.4em; }
 }
 /* A day's column on the History timeline, shaded while the pointer is on it. */
 .laura-column rect { fill: transparent; }
@@ -128,8 +128,11 @@ a:hover { color: var(--ink); }
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: none; }
 }
-/* Cards stand still. What is written in them appears, top to bottom, when a page opens. */
-.laura-card > * { animation: laura-fade var(--motion-state) both; }
+/* Cards stand still. What is written in them appears, top to bottom, when a page opens. `backwards` holds a line back
+   until its turn and then lets go of it, so its own styles (a button dimming on hover) apply again.
+   `laura-still` is a card whose contents never fade: the calendar, which stays as you move from day to day. */
+.laura-card > * { animation: laura-fade var(--motion-state) backwards; }
+.laura-still > * { animation: none; }
 .laura-card > *:nth-child(2) { animation-delay: 60ms; }
 .laura-card > *:nth-child(3) { animation-delay: 120ms; }
 .laura-card > *:nth-child(n + 4) { animation-delay: 180ms; }
@@ -138,8 +141,8 @@ a:hover { color: var(--ink); }
    in the order of the call: each `laura-say` carries its own delay. */
 /* `laura-wait` holds a line back until its turn (the "On the call" cards, which play when they scroll into view). */
 .laura-wait { opacity: 0; animation: none; }
-.laura-say { animation: laura-arrive var(--motion-arrive) both; }
-.laura-phone-name { animation: laura-fade var(--motion-arrive) 800ms both; }
+.laura-say { animation: laura-arrive var(--motion-arrive) backwards; }
+.laura-phone-name { animation: laura-fade var(--motion-arrive) 800ms backwards; }
 @keyframes laura-phone-answer {
   from { opacity: 0.7; transform: scale(1); }
   to { opacity: 0; transform: scale(1.9); }
@@ -150,5 +153,6 @@ a:hover { color: var(--ink); }
   to { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+  /* No motion and no waiting: a delayed line would otherwise sit hidden for seconds and then pop in. */
+  * { animation-duration: 1ms !important; animation-delay: 0ms !important; transition-duration: 1ms !important; }
 }

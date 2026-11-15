@@ -43,7 +43,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
           {days.length ? <Timeline key={range} dates={dates} days={days} range={range} /> : <div style={{ color: "var(--text-secondary)" }}>No calls in this time yet.</div>}
         </Card>
         <div style={{ ...narrow, display: "flex", flexDirection: "column", gap: "var(--gap-cards)" }}>
-          <Card style={{ padding: "24px 20px" }}>
+          <Card className="laura-still" style={{ padding: "24px 20px" }}>
             <HistoryCalendar key={range} first={dates[0]} last={today} called={days.map((d) => d.date)} range={range} />
           </Card>
           {/* The timeline's key. It says how each mark is drawn, never what a value means. */}

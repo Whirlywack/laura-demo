@@ -62,7 +62,7 @@ export function DataBlocks() {
         <div style={label}>Day after day</div>
         <div style={{ ...title, marginTop: 6 }}>The days add up</div>
         <div style={{ marginTop: 14, color: "var(--text-secondary)" }}>
-          The same questions every morning become a record you can read back: a month, three months or a year, and any single day in Lidia&apos;s own words.
+          The same questions every day become a record you can read back: a month, three months or a year, and any single day in Lidia&apos;s own words.
         </div>
         <div style={{ marginTop: 14, color: "var(--text-secondary)" }}>
           <b style={{ color: "var(--text-primary)", fontVariantNumeric: "tabular-nums" }}>39 of 42</b> of Lidia&apos;s tablets confirmed on the call in the last two weeks.

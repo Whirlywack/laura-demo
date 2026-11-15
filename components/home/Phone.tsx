@@ -1,8 +1,9 @@
 // The home page's one illustration: her cordless home phone standing in its charging stand, drawn here (not as an
 // image file) so its parts can move, a little. The screen already shows the time; when the page loads Laura's name
-// appears on it and the answer button pulses three times, as a call coming in. Once, and not at all with reduced
-// motion (app/globals.css: laura-phone-*).
-const ink = "#2b211d", cream = "#fbf6ec";
+// appears on it and the answer button pulses three times, as a call coming in. Once; with reduced motion the name
+// is simply there (app/globals.css: laura-phone-*).
+// The design tokens (app/globals.css); the stand's two beiges have none.
+const ink = "var(--ink)", cream = "var(--cream)", burgundy = "var(--burgundy)", chamomile = "var(--chamomile)";
 const font = "Helvetica Neue,Helvetica,Arial,sans-serif";
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"];
 
@@ -16,15 +17,14 @@ export function Phone({ style }: { style?: React.CSSProperties }) {
       <path d="M84 304 v34 M254 304 v34" fill="none" stroke={ink} strokeWidth="2" strokeLinecap="round" />
       {/* The handset, leaning in the stand. */}
       <g transform="rotate(-8 150 200)">
-        <g>
-          <rect x="96" y="24" width="108" height="320" rx="40" fill="#6e2233" stroke={ink} strokeWidth="3" />
+          <rect x="96" y="24" width="108" height="320" rx="40" fill={burgundy} stroke={ink} strokeWidth="3" />
           <rect x="132" y="42" width="36" height="7" rx="3.5" fill={cream} />
           <rect x="112" y="60" width="76" height="66" rx="10" fill={cream} stroke={ink} strokeWidth="2.5" />
           <text className="laura-phone-name" x="150" y="87" fontFamily={font} fontWeight="700" textAnchor="middle" fontSize="15" fill={ink}>Laura</text>
           <text x="150" y="111" fontFamily={font} fontWeight="700" textAnchor="middle" fontSize="19" fill={ink}>09:30</text>
           {/* The answer button, with the pulse that spreads from it while Laura is calling. */}
-          <rect className="laura-phone-answer" x="108" y="140" width="28" height="18" rx="9" fill="#e4c463" />
-          <rect x="108" y="140" width="28" height="18" rx="9" fill="#e4c463" stroke={ink} strokeWidth="2" />
+          <rect className="laura-phone-answer" x="108" y="140" width="28" height="18" rx="9" fill={chamomile} />
+          <rect x="108" y="140" width="28" height="18" rx="9" fill={chamomile} stroke={ink} strokeWidth="2" />
           <path d="M116 152 q6 -7 12 0" fill="none" stroke={ink} strokeWidth="2.5" strokeLinecap="round" />
           <circle cx="150" cy="149" r="12" fill={cream} stroke={ink} strokeWidth="2" />
           <circle cx="150" cy="149" r="4" fill={ink} />
@@ -42,7 +42,6 @@ export function Phone({ style }: { style?: React.CSSProperties }) {
           <circle cx="141" cy="304" r="2.2" fill={cream} />
           <circle cx="150" cy="304" r="2.2" fill={cream} />
           <circle cx="159" cy="304" r="2.2" fill={cream} />
-        </g>
       </g>
       <rect x="80" y="380" width="30" height="7" rx="3.5" fill={ink} />
       <rect x="230" y="380" width="30" height="7" rx="3.5" fill={ink} />
@@ -56,7 +55,7 @@ export function Phone({ style }: { style?: React.CSSProperties }) {
       <rect x="194" y="343" width="40" height="22" rx="11" fill="#eadfca" stroke={ink} strokeWidth="2" />
       <path d="M206 359 a7 7 0 0 1 0 -10 M222 359 a7 7 0 0 0 0 -10" fill="none" stroke={ink} strokeWidth="2.5" strokeLinecap="round" />
       <circle cx="214" cy="354" r="2.6" fill={ink} />
-      <circle cx="258" cy="354" r="7" fill="#e4c463" stroke={ink} strokeWidth="2" />
+      <circle cx="258" cy="354" r="7" fill={chamomile} stroke={ink} strokeWidth="2" />
     </svg>
   );
 }

@@ -96,7 +96,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         </div>
         <div style={{ ...narrow, display: "flex", flexDirection: "column", gap: "var(--gap-cards)" }}>
           {/* The year's calendar, whatever range she came from, so the day shown is always in it. */}
-          <Card style={{ padding: "24px 20px" }}>
+          <Card className="laura-still" style={{ padding: "24px 20px" }}>
             <HistoryCalendar first={addDays(today, -364)} last={today} called={called} range={range} selected={day.date} />
           </Card>
           {/* Laura's own words as she closed the Call, so no quotation marks. */}
