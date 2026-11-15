@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card } from "../../../components/Card";
 import { HistoryCalendar } from "../../../components/history/HistoryCalendar";
 import { columns, narrow, PageTitle, pill, wide } from "../../../components/history/HistoryHeader";
-import { Timeline } from "../../../components/history/Timeline";
+import { DoseKey, Timeline } from "../../../components/history/Timeline";
 import { addDays, calendarDay } from "../../../lib/dashboard";
 import { getHistory, RANGES, rangeOf, type Range } from "../../../lib/history";
 import { readClient } from "../../../lib/supabase";
@@ -42,13 +42,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
           {/* The timeline's key. It says how each mark is drawn, never what a value means. */}
           <Card tone="quiet" style={{ padding: "14px 24px 16px", font: "var(--text-meta-font)" }}>
             {[
-              ["Blood pressure", "a line from the lower number to the higher, as she read it out."],
-              ["Pulse", "a dot, on the days she gave it."],
+              ["Blood pressure", range === "1y" ? "a bar from the lowest number she read out that month to the highest." : "a line from the lower number to the higher, as she read it out."],
+              ["Pulse", range === "1y" ? "the lowest and the highest she gave that month." : "a dot, on the days she gave it."],
               ["Felt and slept", range === "1m" ? "a dot on her answer that day." : `how many days she gave each answer, ${range === "3m" ? "week by week" : "month by month"}.`],
+              ["Tablets", range === "1m" ? "a mark for each tablet, each morning." : `how many days each was taken on the call, ${range === "3m" ? "week by week" : "month by month"}.`],
               ["A gap", "a day without a call, or without that answer."],
             ].map(([what, how], i) => (
               <div key={what} style={{ padding: "8px 0", borderTop: i ? "1px solid var(--rule)" : undefined, color: "var(--text-secondary)" }}>
                 <b style={{ color: "var(--text-primary)" }}>{what}:</b> {how}
+                {what === "Tablets" && range === "1m" ? <DoseKey style={{ marginTop: 8, color: "var(--text-primary)" }} /> : null}
               </div>
             ))}
           </Card>

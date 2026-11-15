@@ -3,8 +3,7 @@ import type { CSSProperties } from "react";
 import { addDays, type Dose } from "../../lib/dashboard";
 import type { HistoryDay } from "../../lib/history";
 import { Card } from "../Card";
-import { Timeline } from "../history/Timeline";
-import { StatusLabel } from "../StatusLabel";
+import { DoseKey, Timeline } from "../history/Timeline";
 
 // Under the film on the home page: a month of mornings on one timeline, the History page's own, so a day reads straight
 // down (her blood pressure, how she felt, how she slept, her tablets), and where to read the rest. The month is sample
@@ -52,17 +51,12 @@ export function DataBlocks() {
             days={month}
             range="1m"
             only={["Blood pressure", "How she felt", "How she slept", "Tablets"]}
-            tablets
             latest
             links={false}
             label="A sample month, day by day: Lidia's blood pressure, how she felt, how she slept, and each morning tablet."
           />
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 24px", marginTop: 6, paddingTop: 14, borderTop: "1px solid var(--rule)" }}>
-          <StatusLabel status="taken on call" />
-          <StatusLabel status="says taken earlier" />
-          <StatusLabel status="not taken" />
-        </div>
+        <DoseKey style={{ marginTop: 6, paddingTop: 14, borderTop: "1px solid var(--rule)" }} />
       </Card>
       <Card tone="quiet" style={{ flex: "1 1 320px", minWidth: 0, padding: "30px 32px 28px", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
         <div style={label}>Day after day</div>
