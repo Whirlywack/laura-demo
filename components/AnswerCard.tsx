@@ -1,8 +1,9 @@
 import type { CSSProperties, ReactNode } from "react";
 import { Card } from "./Card";
 
-// Ported from .claude/skills/laura-design/components/core/AnswerCard.jsx: card or action tone.
-type Props = { question: string; answer: ReactNode; tone?: "card" | "action"; children?: ReactNode; style?: CSSProperties };
+// Ported from .claude/skills/laura-design/components/core/AnswerCard.jsx: card or action tone, and quiet for an
+// answer that asks nothing of the carer.
+type Props = { question: string; answer: ReactNode; tone?: "card" | "action" | "quiet"; children?: ReactNode; style?: CSSProperties };
 
 export function AnswerCard({ question, answer, tone = "card", children, style }: Props) {
   return (

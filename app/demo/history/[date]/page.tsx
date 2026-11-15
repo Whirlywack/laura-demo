@@ -18,8 +18,8 @@ const title: CSSProperties = { font: "700 30px/1.1 var(--font-sans)", letterSpac
 const line: CSSProperties = { marginTop: 4, color: "var(--text-secondary)" };
 const big: CSSProperties = { marginTop: 14, font: "700 var(--size-reading)/1 var(--font-sans)", letterSpacing: "var(--tracking-reading)" };
 const words: CSSProperties = { marginTop: 10, font: "var(--text-quote)", color: "var(--text-secondary)" };
-// Every card in a row is as tall as the row, and each row keeps a height that fits her longest day (a wrapped title
-// and a three-line quote above; three tablets each with her words below), so going from day to day moves nothing.
+// Every card in a row is as tall as the row, and the top row keeps a height that fits her longest day (a wrapped
+// title and a three-line quote), so going from day to day moves nothing above the last row.
 const card: CSSProperties = { flex: "1 1 240px", minWidth: 0, padding: "28px 30px 26px" };
 const row: CSSProperties = { display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", alignItems: "stretch", minHeight: 292 };
 
@@ -78,10 +78,11 @@ export default async function Page({ params, searchParams }: { params: Promise<{
               )}
             </Card>
           </div>
-          <div style={{ ...row, flex: 1, minHeight: 476 }}>
+          {/* The last row is as tall as its content: nothing is under it to move. */}
+          <div style={{ ...row, flex: 1, minHeight: 0 }}>
             <Card style={card}>
               <div style={title}>Left leg</div>
-              {day.remark ? <div style={{ marginTop: 14, font: "var(--text-quote)", fontWeight: 700 }}>“{day.remark}”</div> : <div style={line}>Not asked on this call.</div>}
+              {day.remark ? <div style={{ marginTop: 14, font: "700 var(--size-lead)/var(--leading-lead) var(--font-sans)", letterSpacing: "var(--tracking-lead)", textWrap: "balance" }}>“{day.remark}”</div> : <div style={line}>Not asked on this call.</div>}
             </Card>
             <Card style={{ ...card, flex: "2.1 1 400px" }}>
               <div style={title}>Tablets</div>

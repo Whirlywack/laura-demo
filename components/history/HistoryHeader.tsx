@@ -8,9 +8,9 @@ export function HistoryHeader() {
     <SiteHeader
       menu={
         <>
-          <Link href="/demo" style={menuItem(false)}>Today</Link>
-          <Link href="/demo?plan=1" style={menuItem(false)}>Care plan</Link>
-          <Link href="/demo/history" aria-current="page" style={menuItem(true)}>History</Link>
+          <Link href="/demo" className="laura-button" style={menuItem(false)}>Today</Link>
+          <Link href="/demo?plan=1" className="laura-button" style={menuItem(false)}>Care plan</Link>
+          <Link href="/demo/history" aria-current="page" className="laura-button" style={menuItem(true)}>History</Link>
         </>
       }
     >

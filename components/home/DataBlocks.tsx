@@ -51,9 +51,12 @@ export function DataBlocks() {
         </div>
       </Card>
       <Card tone="quiet" style={{ ...block, flex: "1 1 320px", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-        <div style={title}>The days add up to her story</div>
-        <div style={line}>
-          The same questions every morning become a record the family can read back: a month, three months or a year, and any single day in her own words.
+        <div style={title}>Her tablets, day after day</div>
+        <div style={line}>39 of 42 confirmed on the call in the last two weeks. The rest is in History: a month, three months or a year.</div>
+        <div role="img" aria-label="39 of 42 dots filled" style={{ alignSelf: "stretch", display: "grid", gridTemplateColumns: "repeat(14,1fr)", gap: 8, marginTop: 22 }}>
+          {Array.from({ length: 42 }, (_, i) => (
+            <span key={i} style={{ aspectRatio: "1", borderRadius: "50%", boxSizing: "border-box", ...(i < 39 ? { background: "var(--accent)" } : { border: "2px solid var(--accent)" }) }} />
+          ))}
         </div>
         <div style={{ flex: 1, minHeight: 24 }} />
         <Link href="/demo/history" style={{ padding: "13px 26px", borderRadius: "var(--radius-pill)", background: "var(--accent)", color: "var(--text-on-accent)", font: "var(--text-label)", textDecoration: "none" }}>

@@ -8,6 +8,7 @@ type Errand = ChecklistItem & { id: string };
 
 // Every Errand from every Call, with a tick box. The page can only read, so a tick goes to the server.
 // The box shows ticked at once, and unticks again if the server does not record it.
+// Chamomile is for something to do: with nothing left to bring, the card is quiet.
 export function Errands({ errands, style }: { errands: Errand[]; style?: CSSProperties }) {
   const [ticked, setTicked] = useState<string[]>([]);
   const items = errands.map((e) => ({ ...e, done: e.done || ticked.includes(e.id) }));
@@ -21,7 +22,7 @@ export function Errands({ errands, style }: { errands: Errand[]; style?: CSSProp
 
   return (
     <AnswerCard
-      tone="action"
+      tone={open ? "action" : "quiet"}
       style={style}
       question="What do I need to do?"
       answer={open === 0 ? "Nothing to bring" : `Bring ${open} ${open === 1 ? "thing" : "things"}`}

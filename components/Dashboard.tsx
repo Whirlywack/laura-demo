@@ -35,7 +35,9 @@ const waiting: CSSProperties = { color: "var(--text-meta)" };
 const noWellbeing = { "not called yet": "Not called yet today", live: "Laura is asking…", done: "Not asked on this call" };
 const title: CSSProperties = { font: "700 30px/1.1 var(--font-sans)", letterSpacing: "-.03em" };
 const line: CSSProperties = { marginTop: 4, color: "var(--text-secondary)" };
-const detailCard: CSSProperties = { flex: "1 1 260px", minWidth: 0, padding: "28px 30px 26px", display: "flex", flexDirection: "column" };
+// Every card on the page starts its text 32px in.
+const inset = "30px 32px 28px";
+const detailCard: CSSProperties = { flex: "1 1 260px", minWidth: 0, padding: inset, display: "flex", flexDirection: "column" };
 const strongQuote: CSSProperties = { marginTop: 14, font: "var(--text-quote)", fontWeight: 700 };
 
 export function Dashboard({ state, now, openPlan = false }: { state: DashboardState; now: string; openPlan?: boolean }) {
@@ -62,9 +64,9 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
       <SiteHeader
         menu={
           <>
-            <Link href="/demo" aria-current="page" style={menuItem(true)}>Today</Link>
+            <Link href="/demo" aria-current="page" className="laura-button" style={menuItem(true)}>Today</Link>
             <button type="button" className="laura-button" onClick={showCarePlan} style={menuItem(false)}>Care plan</button>
-            <Link href="/demo/history" style={menuItem(false)}>History</Link>
+            <Link href="/demo/history" className="laura-button" style={menuItem(false)}>History</Link>
           </>
         }
       >
@@ -75,7 +77,7 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
       {/* The three questions the Family carer has, answered in the only large type on the page. */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
         <AnswerCard
-          style={{ flex: "1.5 1 420px" }}
+          style={{ flex: "1.5 1 420px", padding: inset }}
           question="Is she okay today?"
           answer={wellbeing.general ? `“${wellbeing.general}”` : <span style={waiting}>{noWellbeing[callStatus]}</span>}
         >
@@ -102,11 +104,11 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
             <div style={{ ...waiting, marginTop: 8 }}>For Paul · nothing to pass on</div>
           )}
         </AnswerCard>
-        <AnswerCard style={{ flex: "1 1 300px" }} question="Did she take her tablets?" answer={`${doses.filter((d) => d.status === "taken on call").length} of ${doses.length}`}>
+        <AnswerCard style={{ flex: "1 1 300px", padding: inset }} question="Did she take her tablets?" answer={`${doses.filter((d) => d.status === "taken on call").length} of ${doses.length}`}>
           <DoseBars doses={doses} style={{ marginBottom: 20 }} />
           <div style={{ color: "var(--text-secondary)" }}>{dosesInWords(doses, callStatus)}</div>
         </AnswerCard>
-        <Errands style={{ flex: "1 1 400px", paddingBottom: 26 }} errands={errands.map((e) => ({ id: e.id, label: e.item, quote: e.quote, meta: day(e.at), done: e.done }))} />
+        <Errands style={{ flex: "1 1 400px", padding: inset }} errands={errands.map((e) => ({ id: e.id, label: e.item, quote: e.quote, meta: day(e.at), done: e.done }))} />
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
@@ -170,12 +172,10 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
           </div>
         </div>
 
-        <Card tone="quiet" style={{ flex: "1 1 340px", minWidth: 0, padding: "32px 32px 28px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 12, font: "var(--text-meta-font)", color: "var(--text-secondary)" }}>
-            <b>{feedTitle}</b>
-            <span>Newest first</span>
-          </div>
-          <div style={{ marginTop: 8 }}>
+        <Card tone="quiet" style={{ flex: "1 1 340px", minWidth: 0, padding: inset }}>
+          <div style={title}>{feedTitle}</div>
+          <div style={line}>In her words, newest first.</div>
+          <div style={{ marginTop: 14 }}>
             <LiveFeed cards={feedCards.map((c) => ({ id: c.id, title: c.title, quote: c.quote, time: time(c.at) }))} />
           </div>
         </Card>
