@@ -23,7 +23,8 @@ export function Errands({ errands, style }: { errands: Errand[]; style?: CSSProp
 
   return (
     <AnswerCard
-      tone={open ? "action" : "quiet"}
+      // The colour follows what the server has recorded, so a tick that fails does not flash the card quiet and back.
+      tone={errands.some((e) => !e.done) ? "action" : "quiet"}
       style={style}
       question="What do I need to bring?"
       answer={open ? `Bring ${open} ${open === 1 ? "thing" : "things"}` : brought ? `Nothing new. ${brought} brought.` : "Nothing to bring"}

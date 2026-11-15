@@ -60,7 +60,7 @@ export function DataBlocks() {
         </div>
         <div style={{ ...line, marginTop: 10 }}>39 of 42 of Lidia&apos;s tablets confirmed on the call in the last two weeks.</div>
         <div style={{ flex: 1, minHeight: 24 }} />
-        <Link href="/demo/history" style={{ padding: "13px 26px", borderRadius: "var(--radius-pill)", background: "var(--accent)", color: "var(--text-on-accent)", font: "var(--text-label)", textDecoration: "none" }}>
+        <Link href="/demo/history" className="laura-button" style={{ padding: "13px 26px", borderRadius: "var(--radius-pill)", background: "var(--accent)", color: "var(--text-on-accent)", font: "var(--text-label)", textDecoration: "none" }}>
           Open History
         </Link>
       </Card>

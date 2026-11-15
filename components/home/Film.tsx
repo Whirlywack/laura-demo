@@ -87,7 +87,7 @@ function PaulsPage({ records, status, calledAt }: { records: FilmRecord[]; statu
             ))}
           </div>
         </div>
-        <div style={{ ...card("action"), height: "var(--film-card)" }}>
+        <div style={{ ...card(errands.length ? "action" : "quiet"), height: "var(--film-card)" }}>
           <div style={label}>What do I need to bring?</div>
           <div style={{ ...lead, marginTop: 10 }}>{errands.length ? `Bring ${errands.length} thing${errands.length > 1 ? "s" : ""}` : "Nothing yet"}</div>
           {errands.map((e) => (
@@ -191,8 +191,8 @@ export function Film({ data }: { data: FilmData }) {
     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 18, ...arrive }}>
       <div style={{ font: "700 var(--size-answer)/1 var(--font-sans)", letterSpacing: "var(--tracking-display)" }}>{ending.text}</div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-        <Link href="/demo" style={pill}>See his page</Link>
-        <Link href="/demo/history" style={{ ...pill, background: "var(--surface-card)", color: "var(--ink)" }}>Open History</Link>
+        <Link href="/demo" className="laura-button" style={pill}>See his page</Link>
+        <Link href="/demo/history" className="laura-button" style={{ ...pill, background: "var(--surface-card)", color: "var(--ink)" }}>Open History</Link>
       </div>
     </div>
   ) : (

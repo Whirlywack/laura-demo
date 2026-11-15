@@ -27,6 +27,7 @@ export function DatedList({ items, limit = 3, moreHref, style }: { items: Item[]
         <Link
           href={moreHref}
           className="laura-button"
+          data-row
           style={{ display: "flex", alignItems: "center", boxSizing: "border-box", borderTop: "1px solid var(--rule)", padding: "11px 0", minHeight: "var(--hit-min)", font: "var(--text-quote)", fontWeight: 700, color: "var(--accent)", textDecoration: "none" }}
         >
           See all in History

@@ -28,12 +28,13 @@ const jobs: [string, string[]][] = [
   ["Nothing gets missed", ["Tablets, taken while Laura waits on the line", "Anything running out at home, passed on to you"]],
   ["A record of how they are", ["How they feel today, in their own words", "How they slept", "Whatever you ask Laura to follow, day by day. For Lidia, it is her left leg.", "Blood pressure, as they read it out"]],
 ];
-// What happens on the call: what it is, Laura's or the page's words where there are any, and one plain line.
-const onTheCall: [string, string | null, string][] = [
+// What happens on the call: what it is, Laura's line or what the page shows (her own words, so no quotation marks),
+// and one plain line.
+const onTheCall: [string, string, string][] = [
   ["Laura waits.", "Take them now, take your time, I'll wait.", "The tablet is recorded once it is taken."],
   ["Laura remembers.", "You told me yesterday you slept badly. How was last night?", "Each call starts from the last one."],
-  ["You see it live.", "Tablet taken · 09:32", "It is on your page while the call is still going."],
-  ["They know it is Laura.", null, "Every call opens with a phrase only your family knows."],
+  ["You see it live.", "Concor · Taken on call · 09:32", "It is on your page while the call is still going."],
+  ["They know it is Laura.", "Paul says the blue teapot is still his favourite.", "Once they have said who they are, Laura gives a phrase only your family knows."],
 ];
 
 export default function Home() {
@@ -134,7 +135,7 @@ export default function Home() {
         {onTheCall.map(([what, words, how]) => (
           <Card key={what} style={{ flex: "1 1 300px", minWidth: 0, padding: "28px 30px 26px", display: "flex", flexDirection: "column" }}>
             <div style={title}>{what}</div>
-            {words ? <div style={{ ...lead, marginTop: 14, color: "var(--text-question)", textWrap: "balance" }}>{q(words)}</div> : null}
+            <div style={{ ...lead, marginTop: 14, color: "var(--text-question)", textWrap: "balance" }}>{words}</div>
             <div style={{ flex: 1, minHeight: 14 }} />
             <div style={{ color: "var(--text-secondary)" }}>{how}</div>
           </Card>
@@ -168,7 +169,7 @@ export default function Home() {
         <div style={label}>Safety</div>
         <div style={{ ...lead, marginTop: 10, maxWidth: 760, textWrap: "balance" }}>Laura reminds and records. She never gives medical advice and never interprets a reading.</div>
         <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>
-          Every call opens with a phrase your family chose, so they know it is really Laura and can hang up on anyone else. Asked if she is a person, Laura says she is not. In an emergency she tells them to call 112.
+          Once they have said who they are, Laura gives a phrase your family chose, so they know it is really Laura and can hang up on anyone else. Asked if she is a person, Laura says she is not. In an emergency she tells them to call 112.
         </div>
         <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>Lidia and Paul are sample people, and everything on these pages is sample data.</div>
       </footer>

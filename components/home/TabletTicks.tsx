@@ -9,7 +9,7 @@ type Mark = "taken" | "earlier" | "none";
 const NEXT: Record<Mark, Mark> = { none: "taken", taken: "earlier", earlier: "none" };
 const MARK: Record<Mark, { label: string; mark: CSSProperties; tick: string | null }> = {
   taken: { label: "Taken on call", mark: { background: "var(--accent)", border: "2px solid var(--accent)" }, tick: "var(--text-on-accent)" },
-  earlier: { label: "She says she took it earlier", mark: { border: "2px solid var(--accent)" }, tick: "var(--accent)" },
+  earlier: { label: "Says taken earlier", mark: { border: "2px solid var(--accent)" }, tick: "var(--accent)" },
   none: { label: "Not confirmed", mark: { border: "2px dashed var(--ink-3)" }, tick: null },
 };
 
@@ -22,7 +22,7 @@ export function TabletTicks({ tablets, initial }: { tablets: string[]; initial: 
   return (
     <>
       <div style={{ marginTop: 4, color: "var(--text-secondary)" }}>
-        {taken} confirmed on the call{earlier ? `, ${earlier} she says she took earlier` : ""}. You can correct any of these yourself.
+        {taken} confirmed on the call{earlier ? `, ${earlier} she says she took earlier` : ""}. Press a tablet to see each of its marks.
       </div>
       <div style={{ marginTop: 16 }}>
         {tablets.map((name, i) => {
@@ -32,6 +32,7 @@ export function TabletTicks({ tablets, initial }: { tablets: string[]; initial: 
               key={name}
               type="button"
               className="laura-button"
+              data-row
               onClick={() => setMarks((all) => all.map((v, j) => (j === i ? NEXT[v] : v)))}
               style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", minHeight: 46, padding: 0, border: 0, borderTop: "1px solid var(--rule)", background: "none", font: "inherit", textAlign: "left", cursor: "pointer", color: m.tick ? "var(--text-primary)" : "var(--text-meta)" }}
             >
@@ -43,7 +44,7 @@ export function TabletTicks({ tablets, initial }: { tablets: string[]; initial: 
                 ) : null}
               </span>
               <b style={{ flex: 1 }}>{name}</b>
-              <span style={{ font: "var(--text-meta-font)", textAlign: "right" }}>{m.label}</span>
+              <span style={{ font: "var(--text-meta-font)", whiteSpace: "nowrap" }}>{m.label}</span>
             </button>
           );
         })}

@@ -103,11 +103,12 @@ body {
   text-wrap: pretty;
 }
 /* Buttons, pills and links that act as buttons answer the pointer: a little lighter on hover, a little smaller on press. */
+/* Not the page you are on (aria-current), and full-width rows (data-row) dim but do not shrink. */
 .laura-button:not([role="slider"]) { transition: opacity 150ms ease-out, scale 150ms ease-out; }
 @media (hover: hover) {
-  .laura-button:not([role="slider"]):not(:disabled):hover { opacity: 0.82; }
+  .laura-button:not([role="slider"]):not(:disabled):not([aria-current]):hover { opacity: 0.82; }
 }
-.laura-button:not([role="slider"]):not(:disabled):active { scale: 0.96; }
+.laura-button:not([role="slider"]):not(:disabled):not([data-row]):active { scale: 0.96; }
 a { color: var(--accent); }
 a:hover { color: var(--ink); }
 /* The tick box input is hidden behind its drawn box, so the drawn box shows keyboard focus. */
@@ -117,6 +118,8 @@ a:hover { color: var(--ink); }
 :root { --film-pad: 36px; --film-card: 266px; --film-card-small: 266px; --film-talk: 380px; }
 @media (max-width: 760px) {
   :root { --film-pad: 14px; --film-card: 236px; --film-card-small: 150px; --film-talk: 470px; }
+  /* On a phone an answer is a sentence ("Laura hasn't called yet today."), so it steps down to the reading size. */
+  :root { --size-answer: var(--size-reading); }
 }
 /* A day's column on the History timeline, shaded while the pointer is on it. */
 .laura-column rect { fill: transparent; }

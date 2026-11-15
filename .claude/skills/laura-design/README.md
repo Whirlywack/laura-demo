@@ -13,10 +13,10 @@ The older person never sees a screen. Sample names: the older person is Lidia, 9
 ## Rules for copy
 
 - Every item carries a short quote of what she actually said, in curly double quotes: “It's a little better today, less swollen than yesterday.” Laura's own lines have no quotation marks: Take them now, take your time, I'll wait.
-- Headings on the dashboard are the carer's questions, in their voice: "Is she okay today?", "Did she take her tablets?", "What do I need to do?"
+- Headings on the dashboard are the carer's questions, in their voice: "Is she okay today?", "Did she take her tablets?", "What do I need to bring?"
 - Plain, short, warm. Sentence case. No exclamation marks, no emoji, no jargon. Say "tablets", not "medications"; "Bring 2 things", not "2 open tasks".
 - Record, never interpret. Show readings as said ("138/82"). Never write "normal", "high" or "improving", never colour-code a health value, never give advice.
-- "She / her" for the older person; "you" for the carer on the home page. Laura is "Laura", never "the AI" or "the assistant".
+- "She / her" for Lidia, the example; general copy on the home page says "an older family member" and "they". "You" for the carer on the home page. Laura is "Laura", never "the AI" or "the assistant".
 - Tablet statuses, exactly: Taken on call · Says taken earlier · Not confirmed · Not taken.
 - Call statuses, exactly: Not called yet · Call in progress · Called at 09:30.
 - Dates and times: "Thu 12 Nov", "09:34", "Just now".
@@ -69,4 +69,4 @@ Each has `Name.jsx`, `Name.d.ts` (props) and `Name.prompt.md` (usage).
 Open `ui_kits/dashboard/index.html` or `ui_kits/home/index.html` in a browser (needs internet for React). `preview/ds-loader.js` only exists to make those two pages run; it is not part of the system.
 
 - **Dashboard**: press "Call now" (or → / Space) to play a simulated call; items arrive every 2.6 seconds.
-- **Home page**: tells the story in three parts. The hero says what Laura is: her phone on sage on the left; on the right the headline, her words today, and three cards divided by colour: Tablets (cream, clickable ticks), Blood pressure (sage tint, her words and a dated list) and To bring her (chamomile). "One morning with Lidia" is a video-like block: press play and a 34-second story runs. A caption sets each scene, Laura's and Lidia's speech bubbles appear in turn, and each thing Lidia says lands on the carer's page on the right, which fills up. It has play / pause and a scrubber. "What it adds up to" lists Laura's two jobs and the two-week tablet count.
+- **Home page**: tells the story in three parts. The hero says what Laura is: her phone on sage on the left; on the right the headline, her words today, and three cards divided by colour: Tablets (cream, clickable ticks), Blood pressure (sage tint, her words and a dated list) and To bring her (chamomile). "Listen to a call" is a film with sound: press play and a two-minute call runs, the carer's page on the left filling in as Laura's and Lidia's speech bubbles appear on the right. It has play / pause and a scrubber. Under it, three blocks draw a sample month and the two-week tablet count; then "On the call", "What Laura does" (her two jobs) and "Safety". (In this repo the page has moved on from `ui_kits/home`; `docs/demo-brief.md` says what it shows.)
