@@ -3,12 +3,11 @@ import type { CSSProperties } from "react";
 import { addDays, type Dose } from "../../lib/dashboard";
 import type { HistoryDay } from "../../lib/history";
 import { Card } from "../Card";
-import { Timeline } from "../history/Timeline";
-import { StatusLabel } from "../StatusLabel";
+import { DoseKey, Timeline } from "../history/Timeline";
 
 // Under the film on the home page: a month of mornings on one timeline, the History page's own, so a day reads straight
 // down (her blood pressure, how she felt, how she slept, her tablets), and where to read the rest. The month is sample
-// data, the same on every visit, and says so. It ends on the day of the film's call with that call's answers; the day
+// data, the same on every visit; the page says so once, under Safety. It ends on the day of the film's call with that call's answers; the day
 // before she slept badly, as Laura remembers; and in its last two weeks 39 of 42 tablets were taken on the call.
 const title: CSSProperties = { font: "700 30px/1.1 var(--font-sans)", letterSpacing: "-.03em" };
 const label: CSSProperties = { font: "var(--text-meta-font)", fontWeight: 700 };
@@ -44,25 +43,20 @@ export function DataBlocks() {
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "stretch" }}>
       <Card style={{ flex: "3 1 600px", minWidth: 0, padding: "30px 32px 24px" }}>
-        <div style={label}>A sample month</div>
-        <div style={{ ...title, marginTop: 6 }}>A month of mornings with Lidia</div>
-        <div style={{ marginTop: 22 }}>
+        <div style={title}>A month of mornings with Lidia</div>
+        <div style={{ marginTop: 8 }}>
           <Timeline
             dates={dates}
             days={month}
             range="1m"
             only={["Blood pressure", "How she felt", "How she slept", "Tablets"]}
-            tablets
             latest
             links={false}
+            hint={false}
             label="A sample month, day by day: Lidia's blood pressure, how she felt, how she slept, and each morning tablet."
           />
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 24px", marginTop: 6, paddingTop: 14, borderTop: "1px solid var(--rule)" }}>
-          <StatusLabel status="taken on call" />
-          <StatusLabel status="says taken earlier" />
-          <StatusLabel status="not taken" />
-        </div>
+        <DoseKey style={{ marginTop: 6, paddingTop: 14, borderTop: "1px solid var(--rule)" }} />
       </Card>
       <Card tone="quiet" style={{ flex: "1 1 320px", minWidth: 0, padding: "30px 32px 28px", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
         <div style={label}>Day after day</div>
