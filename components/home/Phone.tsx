@@ -1,7 +1,7 @@
 // The home page's one illustration: her cordless home phone standing in its charging stand, drawn here (not as an
-// image file) so its parts can move. When the page loads the screen is blank; then Laura's call arrives: her name and
-// the time appear on the screen and the handset rocks twice in the stand. Once, and not at all with reduced motion
-// (app/globals.css: laura-phone-*).
+// image file) so its parts can move, a little. The screen already shows the time; when the page loads Laura's name
+// appears on it and the answer button pulses three times, as a call coming in. Once, and not at all with reduced
+// motion (app/globals.css: laura-phone-*).
 const ink = "#2b211d", cream = "#fbf6ec";
 const font = "Helvetica Neue,Helvetica,Arial,sans-serif";
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"];
@@ -14,14 +14,16 @@ export function Phone({ style }: { style?: React.CSSProperties }) {
       <rect x="72" y="272" width="194" height="100" rx="30" fill="#eadfca" stroke={ink} strokeWidth="3" />
       <rect x="100" y="284" width="138" height="60" rx="20" fill="#d9ccb2" stroke={ink} strokeWidth="2" />
       <path d="M84 304 v34 M254 304 v34" fill="none" stroke={ink} strokeWidth="2" strokeLinecap="round" />
-      {/* The handset, leaning in the stand; the inner group is what rocks, about its foot. */}
+      {/* The handset, leaning in the stand. */}
       <g transform="rotate(-8 150 200)">
-        <g className="laura-phone-handset">
+        <g>
           <rect x="96" y="24" width="108" height="320" rx="40" fill="#6e2233" stroke={ink} strokeWidth="3" />
           <rect x="132" y="42" width="36" height="7" rx="3.5" fill={cream} />
           <rect x="112" y="60" width="76" height="66" rx="10" fill={cream} stroke={ink} strokeWidth="2.5" />
           <text className="laura-phone-name" x="150" y="87" fontFamily={font} fontWeight="700" textAnchor="middle" fontSize="15" fill={ink}>Laura</text>
-          <text className="laura-phone-time" x="150" y="111" fontFamily={font} fontWeight="700" textAnchor="middle" fontSize="19" fill={ink}>09:30</text>
+          <text x="150" y="111" fontFamily={font} fontWeight="700" textAnchor="middle" fontSize="19" fill={ink}>09:30</text>
+          {/* The answer button, with the pulse that spreads from it while Laura is calling. */}
+          <rect className="laura-phone-answer" x="108" y="140" width="28" height="18" rx="9" fill="#e4c463" />
           <rect x="108" y="140" width="28" height="18" rx="9" fill="#e4c463" stroke={ink} strokeWidth="2" />
           <path d="M116 152 q6 -7 12 0" fill="none" stroke={ink} strokeWidth="2.5" strokeLinecap="round" />
           <circle cx="150" cy="149" r="12" fill={cream} stroke={ink} strokeWidth="2" />

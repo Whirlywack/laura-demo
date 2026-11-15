@@ -35,7 +35,8 @@ const onTheCall: [string, string, string][] = [
   ["Laura waits.", "Take them now, take your time, I'll wait.", "The tablet is recorded once it is taken."],
   ["Laura remembers.", "You told me yesterday you slept badly. How was last night?", "Each call starts from the last one."],
   ["You see it live.", "Concor · Taken on call · 09:32", "It is on your page while the call is still going."],
-  ["They know it is Laura.", "Paul says the blue teapot is still his favourite.", "Once they have said who they are, Laura gives a phrase only your family knows."],
+  // The family phrase is the family's own sentence, so it is the one line here in quotation marks.
+  ["They know it is Laura.", q("Paul says the blue teapot is still his favourite."), "A safety check. Once they have said who they are, Laura gives a phrase only your family knows, so they can hang up on anyone else."],
 ];
 
 export default function Home() {
@@ -69,37 +70,38 @@ export default function Home() {
                 Laura phones an older family member who lives alone: a parent, a grandparent, an aunt or uncle. You get a page that fills in as they speak.
               </p>
             </div>
-            <Card className="laura-story-1" tone="quiet" style={{ flex: "1 1 300px", minWidth: 0, padding: 30, display: "flex", flexDirection: "column" }}>
+            <Card tone="quiet" style={{ flex: "1 1 300px", minWidth: 0, padding: 30, display: "flex", flexDirection: "column" }}>
               <div style={{ ...label, color: "var(--text-question)" }}>Today, in her words</div>
-              <div style={{ ...reading, marginTop: 14 }}>{q("I'm all right. A bit tired, but all right.")}</div>
+              <div className="laura-say" style={{ ...reading, marginTop: 14, animationDelay: "1.3s" }}>{q("I'm all right. A bit tired, but all right.")}</div>
               <div style={{ flex: 1, minHeight: 16 }} />
               <div style={label}>Sleep</div>
-              <div style={{ marginTop: 2 }}>{q("I woke at four and couldn't get back off.")}</div>
+              <div className="laura-say" style={{ marginTop: 2, animationDelay: "2s" }}>{q("I woke at four and couldn't get back off.")}</div>
             </Card>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
-            <Card className="laura-story-2" style={{ flex: "1.2 1 320px", minWidth: 0, padding: "28px 30px 26px" }}>
+            <Card style={{ flex: "1.2 1 320px", minWidth: 0, padding: "28px 30px 26px" }}>
               <div style={title}>Tablets</div>
-              <TabletTicks tablets={["Concor", "Sanoral HCT", "Eliquis"]} initial={["taken", "taken", "earlier"]} />
+              <TabletTicks tablets={["Concor", "Sanoral HCT", "Eliquis"]} marks={["taken", "taken", "earlier"]} from={2.7} />
             </Card>
-            <Card className="laura-story-3" tone="quiet" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
+            <Card tone="quiet" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
               <div style={title}>Blood pressure</div>
               <div style={{ marginTop: 4, color: "var(--text-secondary)" }}>She read it out on the call.</div>
-              <div style={{ marginTop: 16 }}>{q("One thirty-eight over eighty-two. I wrote it down.")}</div>
+              <div className="laura-say" style={{ marginTop: 16, animationDelay: "4.5s" }}>{q("One thirty-eight over eighty-two. I wrote it down.")}</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto", marginTop: 14, fontVariantNumeric: "tabular-nums" }}>
                 {[["Today", "138/82"], ["Thu 12 Nov", "142/85"], ["Wed 11 Nov", "136/80"]].map(([d, v], i) => (
                   <Fragment key={d}>
-                    <span style={{ padding: "9px 0", borderTop: "1px solid var(--rule)", ...(i ? { color: "var(--text-secondary)" } : { fontWeight: 700 }) }}>{d}</span>
-                    <span style={{ padding: "9px 0", borderTop: "1px solid var(--rule)", fontWeight: i ? 400 : 700 }}>{v}</span>
+                    {/* Today's reading lands after her words; the earlier days are already there. */}
+                    <span className={i ? undefined : "laura-say"} style={{ padding: "9px 0", borderTop: "1px solid var(--rule)", ...(i ? { color: "var(--text-secondary)" } : { fontWeight: 700, animationDelay: "5s" }) }}>{d}</span>
+                    <span className={i ? undefined : "laura-say"} style={{ padding: "9px 0", borderTop: "1px solid var(--rule)", fontWeight: i ? 400 : 700, animationDelay: i ? undefined : "5s" }}>{v}</span>
                   </Fragment>
                 ))}
               </div>
             </Card>
-            <Card className="laura-story-4" tone="action" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
+            <Card tone="action" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
               <div style={title}>To bring Lidia</div>
               <div style={{ marginTop: 4 }}>2 things she&apos;s running out of.</div>
               <div style={{ marginTop: 16, borderTop: "1px solid var(--rule-on-highlight)", padding: "12px 0 14px" }}>
-                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <div className="laura-say" style={{ display: "flex", gap: 12, alignItems: "center", animationDelay: "5.6s" }}>
                   <span style={box} />
                   <b style={{ flex: 1 }}>Tea</b>
                   <span style={{ display: "flex", alignItems: "center", gap: 8, ...label, whiteSpace: "nowrap" }}>
@@ -107,7 +109,7 @@ export default function Home() {
                     <span>Just now</span>
                   </span>
                 </div>
-                <div style={{ margin: "8px 0 0 36px" }}>{q("I'm nearly out of tea. Two bags left.")}</div>
+                <div className="laura-say" style={{ margin: "8px 0 0 36px", animationDelay: "5.6s" }}>{q("I'm nearly out of tea. Two bags left.")}</div>
               </div>
               <div style={{ borderTop: "1px solid var(--rule-on-highlight)", padding: "12px 0 0", display: "flex", gap: 12, alignItems: "center" }}>
                 <span style={box} />

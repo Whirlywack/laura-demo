@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 // Ported from the Tablets card in .claude/skills/laura-design/ui_kits/home/Home.jsx: a 30px round tick per tablet,
 // clickable on the home page so a visitor can see the three marks. Filled = taken on call; outlined = says taken
@@ -13,15 +13,28 @@ const MARK: Record<Mark, { label: string; mark: CSSProperties; tick: string | nu
   none: { label: "Not confirmed", mark: { border: "2px dashed var(--ink-3)" }, tick: null },
 };
 
-export function TabletTicks({ tablets, initial }: { tablets: string[]; initial: Mark[] }) {
-  const [marks, setMarks] = useState(initial);
+// `marks` is how the card ends up. It opens with nothing confirmed and, `from` seconds in, marks one tablet after
+// another, as Laura does on the call; with reduced motion the marks are simply there.
+export function TabletTicks({ tablets, marks: final, from }: { tablets: string[]; marks: Mark[]; from: number }) {
+  const [marks, setMarks] = useState<Mark[]>(() => final.map(() => "none"));
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setMarks(final);
+      return undefined;
+    }
+    const timers = final.map((mark, i) => setTimeout(() => setMarks((all) => all.map((v, j) => (j === i ? mark : v))), (from + i * 0.55) * 1000));
+    return () => timers.forEach(clearTimeout);
+    // The marks and the delay are fixed for the life of the card.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // Only "taken on call" counts as confirmed, as on the dashboard: "says taken earlier" is her word.
   const count = (mark: Mark) => marks.filter((m) => m === mark).length;
   const [taken, earlier] = [count("taken"), count("earlier")];
 
   return (
     <>
-      <div style={{ marginTop: 4, color: "var(--text-secondary)" }}>
+      {/* Room for the sentence at its longest, so the card does not grow as the tablets are marked. */}
+      <div style={{ marginTop: 4, color: "var(--text-secondary)", minHeight: "4.05em" }}>
         {taken} confirmed on the call{earlier ? `, ${earlier} she says she took earlier` : ""}. Press a tablet to see each of its marks.
       </div>
       <div style={{ marginTop: 16 }}>

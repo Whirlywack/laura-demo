@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-// Moving between the History page and a day (or from one day to the next) fades the new page in, under the header.
+// A template is mounted afresh on each move between the History page and a day (or from one day to the next), so the
+// cards stay where they are and what is written in them appears again (app/globals.css: laura-card).
 export default function Template({ children }: { children: ReactNode }) {
-  return <div className="laura-fade">{children}</div>;
+  return <>{children}</>;
 }

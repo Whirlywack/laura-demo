@@ -1,6 +1,7 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 
-// Ported from .claude/skills/laura-design/components/core/Card.jsx
+// Ported from .claude/skills/laura-design/components/core/Card.jsx. The card itself never moves: when a page opens,
+// what is written in it appears (app/globals.css: laura-card).
 const TONES: Record<string, CSSProperties> = {
   card: { background: "var(--surface-card)", color: "var(--text-primary)" },
   quiet: { background: "var(--surface-quiet)", color: "var(--text-primary)" },
@@ -17,6 +18,7 @@ export function Card({ tone = "card", compact = false, style, children, ...rest 
   return (
     <div
       {...rest}
+      className={["laura-card", rest.className].filter(Boolean).join(" ")}
       style={{
         ...TONES[tone],
         borderRadius: compact ? "var(--radius-card-compact)" : "var(--radius-card)",

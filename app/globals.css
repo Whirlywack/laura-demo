@@ -128,25 +128,25 @@ a:hover { color: var(--ink); }
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: none; }
 }
-/* The home page's opening, played once: her phone's screen is blank, then Laura's call arrives (her name, the time,
-   the handset rocking twice in its stand), and what Lidia says lands on the page card by card (laura-story-1 to 4). */
-@keyframes laura-phone-ring {
-  0%, 44%, 56%, 100% { transform: rotate(0deg); }
-  8%, 24%, 64%, 80% { transform: rotate(-2.4deg); }
-  16%, 32%, 72%, 88% { transform: rotate(2.4deg); }
+/* Cards stand still. What is written in them appears, top to bottom, when a page opens. */
+.laura-card > * { animation: laura-fade var(--motion-state) both; }
+.laura-card > *:nth-child(2) { animation-delay: 60ms; }
+.laura-card > *:nth-child(3) { animation-delay: 120ms; }
+.laura-card > *:nth-child(n + 4) { animation-delay: 180ms; }
+/* The home page's opening, played once, like the start of a call. Her phone already shows the time; Laura's name
+   appears and the answer button pulses three times. Then what Lidia says lands in the cards that are already there,
+   in the order of the call: each `laura-say` carries its own delay. */
+.laura-say { animation: laura-arrive var(--motion-arrive) both; }
+.laura-phone-name { animation: laura-fade var(--motion-arrive) 800ms both; }
+@keyframes laura-phone-answer {
+  from { opacity: 0.7; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.9); }
 }
-.laura-phone-handset { transform-origin: 150px 332px; animation: laura-phone-ring 1500ms ease-in-out 900ms both; }
-.laura-phone-name { animation: laura-fade var(--motion-state) 900ms both; }
-.laura-phone-time { animation: laura-fade var(--motion-state) 1100ms both; }
-.laura-story-1 { animation: laura-arrive var(--motion-arrive) 1500ms both; }
-.laura-story-2 { animation: laura-arrive var(--motion-arrive) 2300ms both; }
-.laura-story-3 { animation: laura-arrive var(--motion-arrive) 3100ms both; }
-.laura-story-4 { animation: laura-arrive var(--motion-arrive) 3900ms both; }
+.laura-phone-answer { transform-box: fill-box; transform-origin: center; opacity: 0; animation: laura-phone-answer 1100ms ease-out 800ms 3; }
 @keyframes laura-fade {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-.laura-fade { animation: laura-fade var(--motion-state) both; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }
