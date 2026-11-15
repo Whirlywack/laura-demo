@@ -36,30 +36,31 @@ export function DataBlocks() {
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)" }}>
       <Card style={block}>
-        <div style={title}>Her blood pressure, every morning</div>
-        <div style={line}>A sample month. Each reading is a line from the lower number to the higher; a gap is a day without one.</div>
+        <div style={title}>Lidia&apos;s blood pressure, every morning</div>
+        <div style={line}>A sample month. Each line runs from the lower number to the higher. A gap means no reading that day.</div>
         {/* The History page's timeline as a picture: its day links are switched off here. */}
         <div style={{ marginTop: 18, pointerEvents: "none" }}>
           <Timeline dates={dates} days={month} range="1m" only={["Blood pressure"]} width={400} label="A month of blood pressure readings, one line a day from the lower number to the higher." />
         </div>
       </Card>
       <Card style={block}>
-        <div style={title}>How she felt, how she slept</div>
-        <div style={line}>The same sample month: her answer to two questions, one dot a day.</div>
+        <div style={title}>How Lidia felt, how she slept</div>
+        <div style={line}>The same sample month. Two questions, one dot a day.</div>
         <div style={{ marginTop: 18, pointerEvents: "none" }}>
           <Timeline dates={dates} days={month} range="1m" only={["How she felt", "How she slept"]} width={400} label="A month of her answers: how she felt (good, okay or bad) and how she slept (well or not well), one dot a day." />
         </div>
       </Card>
       <Card tone="quiet" style={{ ...block, flex: "1 1 320px", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-        <div style={title}>Her tablets, day after day</div>
-        <div style={line}>39 of 42 confirmed on the call in the last two weeks. The rest is in History: a month, three months or a year.</div>
+        <div style={title}>The days add up</div>
+        <div style={line}>The same questions every morning become a record you can read back: a month, three months or a year, and any single day in Lidia&apos;s own words.</div>
         <div role="img" aria-label="39 of 42 dots filled" style={{ alignSelf: "stretch", display: "grid", gridTemplateColumns: "repeat(14,1fr)", gap: 8, marginTop: 22 }}>
           {Array.from({ length: 42 }, (_, i) => (
             <span key={i} style={{ aspectRatio: "1", borderRadius: "50%", boxSizing: "border-box", ...(i < 39 ? { background: "var(--accent)" } : { border: "2px solid var(--accent)" }) }} />
           ))}
         </div>
+        <div style={{ ...line, marginTop: 10 }}>39 of 42 of Lidia&apos;s tablets confirmed on the call in the last two weeks.</div>
         <div style={{ flex: 1, minHeight: 24 }} />
-        <Link href="/demo/history" style={{ padding: "13px 26px", borderRadius: "var(--radius-pill)", background: "var(--accent)", color: "var(--text-on-accent)", font: "var(--text-label)", textDecoration: "none" }}>
+        <Link href="/demo/history" className="laura-button" style={{ padding: "13px 26px", borderRadius: "var(--radius-pill)", background: "var(--accent)", color: "var(--text-on-accent)", font: "var(--text-label)", textDecoration: "none" }}>
           Open History
         </Link>
       </Card>

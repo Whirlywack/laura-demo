@@ -20,7 +20,7 @@ test("how she says she is becomes Today's wellbeing line and a card on the live 
   expect(await response.json()).toEqual({ ok: true });
   const state = await getDashboardState(readClient());
   expect(state.wellbeing).toEqual({ general: "I'm all right. A bit tired, but all right.", sleep: null });
-  expect(state.feed).toMatchObject([{ title: "Today", quote: "I'm all right. A bit tired, but all right." }]);
+  expect(state.feed).toMatchObject([{ title: "How she felt", quote: "I'm all right. A bit tired, but all right." }]);
 });
 
 test("sleep is its own line, and the feed shows the newest card first", async () => {
@@ -33,7 +33,7 @@ test("sleep is its own line, and the feed shows the newest card first", async ()
   expect(state.wellbeing).toEqual({ general: "Not bad, thank you.", sleep: "I woke at four and couldn't get back off." });
   expect(state.feed).toMatchObject([
     { title: "Sleep", quote: "I woke at four and couldn't get back off." },
-    { title: "Today", quote: "Not bad, thank you." },
+    { title: "How she felt", quote: "Not bad, thank you." },
   ]);
 });
 

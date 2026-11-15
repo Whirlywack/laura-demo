@@ -107,7 +107,7 @@ export const readingValue = (r: Reading) => `${r.systolic}/${r.diastolic}${r.pul
 
 // What a feed card says the Entry is.
 function feedTitle(entry: Entry) {
-  if (entry.kind === "wellbeing") return entry.details.aspect === "sleep" ? "Sleep" : "Today";
+  if (entry.kind === "wellbeing") return entry.details.aspect === "sleep" ? "Sleep" : "How she felt";
   if (entry.kind === "dose") return `${entry.details.medication} · ${sentence(entry.details.status)}`;
   if (entry.kind === "remark") return "Left leg";
   if (entry.kind === "reading") return `Blood pressure · ${readingValue(reading(entry))}`;

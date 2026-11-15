@@ -25,7 +25,7 @@ export function SiteHeader({ menu, children }: { menu?: ReactNode; children: Rea
           <>
             <Link className="laura-button" href="/#one-morning" style={link}>Listen to a call</Link>
             <Link className="laura-button" href="/#what-laura-does" style={link}>What Laura does</Link>
-            <Link className="laura-button" href="/#about" style={link}>About</Link>
+            <Link className="laura-button" href="/#safety" style={link}>Safety</Link>
           </>
         )}
       </nav>

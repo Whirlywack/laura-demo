@@ -20,7 +20,7 @@ test("Laura's summary is shown for Today and the Call is done; what she said sta
   expect(await getDashboardState(readClient())).toMatchObject({
     callStatus: "done",
     summary,
-    feed: [{ title: "Today", quote: "I'm all right. A bit tired, but all right." }],
+    feed: [{ title: "How she felt", quote: "I'm all right. A bit tired, but all right." }],
   });
 });
 

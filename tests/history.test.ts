@@ -106,7 +106,7 @@ test("before the first Call, the last call's feed is yesterday's Entries, newest
   const { lastCall } = await getDashboardState(readClient());
 
   expect(calendarDay(lastCall!.at)).toBe(daysAgo(1));
-  expect(lastCall!.feed.map((c) => c.title)).toEqual(expect.arrayContaining(["Today", "Sleep", "Left leg", "Concor · Taken on call"]));
+  expect(lastCall!.feed.map((c) => c.title)).toEqual(expect.arrayContaining(["How she felt", "Sleep", "Left leg", "Concor · Taken on call"]));
   expect(lastCall!.feed.map((c) => c.at)).toEqual([...lastCall!.feed.map((c) => c.at)].sort().reverse());
 });
 

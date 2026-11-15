@@ -65,7 +65,7 @@ const recorded: [line: number, Recorded][] = [
 const clockAt = (s: number) => `09:${30 + Math.floor(s / 60)}`;
 
 export const realCall: FilmData = {
-  poster: { title: "Listen to a call. Turn the sound on.", note: "Just under two minutes. Paul's page fills in as Lidia answers." },
+  poster: { title: "Listen to a call. Turn the sound on.", note: "Just under two minutes." },
   calledAt: "09:30",
   lines: spoken.map(([start, , who, text]) => ({ start, who, text })),
   records: recorded.map(([line, e]) => ({ at: +(spoken[line][1] + 0.7).toFixed(2), clock: clockAt(spoken[line][1]), ...e })),

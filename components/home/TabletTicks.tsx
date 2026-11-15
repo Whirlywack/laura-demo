@@ -15,13 +15,14 @@ const MARK: Record<Mark, { label: string; mark: CSSProperties; tick: string | nu
 
 export function TabletTicks({ tablets, initial }: { tablets: string[]; initial: Mark[] }) {
   const [marks, setMarks] = useState(initial);
-  // Only "taken on call" counts, as on the dashboard: "says taken earlier" is her word, not a confirmation.
-  const taken = marks.filter((m) => m === "taken").length;
+  // Only "taken on call" counts as confirmed, as on the dashboard: "says taken earlier" is her word.
+  const count = (mark: Mark) => marks.filter((m) => m === mark).length;
+  const [taken, earlier] = [count("taken"), count("earlier")];
 
   return (
     <>
       <div style={{ marginTop: 4, color: "var(--text-secondary)" }}>
-        {taken} of {tablets.length} taken today. Click one to change its mark.
+        {taken} confirmed on the call{earlier ? `, ${earlier} she says she took earlier` : ""}. Press a tablet to see each of its marks.
       </div>
       <div style={{ marginTop: 16 }}>
         {tablets.map((name, i) => {
@@ -31,6 +32,7 @@ export function TabletTicks({ tablets, initial }: { tablets: string[]; initial: 
               key={name}
               type="button"
               className="laura-button"
+              data-row
               onClick={() => setMarks((all) => all.map((v, j) => (j === i ? NEXT[v] : v)))}
               style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", minHeight: 46, padding: 0, border: 0, borderTop: "1px solid var(--rule)", background: "none", font: "inherit", textAlign: "left", cursor: "pointer", color: m.tick ? "var(--text-primary)" : "var(--text-meta)" }}
             >

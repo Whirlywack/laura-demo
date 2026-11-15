@@ -8,7 +8,7 @@ type Props = { question: string; answer: ReactNode; tone?: "card" | "action" | "
 export function AnswerCard({ question, answer, tone = "card", children, style }: Props) {
   return (
     <Card tone={tone} style={{ display: "flex", flexDirection: "column", minWidth: 0, ...style }}>
-      <div style={{ font: "var(--text-label)", color: tone === "card" ? "var(--text-question)" : "inherit" }}>{question}</div>
+      <div style={{ font: "var(--text-label)", color: tone === "action" ? "inherit" : "var(--text-question)" }}>{question}</div>
       <div style={{ font: "var(--text-answer)", letterSpacing: "var(--tracking-display)", marginTop: 18, textWrap: "balance" }}>{answer}</div>
       {children ? <div style={{ flex: 1, minHeight: 28 }} /> : null}
       {children}

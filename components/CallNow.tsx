@@ -66,7 +66,7 @@ export function CallNow({ status }: { status: Status }) {
           background: calling ? "var(--ink-3)" : "var(--accent)", color: "var(--text-on-accent)", cursor: calling ? "progress" : "pointer",
         }}
       >
-        Call now
+        Have Laura call now
       </button>
     </form>
   );

@@ -11,8 +11,8 @@ import { SiteHeader } from "../components/SiteHeader";
 // The home page, ported from .claude/skills/laura-design/ui_kits/home/Home.jsx: what Laura is, a call to listen to (the film,
 // components/home/films.ts) with a month of her answers and her tablet count drawn under it, then Laura's two jobs. The tablets are Lidia's own (as in the care plan); "See the demo" opens the dashboard at /demo.
 export const metadata: Metadata = {
-  title: "Laura",
-  description: "Laura phones her every morning, so nothing gets missed. A daily phone call for your mother or grandmother, and a page for you that fills in as she speaks.",
+  title: "Laura: a phone call every morning for an older family member",
+  description: "Laura phones an older family member every morning on the phone they already have. You see how they are, whether the tablets were taken and what is running low, as they speak.",
 };
 
 const display = (size: number): CSSProperties => ({ font: `700 ${size}px/0.98 var(--font-sans)`, letterSpacing: "var(--tracking-display)", textWrap: "balance", margin: 0 });
@@ -25,8 +25,16 @@ const pill: CSSProperties = { padding: "13px 26px", borderRadius: "var(--radius-
 const q = (s: string) => "“" + s + "”";
 
 const jobs: [string, string[]][] = [
-  ["Makes sure nothing is missed", ["Her tablets, taken while Laura waits on the line", "Anything running out at home, passed on to you"]],
-  ["Keeps a record of how she is", ["How she feels today, in her own words", "How she slept", "Her left leg, day by day", "Her blood pressure, as she reads it out"]],
+  ["Nothing gets missed", ["Tablets, taken while Laura waits on the line", "Anything running out at home, passed on to you"]],
+  ["A record of how they are", ["How they feel today, in their own words", "How they slept", "Whatever you ask Laura to follow, day by day. For Lidia, it is her left leg.", "Blood pressure, as they read it out"]],
+];
+// What happens on the call: what it is, Laura's line or what the page shows (her own words, so no quotation marks),
+// and one plain line.
+const onTheCall: [string, string, string][] = [
+  ["Laura waits.", "Take them now, take your time, I'll wait.", "The tablet is recorded once it is taken."],
+  ["Laura remembers.", "You told me yesterday you slept badly. How was last night?", "Each call starts from the last one."],
+  ["You see it live.", "Concor · Taken on call · 09:32", "It is on your page while the call is still going."],
+  ["They know it is Laura.", "Paul says the blue teapot is still his favourite.", "Once they have said who they are, Laura gives a phrase only your family knows."],
 ];
 
 export default function Home() {
@@ -38,14 +46,14 @@ export default function Home() {
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
         <Card tone="live" style={{ flex: "1 1 380px", minWidth: 0, padding: "36px 40px 30px", display: "flex", flexDirection: "column" }}>
-          <div style={label}>Her side · the phone she already has</div>
+          <div style={label}>Their side · the phone they already have</div>
           <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 0" }}>
             {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG drawing, nothing to optimise */}
             <img src="/home-phone.svg" alt="A cordless home phone standing in its charging stand" style={{ height: 500, maxHeight: "60vh", maxWidth: "100%" }} />
           </div>
           <div>
             <div style={lead}>No smartphone needed.</div>
-            <div style={{ marginTop: 8 }}>Most people her age don&apos;t have one. Laura rings the phone that&apos;s already in the house, a landline or a simple mobile, and she just answers.</div>
+            <div style={{ marginTop: 8 }}>Many older people have no smartphone, or have one and rarely use it. Laura rings the phone that&apos;s already in the house, a landline or a simple mobile. They just pick up.</div>
           </div>
         </Card>
 
@@ -54,11 +62,11 @@ export default function Home() {
             <div style={{ flex: "2 1 420px", minWidth: 0, padding: "14px 12px 24px 24px", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 10, ...label, padding: "8px 16px", borderRadius: "var(--radius-pill)", background: "var(--surface-quiet)" }}>
                 <span style={{ width: 10, height: 10, borderRadius: "50%", background: "var(--accent)", flex: "none" }} />
-                <span>Lidia, 94 · on the phone now</span>
+                <span>One family&apos;s morning · Lidia, 94 · on the phone now</span>
               </span>
-              <h1 style={{ ...display(60), marginTop: 22, maxWidth: 760 }}>Laura phones her every morning, so nothing gets missed.</h1>
+              <h1 style={{ ...display(60), marginTop: 22, maxWidth: 760 }}>A phone call every morning, so nothing gets missed.</h1>
               <p style={{ margin: "20px 0 0", maxWidth: 520, lineHeight: 1.4, color: "var(--text-secondary)" }}>
-                A daily phone call for your mother or grandmother, and a page for you that fills in as she speaks.
+                Laura phones an older family member who lives alone: a parent, a grandparent, an aunt or uncle. You get a page that fills in as they speak.
               </p>
             </div>
             <Card tone="quiet" style={{ flex: "1 1 300px", minWidth: 0, padding: 30, display: "flex", flexDirection: "column" }}>
@@ -88,7 +96,7 @@ export default function Home() {
               </div>
             </Card>
             <Card tone="action" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
-              <div style={title}>To bring her</div>
+              <div style={title}>To bring Lidia</div>
               <div style={{ marginTop: 4 }}>2 things she&apos;s running out of.</div>
               <div style={{ marginTop: 16, borderTop: "1px solid var(--rule-on-highlight)", padding: "12px 0 14px" }}>
                 <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
@@ -114,11 +122,25 @@ export default function Home() {
       <section id="one-morning" style={{ marginTop: 88, padding: "0 20px", scrollMarginTop: 24 }}>
         <h2 style={display(40)}>Listen to a call</h2>
         <p style={{ margin: "18px 0 0", maxWidth: 760, fontSize: 22, lineHeight: 1.4, color: "var(--text-secondary)" }}>
-          Lidia is 94. Her grandson Paul looks after her from another city. The words are from a real call on 14 November: Laura speaks in her own voice, and Lidia is voiced by a generated voice.
+          Lidia is 94. Her grandson Paul looks after her from another city. The words are from a real call on 14 November. Laura&apos;s voice is the one you would hear on the phone. Lidia&apos;s side is read by a generated voice.
         </p>
       </section>
       <Film data={realCall} />
       <DataBlocks />
+
+      <section id="on-the-call" style={{ marginTop: 72, padding: "0 20px", scrollMarginTop: 24 }}>
+        <h2 style={display(40)}>On the call</h2>
+      </section>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: 36 }}>
+        {onTheCall.map(([what, words, how]) => (
+          <Card key={what} style={{ flex: "1 1 300px", minWidth: 0, padding: "28px 30px 26px", display: "flex", flexDirection: "column" }}>
+            <div style={title}>{what}</div>
+            <div style={{ ...lead, marginTop: 14, color: "var(--text-question)", textWrap: "balance" }}>{words}</div>
+            <div style={{ flex: 1, minHeight: 14 }} />
+            <div style={{ color: "var(--text-secondary)" }}>{how}</div>
+          </Card>
+        ))}
+      </div>
 
       <section id="what-laura-does" style={{ marginTop: 72, padding: "0 20px", scrollMarginTop: 24 }}>
         <h2 style={display(40)}>What Laura does</h2>
@@ -143,9 +165,12 @@ export default function Home() {
         </Card>
       </div>
 
-      <footer id="about" style={{ padding: "64px 20px 40px" }}>
-        <div style={label}>About</div>
+      <footer id="safety" style={{ padding: "64px 20px 40px", scrollMarginTop: 24 }}>
+        <div style={label}>Safety</div>
         <div style={{ ...lead, marginTop: 10, maxWidth: 760, textWrap: "balance" }}>Laura reminds and records. She never gives medical advice and never interprets a reading.</div>
+        <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>
+          Once they have said who they are, Laura gives a phrase your family chose, so they know it is really Laura and can hang up on anyone else. Asked if she is a person, Laura says she is not. In an emergency she tells them to call 112.
+        </div>
         <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>Lidia and Paul are sample people, and everything on these pages is sample data.</div>
       </footer>
     </div>

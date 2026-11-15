@@ -13,6 +13,7 @@ export function Errands({ errands, style }: { errands: Errand[]; style?: CSSProp
   const [ticked, setTicked] = useState<string[]>([]);
   const items = errands.map((e) => ({ ...e, done: e.done || ticked.includes(e.id) }));
   const open = items.filter((e) => !e.done).length;
+  const brought = items.length - open;
 
   async function tick(id: string) {
     setTicked((t) => [...t, id]);
@@ -22,10 +23,11 @@ export function Errands({ errands, style }: { errands: Errand[]; style?: CSSProp
 
   return (
     <AnswerCard
-      tone={open ? "action" : "quiet"}
+      // The colour follows what the server has recorded, so a tick that fails does not flash the card quiet and back.
+      tone={errands.some((e) => !e.done) ? "action" : "quiet"}
       style={style}
-      question="What do I need to do?"
-      answer={open === 0 ? "Nothing to bring" : `Bring ${open} ${open === 1 ? "thing" : "things"}`}
+      question="What do I need to bring?"
+      answer={open ? `Bring ${open} ${open === 1 ? "thing" : "things"}` : brought ? `Nothing new. ${brought} brought.` : "Nothing to bring"}
     >
       {items.length ? <Checklist items={items} onTick={(i) => tick(items[i].id)} /> : null}
     </AnswerCard>
