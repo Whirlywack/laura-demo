@@ -38,19 +38,21 @@ const people: [string, string, string[]][] = [
     "What you know is secondhand and late",
   ]],
 ];
-const context = "Laura knows who she is calling. The family tells her what matters for this person: their conditions, their tablets, the things to keep an eye on. Every morning she asks about exactly those. When the person mentions something new, a bad night or a pain that wasn't there last week, Laura brings it up again on the next call.";
+const context = "Laura knows who she is calling. She works from a care plan for this person: their tablets and the things to keep an eye on. Every morning she asks about exactly those. When the person mentions something new, like a bad night, Laura brings it up again on the next call.";
 // What solves each problem: the problem (as written above), the name of the answer, and one or two plain sentences.
 const solutions: [string, string, string][] = [
-  ["You can't be there or phone every morning", "A daily call from Laura", "Laura phones every morning, at the time the tablets are due, so you don't have to be the one who remembers."],
+  ["You can't be there or phone every morning", "A daily call from Laura", "Laura makes the morning call, so you don't have to be the one who remembers."],
   ["They have no smartphone", "A call to any phone", "Laura rings the landline or the button mobile they already own. They pick up and talk."],
-  ["They aren't sure whether they took their tablets", "Tablets confirmed on the line", "Laura names each tablet, waits while it is taken, and records it only then."],
+  ["They aren't sure whether they took their tablets", "Tablets confirmed on the line", "Laura names each tablet, waits while it is taken, and records what they say about each one."],
   ["All you ever hear is “I'm fine”", "Daily wellbeing log", "How they feel, how they slept, and any reading they give, written down every morning in their own words."],
   ["You don't know what to bring until you arrive", "Shopping list from the call", "Laura asks what is running out. The list is waiting for you before your next visit."],
   // The phrase comes after they have said who they are (docs/demo-brief.md, Trust and safety), not as the first words.
-  ["They can't tell a real call from a scam", "Family passphrase", "Once they have said who they are, Laura gives a phrase the family chose. A caller who doesn't say it isn't Laura."],
+  ["They can't tell a real call from a scam", "Family phrase", "Once they have said who they are, Laura gives a phrase the family chose. A caller who doesn't say it isn't Laura."],
   ["What you know is secondhand and late", "Live family page", "Each answer appears on your page while the call is still going."],
 ];
 const notYet: [string, string][] = [
+  ["A set time every morning", "Laura phones at the same time each day. In this demo, a call starts when you press the button."],
+  ["Your own care plan", "You choose the tablets and what Laura keeps an eye on. In this demo the care plan is fixed."],
   ["Missed-call alert", "You're told within minutes when the morning call goes unanswered."],
   ["Prescription calendar", "Tablets and prescription dates are counted, and you're warned before one runs out."],
   ["Ordering", "Medicines and groceries ordered from the list through a pharmacy or a shop."],
@@ -61,7 +63,7 @@ const quiet: CSSProperties = { font: "var(--text-meta-font)", color: "var(--text
 
 export default function About() {
   return (
-    <div style={{ padding: "0 24px 8px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
+    <main style={{ padding: "0 24px 8px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
       <SiteHeader current="about">
         <Link href="/demo" className="laura-button" style={pill}>See the demo</Link>
       </SiteHeader>
@@ -122,7 +124,7 @@ export default function About() {
       </div>
 
       <section style={section}>
-        <div style={label}>Not yet</div>
+        <h2 style={{ ...label, margin: 0 }}>Not yet</h2>
         <div style={{ marginTop: 6, maxWidth: 860 }}>
           {notYet.map(([name, text], i) => (
             <div key={name} style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: "2px 28px", padding: "14px 0", borderTop: i ? "1px solid var(--rule)" : 0 }}>
@@ -140,6 +142,6 @@ export default function About() {
           <Link href="/#safety" className="laura-button" style={quietPill}>Safety</Link>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }
