@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState, type CSSProperties, type ReactNode } from "react";
-import { day as shortDay } from "../../lib/format";
 import type { HistoryDay, Range } from "../../lib/history";
 
 // The timeline on the History page (and, for a sample month, on the home page): one column per date in the range,
@@ -24,14 +23,22 @@ const rule: CSSProperties = { stroke: "var(--rule)" };
 const FELT = [["good", "Good"], ["okay", "Okay"], ["bad", "Bad"]] as const;
 const SLEPT = [["well", "Well"], ["not well", "Not well"]] as const;
 const lane = (i: number) => 14 + i * 30;
-const monthName = (date: string, form: "short" | "long") => new Date(`${date}T12:00:00Z`).toLocaleDateString("en-GB", { month: form, timeZone: "UTC" });
+// Dates are written from these lists, not by the browser: this component draws on the server and again in the
+// browser, and the two can disagree on a month's short name ("Sep" or "Sept").
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthName = (date: string, form: "short" | "long") => (form === "long" ? MONTHS[Number(date.slice(5, 7)) - 1] : MONTHS[Number(date.slice(5, 7)) - 1].slice(0, 3));
+/** "Fri 6 Nov", from a calendar date like "2026-11-06". */
+const shortDay = (date: string) => `${WEEKDAYS[new Date(`${date}T12:00:00Z`).getUTCDay()]} ${Number(date.slice(8))} ${monthName(date, "short")}`;
 
-// How a tablet's Dose is marked, here and in the key. "Not taken" is a square, not a third colour of dot: filled
-// burgundy and filled ink are too alike to tell apart by colour alone.
+// How a tablet's Dose is marked, here and in the key: all four statuses. "Not taken" is a square, not a third colour
+// of dot: filled burgundy and filled ink are too alike to tell apart by colour alone. "Not confirmed" is a dashed,
+// empty ring, as StatusLabel draws it, so it does not read as a day without a Call.
 const KEY: [status: string, label: string, mark: CSSProperties][] = [
   ["taken on call", "Taken on call", { borderRadius: "50%", background: "var(--status-taken)" }],
   ["says taken earlier", "Says taken earlier", { borderRadius: "50%", border: "2px solid var(--status-taken)" }],
   ["not taken", "Not taken", { borderRadius: 2, background: "var(--ink)" }],
+  ["not confirmed", "Not confirmed", { borderRadius: "50%", border: "2px dashed var(--ink-3)" }],
 ];
 
 /** The key to the Tablets row: the three marks with their statuses. */
@@ -64,7 +71,7 @@ type Props = {
   label?: string;
 };
 
-export function Timeline({ dates, days, range, only, latest = false, links = true, hint = true, label = "Blood pressure, pulse, how she felt, how she slept and her tablets, day by day. Use the calendar to open a day." }: Props) {
+export function Timeline({ dates, days, range, only, latest = false, links = true, hint = true, label }: Props) {
   const [pointed, setPointed] = useState<number | null>(null);
   // Room on the right for the newest Reading's numbers.
   const R = latest ? 84 : 8;
@@ -102,7 +109,8 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
             return (
               <g key={value}>
                 <rect x={left(g) + 3} y={lane(k) - 11} width={Math.max(0, (wide(g) - 6) * (called.length ? n / called.length : 0))} height={22} rx={4} style={{ fill: "var(--rule)" }} />
-                <text x={left(g) + wide(g) / 2} y={lane(k) + 5} textAnchor="middle" style={{ ...meta, fill: n ? "var(--ink)" : "var(--ink-3)", fontWeight: n ? 700 : 400 }}>{n}</text>
+                {/* A period only a day or two wide (the ends of a year) has no room for its number. */}
+                {wide(g) >= 18 ? <text x={left(g) + wide(g) / 2} y={lane(k) + 5} textAnchor="middle" style={{ ...meta, fill: n ? "var(--ink)" : "var(--ink-3)", fontWeight: n ? 700 : 400 }}>{n}</text> : null}
               </g>
             );
           })}
@@ -117,11 +125,13 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
   const within = (v: number, low: number, high: number) => Math.min(high, Math.max(low, v));
   const bp = (v: number) => 8 + 124 * (1 - (within(v, 60, 190) - 60) / 130);
   const pulse = (v: number) => 8 + 58 * (1 - (within(v, 40, 120) - 40) / 80);
-  // The lowest and highest of a period's numbers, as one bar; nothing when she gave none.
-  const span = (g: { a: number; b: number }, numbers: number[], y: (v: number) => number, thick: number) =>
-    numbers.length ? (
-      <line key={g.a} x1={left(g) + wide(g) / 2} x2={left(g) + wide(g) / 2} y1={y(Math.max(...numbers))} y2={y(Math.min(...numbers))} strokeWidth={Math.min(thick, wide(g) - 8)} strokeLinecap="round" style={{ stroke: "var(--ink)" }} />
-    ) : null;
+  // The lowest and highest of a period's numbers, as one bar that ends exactly at them (a round cap would run a few
+  // units past each end); at least 3px tall, so a single number still shows. Nothing when she gave none.
+  const span = (g: { a: number; b: number }, numbers: number[], y: (v: number) => number, thick: number) => {
+    if (!numbers.length) return null;
+    const w = Math.max(1.5, Math.min(thick, wide(g) - 8)), y0 = y(Math.max(...numbers)), h = Math.max(3, y(Math.min(...numbers)) - y0);
+    return <rect key={g.a} x={left(g) + wide(g) / 2 - w / 2} y={y0 - (h - (y(Math.min(...numbers)) - y0)) / 2} width={w} height={h} rx={Math.min(2, w / 2)} style={ink} />;
+  };
   const readingsIn = (g: { a: number; b: number }) => callsIn(g).flatMap((d) => d.reading ?? []);
 
   rows.push({
@@ -130,7 +140,7 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
       ? [dividers(140), groups.map((g) => span(g, readingsIn(g).flatMap((r) => [r.systolic, r.diastolic]), bp, 12))]
       : dates.map((date, i) => {
           const r = byDate.get(date)?.reading;
-          return r ? <line key={date} x1={x(i)} x2={x(i)} y1={bp(r.systolic)} y2={bp(r.diastolic)} strokeWidth={width} strokeLinecap="round" style={{ stroke: "var(--ink)" }} /> : null;
+          return r ? <line key={date} x1={x(i)} x2={x(i)} y1={bp(r.systolic)} y2={bp(r.diastolic)} strokeWidth={width} style={{ stroke: "var(--ink)" }} /> : null;
         }),
   });
   // The one number written on the drawing: the newest Reading, beside its line.
@@ -167,11 +177,12 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
       marks: perDay
         ? dates.flatMap((date, i) =>
             (byDate.get(date)?.doses ?? []).map((d) => {
+              if (!tablets.includes(d.name)) return null;
               const cy = lane(tablets.indexOf(d.name)), key = date + d.name;
               if (d.status === "taken on call") return <circle key={key} cx={x(i)} cy={cy} r={dot} style={{ fill: "var(--status-taken)" }} />;
               if (d.status === "says taken earlier") return <circle key={key} cx={x(i)} cy={cy} r={dot - 1} style={{ fill: "var(--surface-card)", stroke: "var(--status-taken)", strokeWidth: 2 }} />;
               if (d.status === "not taken") return <rect key={key} x={x(i) - dot} y={cy - dot} width={dot * 2} height={dot * 2} rx={1} style={ink} />;
-              return null;
+              return <circle key={key} cx={x(i)} cy={cy} r={dot - 0.75} strokeDasharray="2 2" style={{ fill: "var(--surface-card)", stroke: "var(--ink-3)", strokeWidth: 1.5 }} />;
             }),
           )
         : counts(tablets, (d, name) => d.doses.some((dose) => dose.name === name && dose.status === "taken on call")),
@@ -225,7 +236,7 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
 
   // What pointing at a column reads out: the date (or the month), then what she said.
   const dayRead = (d: HistoryDay): [string, string[]] => [
-    shortDay(d.at),
+    shortDay(d.date),
     [
       d.reading ? `${d.reading.systolic}/${d.reading.diastolic}${d.reading.pulse === null ? "" : `, pulse ${d.reading.pulse}`}` : null,
       d.felt.rating ? `felt ${d.felt.rating}` : null,
@@ -234,11 +245,9 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
     ].flatMap((part) => part ?? []),
   ];
   const monthRead = (g: { a: number; b: number }): [string, string[]] => {
-    const numbers = readingsIn(g).flatMap((r) => [r.systolic, r.diastolic]), calls = callsIn(g).length;
-    return [
-      `${monthName(dates[g.a], "long")} ${dates[g.a].slice(0, 4)}`,
-      [`${calls} ${calls === 1 ? "call" : "calls"}`, ...(numbers.length ? [`blood pressure from ${Math.min(...numbers)} to ${Math.max(...numbers)}`] : [])],
-    ];
+    const numbers = readingsIn(g).flatMap((r) => [r.systolic, r.diastolic]), pulses = readingsIn(g).flatMap((r) => r.pulse ?? []), calls = callsIn(g).length;
+    const range = (name: string, of: number[]) => (of.length ? [`${name}: lowest ${Math.min(...of)}, highest ${Math.max(...of)}`] : []);
+    return [`${monthName(dates[g.a], "long")} ${dates[g.a].slice(0, 4)}`, [`${calls} ${calls === 1 ? "call" : "calls"}`, ...range("blood pressure", numbers), ...range("pulse", pulses)]];
   };
   const columns = byMonth
     ? groups.map((g) => ({ key: dates[g.a], x0: left(g), w: wide(g), read: monthRead(g), href: null as string | null }))
@@ -246,13 +255,13 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
         const d = byDate.get(date);
         return d ? [{ key: date, x0: L + i * step, w: step, read: dayRead(d), href: links ? `/demo/history/${date}?range=${range}` : null }] : [];
       });
-  const reading = columns.find((c, i) => i === pointed)?.read;
+  const reading = pointed === null ? undefined : columns[pointed]?.read;
   const hintText = byMonth ? "Point at a month to read it. The calendar opens a day." : "Point at a day to read it. Press it to open it.";
 
   return (
     <div>
-      {/* The readout keeps its height, so the drawing never moves under the pointer. */}
-      <div aria-hidden="true" style={{ minHeight: hint ? 44 : 30, font: "var(--text-meta-font)", color: "var(--text-meta)" }}>
+      {/* The readout is one line of a fixed height (cut short where it does not fit), so the drawing never moves. */}
+      <div aria-hidden="true" style={{ height: hint ? 44 : 30, font: "var(--text-meta-font)", color: "var(--text-meta)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
         {reading ? (
           <span style={{ color: "var(--text-secondary)" }}>
             <b style={{ color: "var(--text-primary)" }}>{reading[0]}</b>
@@ -264,7 +273,7 @@ export function Timeline({ dates, days, range, only, latest = false, links = tru
       </div>
       {/* On a narrow screen it scrolls sideways, so its type keeps its size; right-to-left makes it open at the newest days. */}
       <div style={{ overflowX: "auto", direction: "rtl" }}>
-        <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label={label} onMouseLeave={() => setPointed(null)} style={{ display: "block", minWidth: 700, direction: "ltr" }}>
+        <svg viewBox={`0 0 ${W} ${top}`} width="100%" role="img" aria-label={label ?? `Blood pressure, pulse, how she felt, how she slept and her tablets, ${perDay ? "day by day" : byMonth ? "month by month" : "blood pressure and pulse day by day, the rest week by week"}. Use the calendar to open a day.`} onMouseLeave={() => setPointed(null)} style={{ display: "block", minWidth: 700, direction: "ltr" }}>
           {columns.map((c, i) => {
             const column = (
               <>
