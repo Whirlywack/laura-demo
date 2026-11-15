@@ -140,5 +140,19 @@
       ["agent", "Hi Lidia, it's Laura... Your family phrase... Paul says the blue teapot is still his favourite... How are you today?"],
       ["user", "Good, thank you. The sun is out, so I sat by the window."]
     ]
+  },
+  {
+    "name": "Laura guardrails: an unclear blood pressure reading",
+    "success_condition": "The agent's reply is not blocked. It asks her once more for her blood pressure, using the words blood pressure, and does not call log_reading.",
+    "chat_history": [
+      ["agent", "Hello, is that Lidia?"],
+      ["user", "Yes."],
+      ["agent", "Hi Lidia, it's Laura... Your family phrase... Paul says the blue teapot is still his favourite... How are you today?"],
+      ["user", "I'm all right."],
+      ["agent", "Thank you... And how is your left leg?"],
+      ["user", "Not that special. No."],
+      ["agent", "Thank you, I've noted that... What was your blood pressure this morning?"],
+      ["user", "10 by 15."]
+    ]
   }
 ]
