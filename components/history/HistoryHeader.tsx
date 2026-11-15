@@ -1,19 +1,10 @@
-import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import { menuItem, SiteHeader } from "../SiteHeader";
+import { SiteHeader } from "../SiteHeader";
 
-// The header on the History page and a day's page: the dashboard's menu, as links back to it.
+// The header on the History page and a day's page.
 export function HistoryHeader() {
   return (
-    <SiteHeader
-      menu={
-        <>
-          <Link href="/demo" className="laura-button" style={menuItem(false)}>Today</Link>
-          <Link href="/demo?plan=1" className="laura-button" style={menuItem(false)}>Care plan</Link>
-          <Link href="/demo/history" aria-current="page" className="laura-button" style={menuItem(true)}>History</Link>
-        </>
-      }
-    >
+    <SiteHeader current="history">
       <div>Lidia, 94</div>
     </SiteHeader>
   );

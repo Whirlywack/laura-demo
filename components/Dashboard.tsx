@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DOSE_STATUSES, calendarDay, type CallStatus, type DashboardState, type Dose } from "../lib/dashboard";
 import { day, sentence, time } from "../lib/format";
@@ -13,7 +12,7 @@ import { Errands } from "./Errands";
 import { LiveFeed } from "./LiveFeed";
 import { KeyValueRows, QuietRow } from "./QuietRow";
 import { QuoteFact } from "./QuoteFact";
-import { menuItem, SiteHeader } from "./SiteHeader";
+import { SiteHeader } from "./SiteHeader";
 import { StatLine } from "./StatLine";
 import { StatusLabel } from "./StatusLabel";
 
@@ -61,15 +60,7 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
 
   return (
     <>
-      <SiteHeader
-        menu={
-          <>
-            <Link href="/demo" aria-current="page" className="laura-button" style={menuItem(true)}>Today</Link>
-            <button type="button" className="laura-button" onClick={showCarePlan} style={menuItem(false)}>Care plan</button>
-            <Link href="/demo/history" className="laura-button" style={menuItem(false)}>History</Link>
-          </>
-        }
-      >
+      <SiteHeader current="today" onCarePlan={showCarePlan}>
         <div>Lidia, 94</div>
         <CallNow status={callStatus} />
       </SiteHeader>
