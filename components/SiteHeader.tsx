@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
-// The one header on every page: the "laura" wordmark (the home page), the same four links everywhere, with the page
+// The one header on every page: the "laura" wordmark (the home page), the same five links everywhere, with the page
 // you are on underlined, and on the right whatever that page needs (the home page's "See the demo", Today's Call
 // status and call button). A visitor on the home page can go straight to History or the Care plan, and from the demo
 // there is a plain way back to Home.
-type Page = "home" | "today" | "history";
+type Page = "home" | "about" | "today" | "history";
 
 const menuItem = (active: boolean): CSSProperties => ({
   display: "inline-flex", alignItems: "center", boxSizing: "border-box", minHeight: "var(--hit-min)", padding: "8px 0", border: 0,
@@ -29,6 +29,7 @@ export function SiteHeader({ current, onCarePlan, children }: { current: Page; o
       <div style={{ flex: 1 }} />
       <nav style={{ display: "flex", flexWrap: "wrap", gap: "0 36px", whiteSpace: "nowrap" }}>
         {item("home", "/", "Home")}
+        {item("about", "/about", "Why Laura")}
         {item("today", "/demo", "Today")}
         {onCarePlan ? (
           <button type="button" className="laura-button" onClick={onCarePlan} style={menuItem(false)}>Care plan</button>
