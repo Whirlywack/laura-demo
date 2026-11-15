@@ -10,6 +10,12 @@ const refuse = (message: string, status = 400) => Response.json({ ok: false, mes
 // Writes one Entry carrying her Quote against the Call named by call_id.
 async function addEntry(body: Body, kind: string, details: object) {
   if (typeof body.quote !== "string" || !body.quote.trim()) return refuse("quote is required");
+  // When she speaks over Laura, ElevenLabs abandons the tool call and Laura sends it again, but the first one has
+  // already arrived. So the same thing in the same words on the same Call is recorded once.
+  // ponytail: read, then write; two requests in the same instant could both get through. Add a unique index if it happens.
+  const same = await writeClient().from("entries").select("details").eq("call_id", body.call_id as string).eq("kind", kind).eq("quote", body.quote);
+  const key = (o: object) => JSON.stringify(Object.entries(o).sort());
+  if (same.data?.some((e) => key(e.details) === key(details))) return Response.json({ ok: true });
   const { error } = await writeClient().from("entries").insert({ call_id: body.call_id, kind, quote: body.quote, details });
   // 23503: no such Call; 22P02: not a Call id at all.
   if (error?.code === "23503" || error?.code === "22P02") return refuse("call_id does not name a call");

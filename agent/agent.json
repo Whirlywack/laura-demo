@@ -76,7 +76,7 @@
             {
               "is_enabled": true,
               "name": "Never asks for money or codes",
-              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, says a family phrase so she knows the call is genuine, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent asks the caller for money, a payment, bank or card details, a password, a PIN or any code. Asking what shopping she is running out of is allowed. Judge only the words the agent has said so far; never block because of what it might say next. A reply that so far only sympathises, declines, or offers to pass a question on to her family is allowed.",
+              "prompt": "Context: the agent is Laura, an AI computer assistant, not a person. It phones an elderly woman each morning for her family, introduces itself by its name, says a family phrase so she knows the call is genuine, and asks about her day, her health, her blood pressure and her tablets. Block the reply only if the agent asks the caller for money, a payment, bank or card details, a password, a PIN or any code. Asking for her blood pressure, her pulse or any other health reading, and asking her to say those numbers again, is allowed: they are not codes. Asking what shopping she is running out of is allowed. Judge only the words the agent has said so far; never block because of what it might say next. A reply that so far only sympathises, declines, or offers to pass a question on to her family is allowed.",
               "execution_mode": "streaming",
               "trigger_action": { "type": "end_call" }
             },
