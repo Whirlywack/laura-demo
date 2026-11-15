@@ -3,6 +3,8 @@ import { Fragment, type CSSProperties } from "react";
 import Link from "next/link";
 import { Card } from "../components/Card";
 import { Film } from "../components/home/Film";
+import { OnTheCall } from "../components/home/OnTheCall";
+import { Phone } from "../components/home/Phone";
 import { DataBlocks } from "../components/home/DataBlocks";
 import { realCall } from "../components/home/films";
 import { TabletTicks } from "../components/home/TabletTicks";
@@ -11,8 +13,8 @@ import { SiteHeader } from "../components/SiteHeader";
 // The home page, ported from .claude/skills/laura-design/ui_kits/home/Home.jsx: what Laura is, a call to listen to (the film,
 // components/home/films.ts) with a month of her answers and her tablet count drawn under it, then Laura's two jobs. The tablets are Lidia's own (as in the care plan); "See the demo" opens the dashboard at /demo.
 export const metadata: Metadata = {
-  title: "Laura: a phone call every morning for an older family member",
-  description: "Laura phones an older family member every morning on the phone they already have. You see how they are, whether the tablets were taken and what is running low, as they speak.",
+  title: "Laura: a phone call every day for an older family member",
+  description: "Laura phones an older family member every day on the phone they already have. You see how they are, whether the tablets were taken and what is running low, as they speak.",
 };
 
 const display = (size: number): CSSProperties => ({ font: `700 ${size}px/0.98 var(--font-sans)`, letterSpacing: "var(--tracking-display)", textWrap: "balance", margin: 0 });
@@ -34,7 +36,8 @@ const onTheCall: [string, string, string][] = [
   ["Laura waits.", "Take them now, take your time, I'll wait.", "The tablet is recorded once it is taken."],
   ["Laura remembers.", "You told me yesterday you slept badly. How was last night?", "Each call starts from the last one."],
   ["You see it live.", "Concor · Taken on call · 09:32", "It is on your page while the call is still going."],
-  ["They know it is Laura.", "Paul says the blue teapot is still his favourite.", "Once they have said who they are, Laura gives a phrase only your family knows."],
+  // The family phrase is the family's own sentence, so it is the one line here in quotation marks.
+  ["They know it is Laura.", q("Paul says the blue teapot is still his favourite."), "A safety check. Once they have said who they are, Laura gives a phrase only your family knows, so they can hang up on anyone else."],
 ];
 
 export default function Home() {
@@ -48,8 +51,7 @@ export default function Home() {
         <Card tone="live" style={{ flex: "1 1 380px", minWidth: 0, padding: "36px 40px 30px", display: "flex", flexDirection: "column" }}>
           <div style={label}>Their side · the phone they already have</div>
           <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 0" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG drawing, nothing to optimise */}
-            <img src="/home-phone.svg" alt="A cordless home phone standing in its charging stand" style={{ height: 500, maxHeight: "60vh", maxWidth: "100%" }} />
+            <Phone style={{ height: 500, maxHeight: "60vh", maxWidth: "100%" }} />
           </div>
           <div>
             <div style={lead}>No smartphone needed.</div>
@@ -64,33 +66,34 @@ export default function Home() {
                 <span style={{ width: 10, height: 10, borderRadius: "50%", background: "var(--accent)", flex: "none" }} />
                 <span>One family&apos;s morning · Lidia, 94 · on the phone now</span>
               </span>
-              <h1 style={{ ...display(60), marginTop: 22, maxWidth: 760 }}>A phone call every morning, so nothing gets missed.</h1>
+              <h1 style={{ ...display(60), marginTop: 22, maxWidth: 760 }}>A phone call every day, so nothing gets missed.</h1>
               <p style={{ margin: "20px 0 0", maxWidth: 520, lineHeight: 1.4, color: "var(--text-secondary)" }}>
                 Laura phones an older family member who lives alone: a parent, a grandparent, an aunt or uncle. You get a page that fills in as they speak.
               </p>
             </div>
             <Card tone="quiet" style={{ flex: "1 1 300px", minWidth: 0, padding: 30, display: "flex", flexDirection: "column" }}>
               <div style={{ ...label, color: "var(--text-question)" }}>Today, in her words</div>
-              <div style={{ ...reading, marginTop: 14 }}>{q("I'm all right. A bit tired, but all right.")}</div>
+              <div className="laura-say" style={{ ...reading, marginTop: 14, animationDelay: "1.3s" }}>{q("I'm all right. A bit tired, but all right.")}</div>
               <div style={{ flex: 1, minHeight: 16 }} />
               <div style={label}>Sleep</div>
-              <div style={{ marginTop: 2 }}>{q("I woke at four and couldn't get back off.")}</div>
+              <div className="laura-say" style={{ marginTop: 2, animationDelay: "2s" }}>{q("I woke at four and couldn't get back off.")}</div>
             </Card>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
             <Card style={{ flex: "1.2 1 320px", minWidth: 0, padding: "28px 30px 26px" }}>
               <div style={title}>Tablets</div>
-              <TabletTicks tablets={["Concor", "Sanoral HCT", "Eliquis"]} initial={["taken", "taken", "earlier"]} />
+              <TabletTicks tablets={["Concor", "Sanoral HCT", "Eliquis"]} marks={["taken", "taken", "earlier"]} from={2.7} />
             </Card>
             <Card tone="quiet" style={{ flex: "1 1 280px", minWidth: 0, padding: "28px 30px 26px" }}>
               <div style={title}>Blood pressure</div>
               <div style={{ marginTop: 4, color: "var(--text-secondary)" }}>She read it out on the call.</div>
-              <div style={{ marginTop: 16 }}>{q("One thirty-eight over eighty-two. I wrote it down.")}</div>
+              <div className="laura-say" style={{ marginTop: 16, animationDelay: "4.5s" }}>{q("One thirty-eight over eighty-two. I wrote it down.")}</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto", marginTop: 14, fontVariantNumeric: "tabular-nums" }}>
                 {[["Today", "138/82"], ["Thu 12 Nov", "142/85"], ["Wed 11 Nov", "136/80"]].map(([d, v], i) => (
                   <Fragment key={d}>
-                    <span style={{ padding: "9px 0", borderTop: "1px solid var(--rule)", ...(i ? { color: "var(--text-secondary)" } : { fontWeight: 700 }) }}>{d}</span>
-                    <span style={{ padding: "9px 0", borderTop: "1px solid var(--rule)", fontWeight: i ? 400 : 700 }}>{v}</span>
+                    {/* Today's reading lands after her words; the earlier days are already there. */}
+                    <span className={i ? undefined : "laura-say"} style={{ padding: "9px 0", borderTop: "1px solid var(--rule)", ...(i ? { color: "var(--text-secondary)" } : { fontWeight: 700, animationDelay: "5s" }) }}>{d}</span>
+                    <span className={i ? undefined : "laura-say"} style={{ padding: "9px 0", borderTop: "1px solid var(--rule)", fontWeight: i ? 400 : 700, animationDelay: i ? undefined : "5s" }}>{v}</span>
                   </Fragment>
                 ))}
               </div>
@@ -99,7 +102,7 @@ export default function Home() {
               <div style={title}>To bring Lidia</div>
               <div style={{ marginTop: 4 }}>2 things she&apos;s running out of.</div>
               <div style={{ marginTop: 16, borderTop: "1px solid var(--rule-on-highlight)", padding: "12px 0 14px" }}>
-                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <div className="laura-say" style={{ display: "flex", gap: 12, alignItems: "center", animationDelay: "5.6s" }}>
                   <span style={box} />
                   <b style={{ flex: 1 }}>Tea</b>
                   <span style={{ display: "flex", alignItems: "center", gap: 8, ...label, whiteSpace: "nowrap" }}>
@@ -107,7 +110,7 @@ export default function Home() {
                     <span>Just now</span>
                   </span>
                 </div>
-                <div style={{ margin: "8px 0 0 36px" }}>{q("I'm nearly out of tea. Two bags left.")}</div>
+                <div className="laura-say" style={{ margin: "8px 0 0 36px", animationDelay: "5.6s" }}>{q("I'm nearly out of tea. Two bags left.")}</div>
               </div>
               <div style={{ borderTop: "1px solid var(--rule-on-highlight)", padding: "12px 0 0", display: "flex", gap: 12, alignItems: "center" }}>
                 <span style={box} />
@@ -126,9 +129,6 @@ export default function Home() {
         <p style={{ ...lead, margin: "22px 0 0", maxWidth: 860, textWrap: "balance" }}>
           He can&apos;t phone her every morning, and that is when her tablets are due. So Laura phones for him. She waits while Lidia takes them, asks how she is, and Paul sees it all as they talk.
         </p>
-        <p style={{ margin: "22px 0 0", maxWidth: 760, color: "var(--text-secondary)" }}>
-          Listen to one of their calls. The words are from a real call on 14 November. Laura&apos;s voice is the one you would hear on the phone. Lidia&apos;s side is read by a generated voice.
-        </p>
       </section>
       <Film data={realCall} />
       <DataBlocks />
@@ -136,16 +136,7 @@ export default function Home() {
       <section id="on-the-call" style={{ marginTop: 72, padding: "0 20px", scrollMarginTop: 24 }}>
         <h2 style={display(40)}>On the call</h2>
       </section>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: 36 }}>
-        {onTheCall.map(([what, words, how]) => (
-          <Card key={what} style={{ flex: "1 1 300px", minWidth: 0, padding: "28px 30px 26px", display: "flex", flexDirection: "column" }}>
-            <div style={title}>{what}</div>
-            <div style={{ ...lead, marginTop: 14, color: "var(--text-question)", textWrap: "balance" }}>{words}</div>
-            <div style={{ flex: 1, minHeight: 14 }} />
-            <div style={{ color: "var(--text-secondary)" }}>{how}</div>
-          </Card>
-        ))}
-      </div>
+      <OnTheCall cards={onTheCall} />
 
       <section id="what-laura-does" style={{ marginTop: 72, padding: "0 20px", scrollMarginTop: 24 }}>
         <h2 style={display(40)}>What Laura does</h2>
@@ -176,7 +167,9 @@ export default function Home() {
         <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>
           Once they have said who they are, Laura gives a phrase your family chose, so they know it is really Laura and can hang up on anyone else. Asked if she is a person, Laura says she is not. In an emergency she tells them to call 112.
         </div>
-        <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>Lidia and Paul are sample people, and everything on these pages is sample data.</div>
+        <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>
+          Lidia and Paul are sample people, and everything on these pages is sample data. The call you can listen to uses the words of a real call on 14 November; Lidia&apos;s side is read by a generated voice.
+        </div>
       </footer>
     </div>
   );

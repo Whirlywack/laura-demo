@@ -44,9 +44,9 @@ The older person never sees a screen. Sample names: the older person is Lidia, 9
 
 **Layout.** Full width, never a narrow centred column. Laptop first; every row wraps so the page stacks on a phone. Hit targets at least 44px.
 
-**Motion.** Only when something arrives or changes state: a new feed item slides down 10px and fades in over 420ms; a dose bar or marker changes over 240ms. Nothing decorative. Respect reduced motion.
+**Motion.** Only when something arrives or changes state: a new feed item slides down 10px and fades in over 420ms; a dose bar or marker changes over 240ms. Nothing decorative. Respect reduced motion. In this repo: a card never moves, and what is written in it fades in when a page opens; on the home page Lidia's words land in their cards in the order of the call, and the phone's answer button pulses three times as Laura's name appears. The family phrase may be shown in quotation marks, as the family's own sentence.
 
-**Imagery and icons.** One illustration: her cordless home phone standing in its charging stand, `assets/home-phone.svg`, drawn with a 3px ink outline and shown on sage. No icon set and no emoji; the only glyph is a tick, in a completed tick box or a tablet's tick mark. There is no logo: the wordmark is Helvetica Bold: lowercase "laura" at 60px with letter-spacing −0.06em on the home page; "Laura" at 32px with −0.04em on the dashboard. In running text the name is always "Laura".
+**Imagery and icons.** One illustration: her cordless home phone standing in its charging stand, `assets/home-phone.svg`, drawn with a 3px ink outline and shown on sage. (In this repo the home page draws it in `components/home/Phone.tsx`, so its screen and handset can move.) No icon set and no emoji; the only glyph is a tick, in a completed tick box or a tablet's tick mark. There is no logo: the wordmark is Helvetica Bold: lowercase "laura" at 60px with letter-spacing −0.06em on the home page; "Laura" at 32px with −0.04em on the dashboard. In running text the name is always "Laura".
 
 ## Components (`components/core`)
 
