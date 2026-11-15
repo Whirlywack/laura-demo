@@ -3,6 +3,7 @@ import { Fragment, type CSSProperties } from "react";
 import Link from "next/link";
 import { Card } from "../components/Card";
 import { Film } from "../components/home/Film";
+import { OnTheCall } from "../components/home/OnTheCall";
 import { Phone } from "../components/home/Phone";
 import { DataBlocks } from "../components/home/DataBlocks";
 import { realCall } from "../components/home/films";
@@ -135,16 +136,7 @@ export default function Home() {
       <section id="on-the-call" style={{ marginTop: 72, padding: "0 20px", scrollMarginTop: 24 }}>
         <h2 style={display(40)}>On the call</h2>
       </section>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: 36 }}>
-        {onTheCall.map(([what, words, how]) => (
-          <Card key={what} style={{ flex: "1 1 300px", minWidth: 0, padding: "28px 30px 26px", display: "flex", flexDirection: "column" }}>
-            <div style={title}>{what}</div>
-            <div style={{ ...lead, marginTop: 14, color: "var(--text-question)", textWrap: "balance" }}>{words}</div>
-            <div style={{ flex: 1, minHeight: 14 }} />
-            <div style={{ color: "var(--text-secondary)" }}>{how}</div>
-          </Card>
-        ))}
-      </div>
+      <OnTheCall cards={onTheCall} />
 
       <section id="what-laura-does" style={{ marginTop: 72, padding: "0 20px", scrollMarginTop: 24 }}>
         <h2 style={display(40)}>What Laura does</h2>

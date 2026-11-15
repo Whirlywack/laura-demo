@@ -136,6 +136,8 @@ a:hover { color: var(--ink); }
 /* The home page's opening, played once, like the start of a call. Her phone already shows the time; Laura's name
    appears and the answer button pulses three times. Then what Lidia says lands in the cards that are already there,
    in the order of the call: each `laura-say` carries its own delay. */
+/* `laura-wait` holds a line back until its turn (the "On the call" cards, which play when they scroll into view). */
+.laura-wait { opacity: 0; animation: none; }
 .laura-say { animation: laura-arrive var(--motion-arrive) both; }
 .laura-phone-name { animation: laura-fade var(--motion-arrive) 800ms both; }
 @keyframes laura-phone-answer {
