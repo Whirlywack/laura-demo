@@ -18,7 +18,7 @@ const meta: CSSProperties = { font: "var(--text-meta-font)", color: "var(--text-
 const quote: CSSProperties = { font: "var(--text-meta-font)", color: "var(--text-secondary)" };
 const arrive: CSSProperties = { animation: "laura-arrive var(--motion-arrive) both" };
 const card = (tone: "card" | "quiet" | "action" = "card"): CSSProperties => ({
-  flex: "1 1 190px", minWidth: 0, boxSizing: "border-box", borderRadius: "var(--radius-card-compact)", padding: "16px 18px 18px", overflow: "hidden",
+  flex: "1 1 190px", minWidth: 0, boxSizing: "border-box", borderRadius: "var(--radius-inner)", padding: "16px 18px 18px", overflow: "hidden",
   background: tone === "card" ? "var(--surface-card)" : tone === "quiet" ? "var(--surface-quiet)" : "var(--surface-action)",
 });
 const question: CSSProperties = { ...label, color: "var(--text-question)" };

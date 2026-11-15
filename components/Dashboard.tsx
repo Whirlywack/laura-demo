@@ -150,8 +150,8 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
               <DatedList style={{ marginTop: 14 }} items={leftLeg.earlier.map((r) => ({ date: day(r.at), quote: r.quote }))} moreHref="/demo/history" />
             </Card>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)", marginTop: "var(--gap-cards)", alignItems: "flex-start" }}>
-            <div ref={plan} style={{ flex: "1 1 360px", minWidth: 0 }}>
+          <div style={{ marginTop: "var(--gap-cards)" }}>
+            <div ref={plan}>
               <QuietRow title="Care plan" note="What Laura knows about her · read-only" open={planOpen} onToggle={() => setPlanOpen((o) => !o)}>
                 <KeyValueRows
                   rows={[
@@ -168,7 +168,6 @@ export function Dashboard({ state, now, openPlan = false }: { state: DashboardSt
                 ) : null}
               </QuietRow>
             </div>
-            <QuietRow style={{ flex: "1 1 360px", minWidth: 0 }} title="History" note="Every call, a month to a year at a time" href="/demo/history" action="Open" />
           </div>
         </div>
 

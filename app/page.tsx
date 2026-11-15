@@ -9,7 +9,7 @@ import { TabletTicks } from "../components/home/TabletTicks";
 import { SiteHeader } from "../components/SiteHeader";
 
 // The home page, ported from .claude/skills/laura-design/ui_kits/home/Home.jsx: what Laura is, a call to listen to (the film,
-// components/home/films.ts) with a month of her answers and her tablet count drawn under it, then Laura's two jobs. The tablets are Lidia's own (as in the care plan); "Call now" opens the demo at /demo.
+// components/home/films.ts) with a month of her answers and her tablet count drawn under it, then Laura's two jobs. The tablets are Lidia's own (as in the care plan); "See the demo" opens the dashboard at /demo.
 export const metadata: Metadata = {
   title: "Laura",
   description: "Laura phones her every morning, so nothing gets missed. A daily phone call for your mother or grandmother, and a page for you that fills in as she speaks.",
@@ -33,7 +33,7 @@ export default function Home() {
   return (
     <div style={{ padding: "0 24px 8px", maxWidth: 1760, margin: "0 auto", boxSizing: "border-box" }}>
       <SiteHeader>
-        <Link href="/demo" style={pill}>Call now</Link>
+        <Link href="/demo" className="laura-button" style={pill}>See the demo</Link>
       </SiteHeader>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--gap-cards)" }}>
@@ -143,9 +143,10 @@ export default function Home() {
         </Card>
       </div>
 
-      <footer id="about" style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "baseline", gap: "8px 32px", padding: "40px 20px 28px" }}>
-        <b>About</b>
-        <span style={{ color: "var(--text-secondary)" }}>Laura reminds and records. She never gives medical advice and never interprets a reading.</span>
+      <footer id="about" style={{ padding: "64px 20px 40px" }}>
+        <div style={label}>About</div>
+        <div style={{ ...lead, marginTop: 10, maxWidth: 760, textWrap: "balance" }}>Laura reminds and records. She never gives medical advice and never interprets a reading.</div>
+        <div style={{ marginTop: 12, maxWidth: 760, color: "var(--text-secondary)" }}>Lidia and Paul are sample people, and everything on these pages is sample data.</div>
       </footer>
     </div>
   );
