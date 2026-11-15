@@ -119,10 +119,15 @@ export default function Home() {
         </div>
       </div>
 
+      {/* The family's story, large: it is why Laura exists, and the film under it is one of their calls. */}
       <section id="one-morning" style={{ marginTop: 88, padding: "0 20px", scrollMarginTop: 24 }}>
-        <h2 style={display(40)}>Listen to a call</h2>
-        <p style={{ margin: "18px 0 0", maxWidth: 760, fontSize: 22, lineHeight: 1.4, color: "var(--text-secondary)" }}>
-          Lidia is 94. Her grandson Paul looks after her from another city. The words are from a real call on 14 November. Laura&apos;s voice is the one you would hear on the phone. Lidia&apos;s side is read by a generated voice.
+        <div style={label}>One family&apos;s story</div>
+        <h2 style={{ ...display(40), marginTop: 12, maxWidth: 980 }}>Lidia is 94. Her grandson Paul looks after her from another city.</h2>
+        <p style={{ ...lead, margin: "22px 0 0", maxWidth: 860, textWrap: "balance" }}>
+          He can&apos;t phone her every morning, and that is when her tablets are due. So Laura phones for him. She waits while Lidia takes them, asks how she is, and Paul sees it all as they talk.
+        </p>
+        <p style={{ margin: "22px 0 0", maxWidth: 760, color: "var(--text-secondary)" }}>
+          Listen to one of their calls. The words are from a real call on 14 November. Laura&apos;s voice is the one you would hear on the phone. Lidia&apos;s side is read by a generated voice.
         </p>
       </section>
       <Film data={realCall} />
